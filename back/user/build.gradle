@@ -2,6 +2,7 @@ plugins {
 	id 'java'
 	id 'org.springframework.boot' version '2.7.18'
 	id 'io.spring.dependency-management' version '1.1.4'
+	id 'com.diffplug.spotless' version '6.16.0'
 }
 
 group = 'com.sieum'
@@ -20,8 +21,10 @@ ext {
 }
 
 dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
+
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 
@@ -33,4 +36,16 @@ dependencyManagement {
 
 tasks.named('test') {
 	useJUnitPlatform()
+}
+
+spotless {
+	java {
+		target("**/*.java")
+		targetExclude("**/SecurityConfig.java", "**/SwaggerConfiguration.java", "**/generated/**")
+		googleJavaFormat().aosp()
+		importOrder()
+		removeUnusedImports()
+		trimTrailingWhitespace()
+		endWithNewline()
+	}
 }
