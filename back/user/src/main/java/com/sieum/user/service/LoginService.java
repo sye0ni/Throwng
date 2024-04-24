@@ -34,9 +34,7 @@ public class LoginService {
         final OauthProvider provider = oauthProviders.mapping(providerName);
         final OauthUserInfo oauthUserInfo = provider.getUserInfo(code);
         return findOrCreateMember(
-                providerName,
-                oauthUserInfo.getSocialLoginId(),
-                oauthUserInfo.getNickname());
+                providerName, oauthUserInfo.getSocialLoginId(), oauthUserInfo.getNickname());
     }
 
     private User findOrCreateMember(
@@ -69,5 +67,9 @@ public class LoginService {
             tryCount += 1;
         }
         throw new AuthException(FAIL_TO_GENERATE_RANDOM_NICKNAME);
+    }
+
+    public void logout(String accessToken) {
+        redisUtil.deleteData(jwtProvider.getUserId(accessToken));
     }
 }
