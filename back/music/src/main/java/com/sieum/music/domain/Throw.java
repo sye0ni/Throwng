@@ -6,7 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.data.geo.Point;
+import org.locationtech.jts.geom.Point;
 
 @Entity
 @Builder
@@ -34,7 +34,7 @@ public class Throw extends BaseTime {
 
     @NotNull private Point locationPoint;
 
-    @NotNull private Integer userId;
+    @NotNull private Long userId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "zipcode_id")

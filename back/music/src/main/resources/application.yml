@@ -7,4 +7,4 @@ spring:
   application:
     name: music
   profiles:
-    active: dev
+    active: local
