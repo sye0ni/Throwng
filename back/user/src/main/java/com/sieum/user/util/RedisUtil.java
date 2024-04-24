@@ -1,6 +1,7 @@
 package com.sieum.user.util;
 
 import java.time.Duration;
+import java.util.Collection;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -41,5 +42,13 @@ public class RedisUtil {
         ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
         Duration expiredDuration = Duration.ofSeconds(duration);
         valueOperations.set(key, value, expiredDuration);
+    }
+
+    public void deleteData(String key) {
+        redisTemplate.delete(key);
+    }
+
+    public void deleteDataList(Collection<?> key) {
+        redisTemplate.delete(key);
     }
 }
