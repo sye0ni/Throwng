@@ -5,6 +5,66 @@ spring:
   application:
     name: gateway
 
+  cloud:
+    gateway:
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+            allowedOrigins:
+              - "http://localhost:5173"
+              - "https://throwng.store/"
+              - "https://k10c101.p.ssafy.io"
+            allow-credentials: true
+            allowedHeaders:
+              - x-requested-with
+              - authorization
+              - accessToken
+              - content-type
+              - credential
+              - X-AUTH-TOKEN
+              - X-CSRF-TOKEN
+            allowedMethods:
+              - POST
+              - GET
+              - PUT
+              - PATCH
+              - OPTIONS
+              - DELETE
+      routes:
+        - id: user
+          predicates:
+            - Path=/users/user/**
+          uri: lb://USER
+          sensitive-headers: Cookie,Set-Cookie
+          #filters:
+          #  - CustomAuthFilter
+        - id: user
+          predicates:
+            - Path=/users/auth/**
+          uri: lb://USER
+          sensitive-headers: Cookie,Set-Cookie
+        - id: quiz
+          predicates:
+            - Path=/quizzes/**
+          uri: lb://QUIZ
+          sensitive-headers: Cookie,Set-Cookie
+          #filters:
+           # - CustomAuthFilter
+        - id: music
+          predicates:
+            - Path=/music/**
+          uri: lb://MUSIC
+          sensitive-headers: Cookie,Set-Cookie
+          #filters:
+           # - CustomAuthFilter
+        - id: notification
+          predicates:
+            - Path=/notifications/**
+          uri: lb://NOTIFICATION
+          sensitive-headers: Cookie,Set-Cookie
+          #filters:
+           # - CustomAuthFilter
+
   eureka:
     client:
       service-url:
