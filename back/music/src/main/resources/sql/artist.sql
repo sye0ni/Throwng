@@ -1,0 +1,1 @@
+INSERT INTO throwng.artist(name) VALUES("(여자)아이들");
