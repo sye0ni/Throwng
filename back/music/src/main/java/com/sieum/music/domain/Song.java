@@ -15,9 +15,8 @@ import lombok.NoArgsConstructor;
 public class Song {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "song_id")
-    private Integer id;
+    private String id;
 
     @Column(length = 400)
     @NotNull

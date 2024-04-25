@@ -16,7 +16,7 @@ import org.locationtech.jts.geom.Point;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ThrowItem extends BaseTime {
+public class ThrowItem extends CreatedTime {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
