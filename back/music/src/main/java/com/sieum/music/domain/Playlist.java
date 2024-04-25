@@ -21,7 +21,7 @@ public class Playlist {
 
     @NotNull private boolean status;
 
-    @NotNull private Integer userId;
+    @NotNull private Long userId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "song_id")

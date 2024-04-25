@@ -1,6 +1,6 @@
 package com.sieum.music.dto.response;
 
-import com.sieum.music.domain.Throw;
+import com.sieum.music.domain.ThrowItem;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
@@ -35,15 +35,32 @@ public class ThrownMusicDetailResponse {
     @Schema(description = "thrown date")
     private LocalDateTime thrownDate;
 
-    public static ThrownMusicDetailResponse of(final Throw thrown) {
+    @Schema(description = "address")
+    private String address;
+
+    @Schema(description = "whether pickup or not")
+    private boolean pickupStatus;
+
+    public static ThrownMusicDetailResponse of(final ThrowItem throwItem, final long userId) {
         return ThrownMusicDetailResponse.builder()
-                .throwId(thrown.getId())
-                .title(thrown.getSong().getTitle())
-                .artist(thrown.getSong().getArtist().getName())
-                .albumImage(thrown.getSong().getAlbumImage())
-                .itemImage(thrown.getItemImage())
-                .content(thrown.getContent())
-                .thrownDate(thrown.getCreatedAt())
+                .throwId(throwItem.getId())
+                .title(throwItem.getSong().getTitle())
+                .artist(throwItem.getSong().getArtist().getName())
+                .albumImage(throwItem.getSong().getAlbumImage())
+                .itemImage(throwItem.getItemImage())
+                .content(throwItem.getContent())
+                .thrownDate(throwItem.getCreatedAt())
+                .address(
+                        throwItem.getZipcode().getSigungu()
+                                + " "
+                                + throwItem.getZipcode().getDong())
+                .pickupStatus(
+                        throwItem.getThrowHistoryList().stream()
+                                .anyMatch(
+                                        throwHistory ->
+                                                throwHistory.getUserId() == userId
+                                                        && throwHistory.getThrowItem().getId()
+                                                                == throwItem.getId()))
                 .build();
     }
 }

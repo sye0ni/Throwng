@@ -72,4 +72,10 @@ public class LoginService {
     public void logout(String accessToken) {
         redisUtil.deleteData(jwtProvider.getUserId(accessToken));
     }
+
+    public long getUsername(String accessToken) {
+        String userId = jwtProvider.getUserId(accessToken);
+        return userRepository.findBySocialId(userId).get().getId();
+    }
+
 }

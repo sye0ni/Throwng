@@ -19,10 +19,15 @@ public class ThrowHistory extends BaseTime {
     @Column(name = "throw_history_id")
     private Long id;
 
-    @NotNull private Integer userId;
+    @NotNull private Long userId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "throw_id")
+    @JoinColumn(name = "throw_item_id")
     @NotNull
-    private Throw throwItem;
+    private ThrowItem throwItem;
+
+    public void setThrowItem(ThrowItem throwItem) {
+        this.throwItem = throwItem;
+        throwItem.getThrowHistoryList().add(this);
+    }
 }
