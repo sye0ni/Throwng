@@ -52,7 +52,7 @@ public class ThrowItem extends CreatedTime {
     @OneToMany(mappedBy = "throwItem", cascade = CascadeType.REMOVE)
     private List<ThrowHistory> throwHistoryList = new ArrayList<>();
 
-    public void changeThrowStatus(String status) {
+    public void changeThrowStatus(final String status) {
         this.status = ThrowStatus.valueOf(status);
     }
 }

@@ -61,7 +61,8 @@ public class MusicService {
         findPlaylist(userId, throwItem.getSong(), true)
                 .orElseGet(
                         () -> {
-                            createPlaylistHistory(createPlaylist(userId, throwItem.getSong()));
+                            createPlaylistHistory(
+                                    createPlaylist(userId, throwItem.getSong()), true);
                             return null;
                         });
     }
@@ -91,9 +92,9 @@ public class MusicService {
                 Playlist.builder().userId(userId).song(song).status(true).build());
     }
 
-    private void createPlaylistHistory(final Playlist playlist) {
+    private void createPlaylistHistory(final Playlist playlist, final boolean status) {
         playlistHistoryRepository.save(
-                PlaylistHistory.builder().playlist(playlist).status(true).build());
+                PlaylistHistory.builder().playlist(playlist).status(status).build());
     }
 
     private Optional<Playlist> findPlaylist(
@@ -120,5 +121,16 @@ public class MusicService {
                 .filter(item -> item.getStatus().equals(ThrowStatus.valueOf("VISIBLE")))
                 .map(PoiResponse::fromItemPoint)
                 .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public void deletePlaylist(final long userId, final int playlistId) {
+        final Playlist playlist =
+                playlistRepository
+                        .findByIdAndUserId(playlistId, userId)
+                        .orElseThrow(() -> new BadRequestException(NOT_FOUND_PLAYLIST_ID));
+        playlist.changePlaylistStatus(false);
+        playlistRepository.save(playlist);
+        createPlaylistHistory(playlist, false);
     }
 }

@@ -11,7 +11,8 @@ public enum CustomExceptionStatus implements BaseErrorCode {
     INVALID_REQUEST("BadRequest_400_1", "Invalid request"),
     REQUEST_ERROR("NotValidInput_400_2", "Invalid input"),
     NOT_FOUND_THROW_ITEM_ID("THROW_400_1", "No throw item with the requested id"),
-    NOT_FOUND_KEY_WORD("Search_400_1", "No search key word");
+    NOT_FOUND_KEY_WORD("Search_400_1", "No search key word"),
+    NOT_FOUND_PLAYLIST_ID("PLAYLIST_400_1", "No playlist with the requested id");
 
     private String code;
     private String reason;

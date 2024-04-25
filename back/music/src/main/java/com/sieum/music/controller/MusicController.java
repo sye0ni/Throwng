@@ -63,4 +63,14 @@ public class MusicController {
             @Valid @RequestBody NearItemPointRequest nearItemPointRequest) {
         return ResponseEntity.ok().body(musicService.findNearItemsPoints(nearItemPointRequest));
     }
+
+    @Operation(summary = "delete playlist")
+    @DeleteMapping("/playlists/{playlistId}")
+    public ResponseEntity<?> deletePlaylist(
+            @RequestHeader("Authorization") final String authorization,
+            @PathVariable final int playlistId) {
+        final long userId = musicService.getCurrentUserId(authorization);
+        musicService.deletePlaylist(userId, playlistId);
+        return ResponseEntity.noContent().build();
+    }
 }
