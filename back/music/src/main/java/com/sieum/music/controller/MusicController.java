@@ -1,10 +1,8 @@
 package com.sieum.music.controller;
 
-import com.sieum.music.dto.response.SearchSongResponse;
 import com.sieum.music.dto.request.NearItemPointRequest;
 import com.sieum.music.dto.response.SearchSongResponse;
 import com.sieum.music.service.MusicService;
-import com.sieum.music.util.YoutubeMusicUtil;
 import com.sieum.music.util.YoutubeMusicUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import java.util.List;
@@ -12,9 +10,6 @@ import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import javax.validation.Valid;
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
