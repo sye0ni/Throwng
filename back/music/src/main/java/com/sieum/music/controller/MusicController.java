@@ -39,7 +39,6 @@ public class MusicController {
         return ResponseEntity.noContent().build();
     }
 
-
     @Operation(summary = "show playlist")
     @GetMapping("/playlists")
     public ResponseEntity<?> getPlaylist(
@@ -49,6 +48,7 @@ public class MusicController {
                     final LocalDateTime modifiedAt) {
         final long userId = musicService.getCurrentUserId(authorization);
         return ResponseEntity.ok().body(musicService.getPlaylist(userId, modifiedAt));
+    }
 
     @Operation(summary = "search for songs on YouTube")
     @GetMapping("/search/{keyword}")
