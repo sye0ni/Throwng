@@ -11,6 +11,8 @@ import com.sieum.user.service.MyUserDetailsService;
 import com.sieum.user.util.JwtUtil;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
@@ -59,4 +61,11 @@ public class AuthController {
         return ResponseEntity.status(CREATED)
                 .body(new AccessTokenResponse(memberTokens.getAccessToken()));
     }
+
+    @Operation(summary = "feign client")
+    @GetMapping("/id")
+    public ResponseEntity getUserId(@RequestHeader("Authorization") String accessToken) {
+        return ResponseEntity.ok(loginService.getUsername(accessToken));
+    }
+
 }

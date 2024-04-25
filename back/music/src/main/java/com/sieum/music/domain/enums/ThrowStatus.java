@@ -1,4 +1,4 @@
-package com.sieum.music.domain;
+package com.sieum.music.domain.enums;
 
 import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.AllArgsConstructor;
