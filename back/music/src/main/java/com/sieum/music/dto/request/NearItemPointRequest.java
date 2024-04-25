@@ -17,7 +17,8 @@ import org.springframework.validation.annotation.Validated;
 @AllArgsConstructor
 public class NearItemPointRequest {
 
-    private static final Double DEFAULT_DISTANCE = 600.0;
+    private static final Double DEFAULT_RADIUS = 600.0;
+    private static final Double DEFAULT_DISTANCE = 1000.0;
 
     @Schema(description = "the distance of a place east or west", example = "127.123456")
     @IsLongitude
@@ -31,9 +32,13 @@ public class NearItemPointRequest {
     @NotNull(message = "Latitude is required")
     private Double latitude;
 
-    @Schema(description = "distance - (Unit - m)", example = "600.0")
+    @Schema(description = "current location of user", example = "true")
+    @NotNull(message = "isUserLocation is required")
+    private Boolean isUserLocation;
+
+    @Schema(description = "distance - (Unit - m)", example = "1000.0")
     private Double distance = DEFAULT_DISTANCE;
 
     @Schema(description = "a distance within a radius - (Unit - m)", example = "600.0")
-    private Double innerDistance = DEFAULT_DISTANCE;
+    private Double innerDistance = DEFAULT_RADIUS;
 }
