@@ -27,4 +27,8 @@ public class Playlist extends ModifiedTime {
     @JoinColumn(name = "song_id")
     @NotNull
     private Song song;
+
+    public void changePlaylistStatus(final boolean status) {
+        this.status = status;
+    }
 }
