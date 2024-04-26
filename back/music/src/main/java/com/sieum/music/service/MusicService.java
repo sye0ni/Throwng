@@ -57,6 +57,11 @@ public class MusicService {
                 musicRepository
                         .findById(throwId)
                         .orElseThrow(() -> new BadRequestException(NOT_FOUND_THROW_ITEM_ID));
+
+        if (throwHistoryRepository.existsByUserIdAndThrowItemId(userId, throwId)) {
+            throw new BadRequestException(DUPLICATE_PICKUP_REQUEST);
+        }
+
         createThrowHistory(userId, throwItem);
         findPlaylist(userId, throwItem.getSong(), true)
                 .orElseGet(
