@@ -133,4 +133,12 @@ public class MusicService {
         playlistRepository.save(playlist);
         createPlaylistHistory(playlist, false);
     }
+
+    public Long countThrowngSong(final long userId) {
+        return musicRepository.countByUserId(userId);
+    }
+
+    public Long countPickUpSong(final long userId) {
+        return throwHistoryRepository.countByUserId(userId);
+    }
 }

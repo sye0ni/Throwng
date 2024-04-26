@@ -6,4 +6,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface ThrowHistoryRepository extends JpaRepository<ThrowHistory, Long> {
 
     boolean existsByUserIdAndThrowItemId(long userId, long throwId);
+
+    Long countByUserId(final long userId);
 }
