@@ -58,7 +58,7 @@ public class MusicController {
     }
 
     @Operation(summary = "Search for list of dropped music within 600 radius")
-    @GetMapping("/thrown/points")
+    @PostMapping("/thrown/points")
     public ResponseEntity<?> findNearItemsPoints(
             @Valid @RequestBody NearItemPointRequest nearItemPointRequest) {
         return ResponseEntity.ok().body(musicService.findNearItemsPoints(nearItemPointRequest));
