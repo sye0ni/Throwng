@@ -73,4 +73,16 @@ public class MusicController {
         musicService.deletePlaylist(userId, playlistId);
         return ResponseEntity.noContent().build();
     }
+
+    @Operation(summary = "Count the number of songs thrown by the user")
+    @GetMapping("/thrown-song/{userId}")
+    public ResponseEntity<?> countThrownSong(@PathVariable("userId") long userId) {
+        return ResponseEntity.ok(musicService.countThrowngSong(userId));
+    }
+
+    @Operation(summary = "Count the number of songs the user picked up")
+    @GetMapping("/pick-song/{userId}")
+    public ResponseEntity<?> countPickUpSong(@PathVariable("userId") long userId) {
+        return ResponseEntity.ok(musicService.countPickUpSong(userId));
+    }
 }
