@@ -9,10 +9,9 @@ import com.sieum.user.dto.response.AccessTokenResponse;
 import com.sieum.user.service.LoginService;
 import com.sieum.user.service.MyUserDetailsService;
 import com.sieum.user.util.JwtUtil;
+import io.swagger.v3.oas.annotations.Operation;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
@@ -67,5 +66,4 @@ public class AuthController {
     public ResponseEntity getUserId(@RequestHeader("Authorization") String accessToken) {
         return ResponseEntity.ok(loginService.getUsername(accessToken));
     }
-
 }

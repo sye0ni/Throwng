@@ -77,5 +77,4 @@ public class LoginService {
         String userId = jwtProvider.getUserId(accessToken);
         return userRepository.findBySocialId(userId).get().getId();
     }
-
 }
