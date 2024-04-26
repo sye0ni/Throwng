@@ -20,7 +20,7 @@ public class MusicController {
     private final MusicService musicService;
     private final YoutubeMusicUtil youtubeMusicUtil;
 
-    @Operation(summary = "show detail of a thrown music")
+    @Operation(summary = "Show detail of a thrown music")
     @GetMapping("/thrown/{throwId}")
     public ResponseEntity<?> getDetailOfThrownMusic(
             @RequestHeader("Authorization") final String authorization,
@@ -29,7 +29,7 @@ public class MusicController {
         return ResponseEntity.ok().body(musicService.getDetailOfThrownMusic(userId, throwId));
     }
 
-    @Operation(summary = "pick up a song")
+    @Operation(summary = "Pick up a song")
     @PostMapping("/pick/{throwId}")
     public ResponseEntity<?> createPickup(
             @RequestHeader("Authorization") final String authorization,
@@ -39,7 +39,7 @@ public class MusicController {
         return ResponseEntity.noContent().build();
     }
 
-    @Operation(summary = "show playlist")
+    @Operation(summary = "Show playlist")
     @GetMapping("/playlists")
     public ResponseEntity<?> getPlaylist(
             @RequestHeader("Authorization") final String authorization,
@@ -50,7 +50,7 @@ public class MusicController {
         return ResponseEntity.ok().body(musicService.getPlaylist(userId, modifiedAt));
     }
 
-    @Operation(summary = "search for songs on YouTube")
+    @Operation(summary = "Search for songs on YouTube")
     @GetMapping("/search/{keyword}")
     public ResponseEntity<?> searchSong(@PathVariable("keyword") String keyword) {
         List<SearchSongResponse> searchSongResponse = youtubeMusicUtil.searchSongInYoutube(keyword);
@@ -64,7 +64,7 @@ public class MusicController {
         return ResponseEntity.ok().body(musicService.findNearItemsPoints(nearItemPointRequest));
     }
 
-    @Operation(summary = "delete playlist")
+    @Operation(summary = "Eelete playlist")
     @DeleteMapping("/playlists/{playlistId}")
     public ResponseEntity<?> deletePlaylist(
             @RequestHeader("Authorization") final String authorization,
