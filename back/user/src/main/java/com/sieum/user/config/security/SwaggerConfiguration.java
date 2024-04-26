@@ -28,7 +28,7 @@ public class SwaggerConfiguration {
     @Bean
     public Docket api() {
         return new Docket(DocumentationType.SWAGGER_2)
-                .host(host)
+                .host("throwng.store:8086")
                 .consumes(getConsumeContentTypes())
                 .produces(getProduceContentTypes())
                 .apiInfo(apiInfo())
