@@ -7,29 +7,6 @@ spring:
 
   cloud:
     gateway:
-      globalcors:
-        corsConfigurations:
-          '[/**]':
-            allowedOrigins:
-              - "http://localhost:5173"
-              - "https://throwng.store/"
-              - "https://k10c101.p.ssafy.io"
-            allow-credentials: true
-            allowedHeaders:
-              - x-requested-with
-              - authorization
-              - accessToken
-              - content-type
-              - credential
-              - X-AUTH-TOKEN
-              - X-CSRF-TOKEN
-            allowedMethods:
-              - POST
-              - GET
-              - PUT
-              - PATCH
-              - OPTIONS
-              - DELETE
       routes:
         - id: user
           predicates:
@@ -54,6 +31,7 @@ spring:
           predicates:
             - Path=/music/**
           uri: lb://MUSIC
+          #uri: http://localhost:8084/
           sensitive-headers: Cookie,Set-Cookie
           #filters:
            # - CustomAuthFilter
@@ -65,7 +43,19 @@ spring:
           #filters:
            # - CustomAuthFilter
 
-  eureka:
-    client:
-      service-url:
-        default-zone: http://localhost:8761/eureka
+eureka:
+  instance:
+    instance-id: ${spring.cloud.client.hostname}:${spring.application.instance_id:${random.value}}
+  client:
+    service-url:
+      default-zone: http://localhost:8761/eureka
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include:
+          - "gateway"
+  endpoint:
+    gateway:
+      enabled: true
