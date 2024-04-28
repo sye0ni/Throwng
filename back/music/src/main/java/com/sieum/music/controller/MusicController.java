@@ -1,7 +1,9 @@
 package com.sieum.music.controller;
 
 import com.sieum.music.dto.request.NearItemPointRequest;
+import com.sieum.music.dto.request.ThrownItemRequest;
 import com.sieum.music.dto.response.SearchSongResponse;
+import com.sieum.music.dto.response.UserLevelInfoResponse;
 import com.sieum.music.service.MusicService;
 import com.sieum.music.util.YoutubeMusicUtil;
 import io.swagger.v3.oas.annotations.Operation;
@@ -33,7 +35,7 @@ public class MusicController {
     @PostMapping("/pick/{throwId}")
     public ResponseEntity<?> createPickup(
             @RequestHeader("Authorization") final String authorization,
-            @PathVariable final long throwId) {
+            @PathVariable("throwId") final long throwId) {
         final long userId = musicService.getCurrentUserId(authorization);
         musicService.createPickup(userId, throwId);
         return ResponseEntity.noContent().build();
@@ -84,5 +86,17 @@ public class MusicController {
     @GetMapping("/pick-song/{userId}")
     public ResponseEntity<?> countPickUpSong(@PathVariable("userId") long userId) {
         return ResponseEntity.ok(musicService.countPickUpSong(userId));
+    }
+
+    @Operation(summary = "Throw song")
+    @PostMapping("/thrown-song/{youtubeId}")
+    public ResponseEntity<?> thrownSong(
+            @RequestHeader("Authorization") final String authorization,
+            @PathVariable("youtubeId") final String youtubeId,
+            @RequestBody ThrownItemRequest thrownItemRequest) {
+        //        final long userId = musicService.getLimitAccount(authorization);
+        UserLevelInfoResponse userLevelInfoResponse = musicService.getLimitAccount(authorization);
+        musicService.thrownSong(userLevelInfoResponse, youtubeId, thrownItemRequest);
+        return ResponseEntity.noContent().build();
     }
 }

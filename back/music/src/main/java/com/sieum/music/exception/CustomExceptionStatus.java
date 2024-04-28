@@ -13,7 +13,13 @@ public enum CustomExceptionStatus implements BaseErrorCode {
     NOT_FOUND_THROW_ITEM_ID("Throw_400_1", "No throw item with the requested id"),
     DUPLICATE_PICKUP_REQUEST("Throw_400_2", "No duplicate pick-up request for one thrown item"),
     NOT_FOUND_KEY_WORD("Search_400_1", "No search key word"),
-    NOT_FOUND_PLAYLIST_ID("Playlist_400_1", "No playlist with the requested id");
+    NOT_FOUND_PLAYLIST_ID("PLAYLIST_400_1", "No playlist with the requested id"),
+    NOT_FOUND_YOUTUBE_ID("Song_400_1", "No Song with the requested id"),
+    NOT_THROW_SONG("Song_400_2", "The number of songs assigned per day is over"),
+    NOT_FOUND_ZIP_CODE("Zip_code_400_1", "This location doesn't exist"),
+    NOT_FOUND_ARTIST("Artist_400_1", "The artist does not exist"),
+    NOT_THROW_ITEM_IN_LIMITED_RADIUS(
+            "Throw_400_2", "Can't throw the same song in a limited radius");
 
     private String code;
     private String reason;
