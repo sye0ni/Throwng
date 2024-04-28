@@ -20,9 +20,8 @@ public class UserController {
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/profile")
-    public ResponseEntity<?> getUserLevel(@RequestHeader("Authorization") String accessToken) {
-        final long userId = loginService.getUsername(accessToken);
-        return ResponseEntity.ok().body(userService.getUserLevel(userId));
+    @GetMapping("/level/{userId}")
+    public ResponseEntity<?> getUserLevelInfo(@PathVariable("userId") long userId) {
+        return ResponseEntity.ok().body(userService.getUserLevelInfo(userId));
     }
 }

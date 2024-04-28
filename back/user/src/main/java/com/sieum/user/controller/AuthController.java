@@ -8,6 +8,7 @@ import com.sieum.user.dto.MemberTokens;
 import com.sieum.user.dto.response.AccessTokenResponse;
 import com.sieum.user.service.LoginService;
 import com.sieum.user.service.MyUserDetailsService;
+import com.sieum.user.service.UserService;
 import com.sieum.user.util.JwtUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import javax.servlet.http.HttpServletRequest;
@@ -28,6 +29,7 @@ public class AuthController {
     public static final int COOKIE_AGE_SECONDS = 604800;
 
     private final LoginService loginService;
+    private final UserService userService;
     private final JwtUtil jwtUtil;
     private final MyUserDetailsService myUserDetailsService;
 
@@ -65,5 +67,26 @@ public class AuthController {
     @GetMapping("/id")
     public ResponseEntity getUserId(@RequestHeader("Authorization") String accessToken) {
         return ResponseEntity.ok(loginService.getUsername(accessToken));
+    }
+
+    //    @Operation(summary = "feign client")
+    //    @GetMapping("/violation")
+    //    public ResponseEntity<?> getLimitAccount(@RequestHeader("Authorization") String
+    // accessToken) {
+    //        long userId = loginService.getUsername(accessToken);
+    //        return ResponseEntity.ok(userService.getLimitAccount(userId));
+    //    }
+
+    @Operation(summary = "feign client")
+    @GetMapping("/violation")
+    public ResponseEntity<?> getLimitAccount(@RequestHeader("Authorization") String accessToken) {
+        long userId = loginService.getUsername(accessToken);
+        return ResponseEntity.ok(userService.getLimitAccount(userId));
+    }
+
+    @GetMapping("/profile")
+    public ResponseEntity<?> getUserLevel(@RequestHeader("Authorization") String accessToken) {
+        final long userId = loginService.getUsername(accessToken);
+        return ResponseEntity.ok().body(userService.getUserLevel(userId));
     }
 }

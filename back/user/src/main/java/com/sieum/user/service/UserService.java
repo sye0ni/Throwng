@@ -1,10 +1,12 @@
 package com.sieum.user.service;
 
 import static com.sieum.user.common.CustomExceptionStatus.NOT_FOUND_ACCOUNT;
+import static com.sieum.user.common.CustomExceptionStatus.VIOLATE_ACCOUNT;
 
 import com.sieum.user.controller.feign.MusicFeignClient;
 import com.sieum.user.domain.User;
 import com.sieum.user.dto.response.UserInfoResponse;
+import com.sieum.user.dto.response.UserLevelInfoResponse;
 import com.sieum.user.exception.AuthException;
 import com.sieum.user.repository.UserRepository;
 import javax.transaction.Transactional;
@@ -29,5 +31,43 @@ public class UserService {
                 user,
                 musicFeignClient.countThrownSong(userId),
                 musicFeignClient.countPickUpSong(userId));
+    }
+
+    public UserLevelInfoResponse getLimitAccount(long userId) {
+        User user =
+                userRepository
+                        .findById(userId)
+                        .orElseThrow(() -> new AuthException(NOT_FOUND_ACCOUNT));
+
+        if (!user.getViolation().equals("NONE")) {
+            throw new AuthException(VIOLATE_ACCOUNT);
+        }
+
+        int count = 0;
+        if (user.getLevel().equals("EARPHONES")) {
+            count = 4;
+        } else if (user.getLevel().equals("BUDS")) {
+            count = 6;
+        } else {
+            count = 10;
+        }
+
+        return UserLevelInfoResponse.of(userId, count);
+    }
+
+    public int getUserLevelInfo(long userId) {
+        User user =
+                userRepository
+                        .findById(userId)
+                        .orElseThrow(() -> new AuthException(NOT_FOUND_ACCOUNT));
+        int count = 0;
+        if (user.getLevel().equals("EARPHONES")) {
+            count = 4;
+        } else if (user.getLevel().equals("BUDS")) {
+            count = 6;
+        } else {
+            count = 10;
+        }
+        return count;
     }
 }

@@ -9,7 +9,8 @@ public enum CustomExceptionStatus {
     ACCOUNT_ACCESS_DENIED("User_400_5", "You do not have permission"),
     FAIL_TO_GENERATE_RANDOM_NICKNAME("User_400_6", "Failed to create random nicknames"),
     NOT_FOUND_ACCOUNT("User_400_7", "This account does not exist."),
-    NOT_FOUND_LEVEL("User_400_8", "This level does not exist.");
+    NOT_FOUND_LEVEL("User_400_8", "This level does not exist."),
+    VIOLATE_ACCOUNT("User_400_9", "This account is in violation of regulations");
 
     private final String code;
     private final String message;
