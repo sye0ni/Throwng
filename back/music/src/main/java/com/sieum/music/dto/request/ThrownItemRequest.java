@@ -32,9 +32,6 @@ public class ThrownItemRequest {
     @Schema(description = "the address to which music will be thrown")
     private String location;
 
-    @Schema(description = "images to upload with music to throw")
-    private String imageUrl;
-
     @Schema(description = "comment")
     private String comment;
 
@@ -43,7 +40,4 @@ public class ThrownItemRequest {
 
     @Schema(description = "artist")
     private String artist;
-
-    @Schema(description = "albumImageUrl")
-    private String albumImageUrl;
 }

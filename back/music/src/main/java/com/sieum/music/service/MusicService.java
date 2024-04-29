@@ -18,6 +18,7 @@ import com.sieum.music.repository.*;
 import com.sieum.music.util.GeomUtil;
 import com.sieum.music.util.LocalDateUtil;
 import com.sieum.music.util.RedisUtil;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -30,6 +31,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @RequiredArgsConstructor
@@ -47,6 +49,7 @@ public class MusicService {
     private final LocalDateUtil localDateUtil;
     private final ZipCodeRepository zipCodeRepository;
     private final ArtistRepository artistRepository;
+    private final S3FileUploadService s3FileUploadService;
 
     public long getCurrentUserId(String authorization) {
         return tokenAuthClient.getUserId(authorization);
@@ -171,7 +174,10 @@ public class MusicService {
     public void thrownSong(
             final UserLevelInfoResponse userLevelInfoResponse,
             final String youtubeId,
-            final ThrownItemRequest thrownItemRequest) {
+            final MultipartFile imageUrl,
+            final MultipartFile albumImageUrl,
+            final ThrownItemRequest thrownItemRequest)
+            throws IOException {
         final long userId = userLevelInfoResponse.getUserId();
 
         final String key = "user_throw_" + userId + "_" + localDateUtil.GetDate(LocalDate.now());
@@ -215,11 +221,12 @@ public class MusicService {
                 artistRepository.save(Artist.builder().name(thrownItemRequest.getArtist()).build());
             }
             Artist artist = artistRepository.findByName(thrownItemRequest.getArtist());
+
             songRepository.save(
                     Song.builder()
                             .youtubeId(youtubeId)
                             .title(thrownItemRequest.getTitle())
-                            .albumImage(thrownItemRequest.getAlbumImageUrl())
+                            .albumImage(s3FileUploadService.uploadFile(albumImageUrl))
                             .artist(artist)
                             .build());
         }
@@ -229,16 +236,30 @@ public class MusicService {
                         .findByYoutubeId(youtubeId)
                         .orElseThrow(() -> new BadRequestException(NOT_FOUND_YOUTUBE_ID));
 
-        musicRepository.save(
-                ThrowItem.builder()
-                        .content(thrownItemRequest.getComment())
-                        .itemImage(thrownItemRequest.getImageUrl())
-                        .status(ThrowStatus.valueOf("VISIBLE"))
-                        .locationPoint(point)
-                        .userId(userId)
-                        .zipcode(zipcode)
-                        .song(songRepository.findByTitle(thrownItemRequest.getTitle()))
-                        .build());
+        if (!imageUrl.isEmpty()) {
+            musicRepository.save(
+                    ThrowItem.builder()
+                            .content(thrownItemRequest.getComment())
+                            .itemImage(s3FileUploadService.uploadFile(imageUrl))
+                            .status(ThrowStatus.valueOf("VISIBLE"))
+                            .locationPoint(point)
+                            .userId(userId)
+                            .zipcode(zipcode)
+                            .song(songRepository.findByTitle(thrownItemRequest.getTitle()))
+                            .build());
+
+        } else {
+            musicRepository.save(
+                    ThrowItem.builder()
+                            .content(thrownItemRequest.getComment())
+                            .status(ThrowStatus.valueOf("VISIBLE"))
+                            .locationPoint(point)
+                            .userId(userId)
+                            .zipcode(zipcode)
+                            .song(songRepository.findByTitle(thrownItemRequest.getTitle()))
+                            .build());
+        }
+
         thrownCount--;
 
         redisUtil.setData(key, String.valueOf(thrownCount));
