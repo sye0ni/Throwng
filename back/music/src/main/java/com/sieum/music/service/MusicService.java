@@ -246,4 +246,14 @@ public class MusicService {
 
         return thrwonSongResponse;
     }
+
+    public List<PickedUpSongResponse> getPickedUpSong(final long userId) {
+        List<ThrowHistory> throwHistories = throwHistoryRepository.findByUserId(userId);
+        List<PickedUpSongResponse> pickedUpSongResponse =
+                throwHistories.stream()
+                        .map(throwHistory -> PickedUpSongResponse.of(throwHistory))
+                        .collect(Collectors.toList());
+
+        return pickedUpSongResponse;
+    }
 }
