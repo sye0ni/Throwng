@@ -5,6 +5,7 @@ import static com.sieum.user.common.CustomExceptionStatus.VIOLATE_ACCOUNT;
 
 import com.sieum.user.controller.feign.MusicFeignClient;
 import com.sieum.user.domain.User;
+import com.sieum.user.dto.response.PickedUpSongResponse;
 import com.sieum.user.dto.response.ThrownSongResponse;
 import com.sieum.user.dto.response.UserInfoResponse;
 import com.sieum.user.dto.response.UserLevelInfoResponse;
@@ -75,5 +76,9 @@ public class UserService {
 
     public List<ThrownSongResponse> getThrownSong(final long userId) {
         return musicFeignClient.getThrwonSong(userId);
+    }
+
+    public List<PickedUpSongResponse> getPickedUpSong(final long userId) {
+        return musicFeignClient.getPickedUpSong(userId);
     }
 }
