@@ -8,10 +8,7 @@ import com.sieum.music.domain.ThrowItem;
 import com.sieum.music.domain.enums.ThrowStatus;
 import com.sieum.music.dto.request.NearItemPointRequest;
 import com.sieum.music.dto.request.ThrownItemRequest;
-import com.sieum.music.dto.response.PlaylistItemResponse;
-import com.sieum.music.dto.response.PoiResponse;
-import com.sieum.music.dto.response.ThrownMusicDetailResponse;
-import com.sieum.music.dto.response.UserLevelInfoResponse;
+import com.sieum.music.dto.response.*;
 import com.sieum.music.exception.BadRequestException;
 import com.sieum.music.repository.*;
 import com.sieum.music.util.GeomUtil;
@@ -238,5 +235,15 @@ public class MusicService {
         thrownCount--;
 
         redisUtil.setData(key, String.valueOf(thrownCount));
+    }
+
+    public List<ThrownSongResponse> getThrownSong(final long userId) {
+        List<ThrowItem> throwItems = musicRepository.findByUserId(userId);
+        final List<ThrownSongResponse> thrwonSongResponse =
+                throwItems.stream()
+                        .map(throwItem -> ThrownSongResponse.of(throwItem))
+                        .collect(Collectors.toList());
+
+        return thrwonSongResponse;
     }
 }

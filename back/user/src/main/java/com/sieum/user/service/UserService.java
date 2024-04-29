@@ -5,10 +5,12 @@ import static com.sieum.user.common.CustomExceptionStatus.VIOLATE_ACCOUNT;
 
 import com.sieum.user.controller.feign.MusicFeignClient;
 import com.sieum.user.domain.User;
+import com.sieum.user.dto.response.ThrownSongResponse;
 import com.sieum.user.dto.response.UserInfoResponse;
 import com.sieum.user.dto.response.UserLevelInfoResponse;
 import com.sieum.user.exception.AuthException;
 import com.sieum.user.repository.UserRepository;
+import java.util.List;
 import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -69,5 +71,9 @@ public class UserService {
             count = 10;
         }
         return count;
+    }
+
+    public List<ThrownSongResponse> getThrownSong(final long userId) {
+        return musicFeignClient.getThrwonSong(userId);
     }
 }

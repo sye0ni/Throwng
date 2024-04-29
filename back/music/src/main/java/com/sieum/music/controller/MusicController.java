@@ -99,4 +99,10 @@ public class MusicController {
         musicService.thrownSong(userLevelInfoResponse, youtubeId, thrownItemRequest);
         return ResponseEntity.noContent().build();
     }
+
+    @Operation(summary = "Feign Client")
+    @GetMapping("/thrown-music/{userId}")
+    public ResponseEntity<?> getThrownSong(@PathVariable("userId") long userId) {
+        return ResponseEntity.ok().body(musicService.getThrownSong(userId));
+    }
 }
