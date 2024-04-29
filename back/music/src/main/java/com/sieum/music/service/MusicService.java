@@ -9,6 +9,10 @@ import com.sieum.music.domain.enums.ThrowStatus;
 import com.sieum.music.dto.request.NearItemPointRequest;
 import com.sieum.music.dto.request.ThrownItemRequest;
 import com.sieum.music.dto.response.*;
+import com.sieum.music.dto.response.PlaylistItemResponse;
+import com.sieum.music.dto.response.PoiResponse;
+import com.sieum.music.dto.response.ThrowItemResponse;
+import com.sieum.music.dto.response.ThrownMusicDetailResponse;
 import com.sieum.music.exception.BadRequestException;
 import com.sieum.music.repository.*;
 import com.sieum.music.util.GeomUtil;
@@ -152,6 +156,9 @@ public class MusicService {
         return throwHistoryRepository.countByUserId(userId);
     }
 
+    public List<ThrowItemResponse> getThrowItems() {
+        return throwQueryDSLRepository.findThrowHistoryIsNull();
+    }
     //    public long getLimitAccount(String authorization) {
     //        return tokenAuthClient.getLimitAccount(authorization);
     //    }
