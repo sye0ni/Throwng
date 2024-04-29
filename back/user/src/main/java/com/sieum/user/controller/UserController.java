@@ -30,4 +30,10 @@ public class UserController {
         final long userId = loginService.getUsername(accessToken);
         return ResponseEntity.ok().body(userService.getThrownSong(userId));
     }
+
+    @GetMapping("/picked-song")
+    public ResponseEntity<?> getPickedUpSong(@RequestHeader("Authorization") String accessToken) {
+        final long userId = loginService.getUsername(accessToken);
+        return ResponseEntity.ok().body(userService.getPickedUpSong(userId));
+    }
 }
