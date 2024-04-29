@@ -27,10 +27,6 @@ public class RedisConfig {
 
     @Bean
     public RedisConnectionFactory redisConnectionFactory() {
-        // LettuceClientConfiguration clientConfig =
-        //         LettuceClientConfiguration.builder().readFrom(ReadFrom.REPLICA_PREFERRED).build();
-        // RedisStaticMasterReplicaConfiguration slaveConfig =
-        //         new RedisStaticMasterReplicaConfiguration(redisHost, redisPort);
         return new LettuceConnectionFactory(redisHost, redisPort);
     }
 
