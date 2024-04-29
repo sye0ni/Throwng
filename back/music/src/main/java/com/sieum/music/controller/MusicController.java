@@ -88,6 +88,12 @@ public class MusicController {
         return ResponseEntity.ok(musicService.countPickUpSong(userId));
     }
 
+    @GetMapping("/throw-items")
+    @Operation(summary = "Look up music that has no record of picking up")
+    public ResponseEntity<?> getThrowItems() {
+        return ResponseEntity.ok(musicService.getThrowItems());
+    }
+
     @Operation(summary = "Throw song")
     @PostMapping("/thrown-song/{youtubeId}")
     public ResponseEntity<?> thrownSong(
