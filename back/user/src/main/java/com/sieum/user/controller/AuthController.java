@@ -83,10 +83,4 @@ public class AuthController {
         long userId = loginService.getUsername(accessToken);
         return ResponseEntity.ok(userService.getLimitAccount(userId));
     }
-
-    @GetMapping("/profile")
-    public ResponseEntity<?> getUserLevel(@RequestHeader("Authorization") String accessToken) {
-        final long userId = loginService.getUsername(accessToken);
-        return ResponseEntity.ok().body(userService.getUserLevel(userId));
-    }
 }

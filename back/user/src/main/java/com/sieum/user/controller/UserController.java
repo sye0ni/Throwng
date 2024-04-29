@@ -2,6 +2,7 @@ package com.sieum.user.controller;
 
 import com.sieum.user.service.LoginService;
 import com.sieum.user.service.UserService;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,6 +21,7 @@ public class UserController {
         return ResponseEntity.ok().build();
     }
 
+    @Operation(summary = "Feign Client")
     @GetMapping("/level/{userId}")
     public ResponseEntity<?> getUserLevelInfo(@PathVariable("userId") long userId) {
         return ResponseEntity.ok().body(userService.getUserLevelInfo(userId));
@@ -35,5 +37,11 @@ public class UserController {
     public ResponseEntity<?> getPickedUpSong(@RequestHeader("Authorization") String accessToken) {
         final long userId = loginService.getUsername(accessToken);
         return ResponseEntity.ok().body(userService.getPickedUpSong(userId));
+    }
+
+    @GetMapping("/profile")
+    public ResponseEntity<?> getUserLevel(@RequestHeader("Authorization") String accessToken) {
+        final long userId = loginService.getUsername(accessToken);
+        return ResponseEntity.ok().body(userService.getUserLevel(userId));
     }
 }
