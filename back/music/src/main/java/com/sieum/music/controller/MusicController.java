@@ -105,4 +105,10 @@ public class MusicController {
     public ResponseEntity<?> getThrownSong(@PathVariable("userId") long userId) {
         return ResponseEntity.ok().body(musicService.getThrownSong(userId));
     }
+
+    @Operation(summary = "Feign Client - Check User picked-music list ")
+    @GetMapping("/picked-music/{userId}")
+    public ResponseEntity<?> getPickedUpSong(@PathVariable("userId") long userId) {
+        return ResponseEntity.ok().body(musicService.getPickedUpSong(userId));
+    }
 }
