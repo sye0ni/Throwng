@@ -13,9 +13,13 @@ java {
 	sourceCompatibility = '11'
 }
 
-repositories {
-	mavenCentral()
+allprojects {
+	repositories {
+		mavenCentral()
+		maven { url "https://jitpack.io" }
+	}
 }
+
 
 ext {
 	set('springCloudVersion', "2021.0.9")
@@ -33,6 +37,8 @@ dependencies {
 	implementation 'io.github.openfeign:feign-jackson:13.2.1'
 
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+
+	implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
 
 	implementation 'com.fasterxml.jackson.core:jackson-databind:2.12.3'
 
@@ -52,6 +58,13 @@ dependencies {
 	annotationProcessor "com.querydsl:querydsl-apt:${queryDslVersion}"
 	annotationProcessor("jakarta.persistence:jakarta.persistence-api")
 	annotationProcessor("jakarta.annotation:jakarta.annotation-api")
+
+	implementation 'se.michaelthelin.spotify:spotify-web-api-java:7.0.0'
+//	implementation 'org.apache.httpcomponents.client5:httpclient5:5.1.1'
+//	implementation 'com.github.thelinmichael:spotify-web-api-java:master-SNAPSHOT'
+//	implementation 'com.github.jitpack:gradle-simple:1.0'
+//	implementation group: 'se.michaelthelin.spotify', name: 'spotify-web-api-java', version: '7.0.0'
+
 
 	runtimeOnly 'com.mysql:mysql-connector-j'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'

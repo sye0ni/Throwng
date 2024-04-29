@@ -8,6 +8,8 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum CustomExceptionStatus implements BaseErrorCode {
     INTERNAL_SERVER_ERROR("InternalServer_500_1", "Server error"),
+    SPOTIFY_CONNECTION_ERROR("SpotifyConnection_500_2", "Spotify connection error"),
+    SPOTIFY_SEARCH_ERROR("SpotifySearch_500_3", "Spotify search error"),
     INVALID_REQUEST("BadRequest_400_1", "Invalid request"),
     REQUEST_ERROR("NotValidInput_400_2", "Invalid input"),
     NOT_FOUND_THROW_ITEM_ID("Throw_400_1", "No throw item with the requested id"),

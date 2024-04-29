@@ -1,15 +1,13 @@
 package com.sieum.music.dto.response;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.ToString;
+import lombok.*;
 
 @Getter
 @Builder
 @ToString
 @AllArgsConstructor
+@NoArgsConstructor
 public class SearchSongResponse {
 
     @Schema(description = "id of the song searched on YouTube")
