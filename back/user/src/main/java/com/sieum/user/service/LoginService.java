@@ -3,6 +3,7 @@ package com.sieum.user.service;
 import static com.sieum.user.common.CustomExceptionStatus.FAIL_TO_GENERATE_RANDOM_NICKNAME;
 
 import com.sieum.user.domain.User;
+import com.sieum.user.domain.UserHistory;
 import com.sieum.user.domain.enums.Level;
 import com.sieum.user.domain.enums.Violation;
 import com.sieum.user.exception.AuthException;
@@ -10,6 +11,7 @@ import com.sieum.user.infrastructure.JwtProvider;
 import com.sieum.user.infrastructure.oauthprovider.OauthProvider;
 import com.sieum.user.infrastructure.oauthprovider.OauthProviders;
 import com.sieum.user.infrastructure.oauthuserinfo.OauthUserInfo;
+import com.sieum.user.repository.UserHistoryRepository;
 import com.sieum.user.repository.UserRepository;
 import com.sieum.user.util.RandomNicknameUtil;
 import com.sieum.user.util.RedisUtil;
@@ -29,6 +31,7 @@ public class LoginService {
     private final UserRepository userRepository;
     private final RedisUtil redisUtil;
     private final JwtProvider jwtProvider;
+    private final UserHistoryRepository userHistoryRepository;
 
     public User login(final String providerName, final String code) {
         final OauthProvider provider = oauthProviders.mapping(providerName);
@@ -76,5 +79,9 @@ public class LoginService {
     public long getUsername(String accessToken) {
         String userId = jwtProvider.getUserId(accessToken);
         return userRepository.findBySocialId(userId).get().getId();
+    }
+
+    public void saveLogOnLogin(UserHistory userHistory) {
+        userHistoryRepository.save(userHistory);
     }
 }
