@@ -10,8 +10,8 @@ import lombok.Getter;
 @Schema(description = "Check my picked up songs")
 public class PickedUpSongResponse {
 
-    @Schema(description = "myThrowId")
-    private long myThrowId;
+    @Schema(description = "myPickId")
+    private long myPickId;
 
     @Schema(description = "title")
     private String title;
@@ -25,8 +25,8 @@ public class PickedUpSongResponse {
     @Schema(description = "comment")
     private String comment;
 
-    @Schema(description = "createdAt")
-    private LocalDateTime createdAt;
+    @Schema(description = "pickDate")
+    private LocalDateTime pickDate;
 
     @Schema(description = "location")
     private String location;
