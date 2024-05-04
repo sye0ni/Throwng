@@ -5,6 +5,7 @@ import static com.sieum.user.common.CustomExceptionStatus.VIOLATE_ACCOUNT;
 
 import com.sieum.user.controller.feign.MusicFeignClient;
 import com.sieum.user.domain.User;
+import com.sieum.user.dto.request.FcmTokenRequest;
 import com.sieum.user.dto.response.PickedUpSongResponse;
 import com.sieum.user.dto.response.ThrownSongResponse;
 import com.sieum.user.dto.response.UserInfoResponse;
@@ -23,6 +24,7 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final MusicFeignClient musicFeignClient;
+    private final LoginService loginService;
 
     public UserInfoResponse getUserLevel(long userId) {
         User user =
@@ -84,5 +86,13 @@ public class UserService {
 
     public List<PickedUpSongResponse> getPickedUpSong(final long userId) {
         return musicFeignClient.getPickedUpSong(userId);
+    }
+
+    public void createUserFcmToken(
+            final String accessToken, final FcmTokenRequest fcmTokenRequest) {
+        final long userId = loginService.getUsername(accessToken);
+        final User user = userRepository.findById(userId).get();
+        user.setFcmToken(fcmTokenRequest.getFcmToken());
+        userRepository.save(user);
     }
 }
