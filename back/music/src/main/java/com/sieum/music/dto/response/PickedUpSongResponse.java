@@ -32,6 +32,9 @@ public class PickedUpSongResponse {
     @Schema(description = "location")
     private String location;
 
+    @Schema(description = "throwId")
+    private long throwId;
+
     public static PickedUpSongResponse of(ThrowHistory throwHistory) {
         return new PickedUpSongResponse(
                 throwHistory.getId(),
@@ -42,6 +45,7 @@ public class PickedUpSongResponse {
                 throwHistory.getCreatedAt(),
                 (throwHistory.getThrowItem().getZipcode().getSigungu()
                         + " "
-                        + throwHistory.getThrowItem().getZipcode().getDong()));
+                        + throwHistory.getThrowItem().getZipcode().getDong()),
+                throwHistory.getThrowItem().getId());
     }
 }

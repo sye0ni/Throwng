@@ -3,8 +3,12 @@ package com.sieum.music.exception.global;
 import static com.sieum.music.exception.CustomExceptionStatus.*;
 
 import com.sieum.music.exception.BadRequestException;
+import com.sieum.music.util.NotificationManagerUtil;
+import java.util.Enumeration;
 import java.util.Objects;
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.ConstraintViolationException;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -17,7 +21,11 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 @Slf4j
 @RestControllerAdvice
+@RequiredArgsConstructor
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
+
+    private final NotificationManagerUtil notificationManagerUtil;
+
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(
             final MethodArgumentNotValidException e,
@@ -34,9 +42,8 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(BadRequestException.class)
     public ResponseEntity<ExceptionResponse> handleBadRequestException(
-            final BadRequestException e) {
+            final BadRequestException e, HttpServletRequest req) {
         log.warn(e.getMessage(), e);
-
         return ResponseEntity.badRequest().body(new ExceptionResponse(e.getCode(), e.getMessage()));
     }
 
@@ -50,8 +57,10 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ExceptionResponse> handleException(final Exception e) {
+    public ResponseEntity<ExceptionResponse> handleException(
+            final Exception e, HttpServletRequest req) {
         log.error(e.getMessage(), e);
+        notificationManagerUtil.sendNotification(e, req.getRequestURI(), getParams(req));
 
         return ResponseEntity.internalServerError()
                 .body(
@@ -61,9 +70,26 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<ExceptionResponse> illegalArgumentException(IllegalArgumentException e) {
+    public ResponseEntity<ExceptionResponse> illegalArgumentException(
+            IllegalArgumentException e, HttpServletRequest req) {
         logger.error(e.getMessage());
+        notificationManagerUtil.sendNotification(e, req.getRequestURI(), getParams(req));
         return ResponseEntity.badRequest()
                 .body(new ExceptionResponse(REQUEST_ERROR.getCode(), REQUEST_ERROR.getReason()));
+    }
+
+    private String getParams(HttpServletRequest req) {
+        StringBuilder params = new StringBuilder();
+        Enumeration<String> keys = req.getParameterNames();
+        while (keys.hasMoreElements()) {
+            String key = keys.nextElement();
+            params.append("- ")
+                    .append(key)
+                    .append(" : ")
+                    .append(req.getParameter(key))
+                    .append("/n");
+        }
+
+        return params.toString();
     }
 }

@@ -25,4 +25,7 @@ public class PlaylistItemResponse {
 
     @Schema(description = "modifiedAt")
     private LocalDateTime modifiedAt;
+
+    @Schema(description = "youtubeId")
+    private String youtubeId;
 }

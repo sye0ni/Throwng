@@ -35,9 +35,15 @@ public class ThrownItemRequest {
     @Schema(description = "comment")
     private String comment;
 
+    @Schema(description = "imageUrl")
+    private String imageUrl;
+
     @Schema(description = "title")
     private String title;
 
     @Schema(description = "artist")
     private String artist;
+
+    @Schema(description = "albumImage")
+    private String albumImageUrl;
 }

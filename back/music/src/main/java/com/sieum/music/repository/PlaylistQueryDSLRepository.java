@@ -32,7 +32,8 @@ public class PlaylistQueryDSLRepository {
                                         playlist.song.title,
                                         playlist.song.artist.name.as("artist"),
                                         playlist.song.albumImage,
-                                        playlist.modifiedAt))
+                                        playlist.modifiedAt,
+                                        playlist.song.youtubeId))
                         .from(playlist)
                         .where(
                                 isFirstPage(modifiedAt),

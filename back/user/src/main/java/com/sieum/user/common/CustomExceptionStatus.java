@@ -1,6 +1,9 @@
 package com.sieum.user.common;
 
 public enum CustomExceptionStatus {
+    INTERNAL_SERVER_ERROR("InternalServer_500_1", "Server error"),
+    REQUEST_ERROR("NotValidInput_400_2", "Invalid input"),
+    INVALID_REQUEST("BadRequest_400_1", "Invalid request"),
     NOT_SUPPORTED_OAUTH_SERVICE("User_400_1", "This OAuth service is not available"),
     INVALID_AUTHORIZATION_CODE("User_400_2", "Invalid authentication code"),
     FAILED_TO_DISCONNECT_SOCIAL(

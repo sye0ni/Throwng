@@ -30,4 +30,7 @@ public class PickedUpSongResponse {
 
     @Schema(description = "location")
     private String location;
+
+    @Schema(description = "throwId")
+    private long throwId;
 }

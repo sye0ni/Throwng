@@ -13,7 +13,8 @@ import lombok.Getter;
 public enum Level {
     EARPHONES("EARPHONES", 1),
     BUDS("BUDS", 2),
-    BUDS_PRO("BUDS_PRO", 3);
+    BUDS_PRO("BUDS_PRO", 3),
+    VVIP("VVIP", 4);
 
     private String value;
 

@@ -51,8 +51,10 @@ public class UserService {
             count = 4;
         } else if (user.getLevel().equals("BUDS")) {
             count = 6;
-        } else {
+        } else if (user.getLevel().equals("BUDS_PRO")) {
             count = 10;
+        } else if (user.getLevel().equals("VVIP")) {
+            count = 1000;
         }
 
         return UserLevelInfoResponse.of(userId, count);
@@ -68,8 +70,10 @@ public class UserService {
             count = 4;
         } else if (user.getLevel().equals("BUDS")) {
             count = 6;
-        } else {
+        } else if (user.getLevel().equals("BUDS_PRO")) {
             count = 10;
+        } else if (user.getLevel().equals("VVIP")) {
+            count = 1000;
         }
         return count;
     }

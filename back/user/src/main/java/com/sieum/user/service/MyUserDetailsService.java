@@ -1,7 +1,10 @@
 package com.sieum.user.service;
 
+import static com.sieum.user.common.CustomExceptionStatus.NOT_FOUND_ACCOUNT;
+
 import com.sieum.user.domain.SecurityUser;
 import com.sieum.user.domain.User;
+import com.sieum.user.exception.BadRequestException;
 import com.sieum.user.repository.UserRepository;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -19,8 +22,9 @@ public class MyUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Optional<User> user = userRepository.findBySocialId(username);
-        if (user == null) {
-            throw new UsernameNotFoundException(username + " : User does not exist");
+        if (user.isEmpty()) {
+            throw new BadRequestException(NOT_FOUND_ACCOUNT);
+            // UsernameNotFoundException(username + " : User does not exist");
         }
 
         return new SecurityUser(user.get());
