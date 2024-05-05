@@ -41,6 +41,9 @@ public class ThrownMusicDetailResponse {
     @Schema(description = "whether pickup or not")
     private boolean pickupStatus;
 
+    @Schema(description = "preview url")
+    private String previewUrl;
+
     public static ThrownMusicDetailResponse of(final ThrowItem throwItem, final long userId) {
         return ThrownMusicDetailResponse.builder()
                 .throwId(throwItem.getId())
@@ -61,6 +64,7 @@ public class ThrownMusicDetailResponse {
                                                 throwHistory.getUserId() == userId
                                                         && throwHistory.getThrowItem().getId()
                                                                 == throwItem.getId()))
+                .previewUrl(throwItem.getSong().getPreviewUrl())
                 .build();
     }
 }
