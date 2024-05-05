@@ -229,6 +229,7 @@ public class MusicService {
                             .title(thrownItemRequest.getTitle())
                             .albumImage(thrownItemRequest.getAlbumImageUrl())
                             .artist(artist)
+                            .previewUrl(thrownItemRequest.getPreviewUrl())
                             .build());
         }
 
