@@ -8,9 +8,9 @@ import static com.sieum.music.repository.MySqlSpatialFunction.mySqlDistanceSpher
 
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.sieum.music.domain.ThrowItem;
 import com.sieum.music.domain.dao.ThrowDao;
 import com.sieum.music.domain.enums.ThrowStatus;
-import com.sieum.music.dto.response.ThrowItemResponse;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.locationtech.jts.geom.Point;
@@ -49,10 +49,9 @@ public class ThrowQueryDSLRepository {
                 .fetch();
     }
 
-    public List<ThrowItemResponse> findThrowHistoryIsNull() {
+    public List<ThrowItem> findThrowHistoryIsNull() {
         return queryFactory
-                .select(Projections.fields(ThrowItemResponse.class, throwItem.id))
-                .from(throwItem)
+                .selectFrom(throwItem)
                 .leftJoin(throwHistory)
                 .on(throwItem.id.eq(throwHistory.throwItem.id))
                 .where(throwItem.status.eq(ThrowStatus.VISIBLE).and(throwHistory.id.isNull()))
