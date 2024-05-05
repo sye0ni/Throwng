@@ -1,5 +1,6 @@
 package com.sieum.user.controller;
 
+import com.sieum.user.dto.request.FcmTokenRequest;
 import com.sieum.user.service.LoginService;
 import com.sieum.user.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -43,5 +44,14 @@ public class UserController {
     public ResponseEntity<?> getUserLevel(@RequestHeader("Authorization") String accessToken) {
         final long userId = loginService.getUsername(accessToken);
         return ResponseEntity.ok().body(userService.getUserLevel(userId));
+    }
+
+    @Operation(summary = "Save user fcm token")
+    @PostMapping("/fcm")
+    public ResponseEntity<?> getUserFcm(
+            @RequestHeader("Authorization") final String accessToken,
+            @RequestBody final FcmTokenRequest fcmTokenRequest) {
+        userService.createUserFcmToken(accessToken, fcmTokenRequest);
+        return ResponseEntity.noContent().build();
     }
 }

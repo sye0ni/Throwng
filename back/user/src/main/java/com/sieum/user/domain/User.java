@@ -39,4 +39,8 @@ public class User extends BaseTime {
 
     @Column(name = "is_sign_in")
     private boolean isSignIn;
+
+    public void setFcmToken(final String fcmToken) {
+        this.fcmToken = fcmToken;
+    }
 }
