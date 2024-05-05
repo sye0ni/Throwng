@@ -12,7 +12,6 @@ import com.sieum.music.dto.request.ThrownItemRequest;
 import com.sieum.music.dto.response.*;
 import com.sieum.music.dto.response.PlaylistItemResponse;
 import com.sieum.music.dto.response.PoiResponse;
-import com.sieum.music.dto.response.ThrowItemResponse;
 import com.sieum.music.dto.response.ThrownMusicDetailResponse;
 import com.sieum.music.exception.BadRequestException;
 import com.sieum.music.repository.*;
@@ -160,9 +159,9 @@ public class MusicService {
         return throwHistoryRepository.countByUserId(userId);
     }
 
-    public List<ThrowItemResponse> getThrowItems() {
-        return throwQueryDSLRepository.findThrowHistoryIsNull();
-    }
+    //    public List<ThrowItemResponse> getThrowItems() {
+    //        return throwQueryDSLRepository.findThrowHistoryIsNull();
+    //    }
     //    public long getLimitAccount(String authorization) {
     //        return tokenAuthClient.getLimitAccount(authorization);
     //    }
@@ -229,6 +228,7 @@ public class MusicService {
                             .title(thrownItemRequest.getTitle())
                             .albumImage(thrownItemRequest.getAlbumImageUrl())
                             .artist(artist)
+                            .previewUrl(thrownItemRequest.getPreviewUrl())
                             .build());
         }
 
@@ -278,5 +278,12 @@ public class MusicService {
                 kakaoMapReverseGeoUtil.getReverseGeo(
                         reverseGeoCodeRequest.getLatitude(), reverseGeoCodeRequest.getLongitude());
         return ReverseGeoResponse.of(kakaoMapReverseGeoResponse);
+    }
+
+    @Transactional
+    public long deleteNotFamousMusic() {
+        List<ThrowItem> throwItems = throwQueryDSLRepository.findThrowHistoryIsNull();
+        throwItems.forEach(throwItem -> throwItem.changeThrowStatus(ThrowStatus.HIDDEN.getValue()));
+        return throwItems.size();
     }
 }

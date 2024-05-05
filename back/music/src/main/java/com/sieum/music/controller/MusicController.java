@@ -96,11 +96,11 @@ public class MusicController {
         return ResponseEntity.ok(musicService.countPickUpSong(userId));
     }
 
-    @GetMapping("/throw-items")
-    @Operation(summary = "Look up music that has no record of picking up")
-    public ResponseEntity<?> getThrowItems() {
-        return ResponseEntity.ok(musicService.getThrowItems());
-    }
+    //    @GetMapping("/throw-items")
+    //    @Operation(summary = "Look up music that has no record of picking up")
+    //    public ResponseEntity<?> getThrowItems() {
+    //        return ResponseEntity.ok(musicService.getThrowItems());
+    //    }
 
     @Operation(summary = "Throw song")
     @PostMapping("/thrown-song/{youtubeId}")
@@ -131,5 +131,11 @@ public class MusicController {
     public ResponseEntity<?> reverseGeoCode(
             @Valid @RequestBody ReverseGeoCodeRequest reverseGeoCodeRequest) {
         return ResponseEntity.ok().body(musicService.getReverseGeo(reverseGeoCodeRequest));
+    }
+
+    @DeleteMapping("/throw-items")
+    @Operation(summary = "Feign Client - update status to HIDDEN")
+    public ResponseEntity<?> deleteNotFamousMusic() {
+        return ResponseEntity.ok().body(musicService.deleteNotFamousMusic());
     }
 }
