@@ -13,6 +13,7 @@ import com.sieum.user.dto.response.UserLevelInfoResponse;
 import com.sieum.user.exception.AuthException;
 import com.sieum.user.repository.UserRepository;
 import java.util.List;
+import java.util.stream.Collectors;
 import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -94,5 +95,11 @@ public class UserService {
         final User user = userRepository.findById(userId).get();
         user.setFcmToken(fcmTokenRequest.getFcmToken());
         userRepository.save(user);
+    }
+
+    public List<String> getUserFcmList() {
+        return userRepository.findByFcmTokenIsNotNull().stream()
+                .map(User::getFcmToken)
+                .collect(Collectors.toList());
     }
 }
