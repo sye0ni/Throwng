@@ -54,4 +54,10 @@ public class UserController {
         userService.createUserFcmToken(accessToken, fcmTokenRequest);
         return ResponseEntity.noContent().build();
     }
+
+    @Operation(summary = "Feign Client")
+    @GetMapping("/fcm-list")
+    public ResponseEntity<?> getUserFcmList() {
+        return ResponseEntity.ok().body(userService.getUserFcmList());
+    }
 }
