@@ -5,6 +5,7 @@ import static com.sieum.user.common.CustomExceptionStatus.VIOLATE_ACCOUNT;
 
 import com.sieum.user.controller.feign.MusicFeignClient;
 import com.sieum.user.domain.User;
+import com.sieum.user.domain.enums.Level;
 import com.sieum.user.dto.request.FcmTokenRequest;
 import com.sieum.user.dto.response.PickedUpSongResponse;
 import com.sieum.user.dto.response.ThrownSongResponse;
@@ -49,18 +50,7 @@ public class UserService {
             throw new AuthException(VIOLATE_ACCOUNT);
         }
 
-        int count = 0;
-        if (user.getLevel().equals("EARPHONES")) {
-            count = 4;
-        } else if (user.getLevel().equals("BUDS")) {
-            count = 6;
-        } else if (user.getLevel().equals("BUDS_PRO")) {
-            count = 10;
-        } else if (user.getLevel().equals("VVIP")) {
-            count = 1000;
-        }
-
-        return UserLevelInfoResponse.of(userId, count);
+        return UserLevelInfoResponse.of(userId, Level.getCount(user.getLevel()));
     }
 
     public int getUserLevelInfo(long userId) {
@@ -68,17 +58,8 @@ public class UserService {
                 userRepository
                         .findById(userId)
                         .orElseThrow(() -> new AuthException(NOT_FOUND_ACCOUNT));
-        int count = 0;
-        if (user.getLevel().equals("EARPHONES")) {
-            count = 4;
-        } else if (user.getLevel().equals("BUDS")) {
-            count = 6;
-        } else if (user.getLevel().equals("BUDS_PRO")) {
-            count = 10;
-        } else if (user.getLevel().equals("VVIP")) {
-            count = 1000;
-        }
-        return count;
+
+        return Level.getCount(user.getLevel());
     }
 
     public List<ThrownSongResponse> getThrownSong(final long userId) {
