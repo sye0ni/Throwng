@@ -11,8 +11,8 @@ public enum CustomExceptionStatus implements BaseErrorCode {
     INVALID_REQUEST("BadRequest_400_1", "Invalid request"),
     REQUEST_ERROR("NotValidInput_400_2", "Invalid input"),
     DUPLICATE_COUPON_REQUEST(
-            "CouponDuplicationError_400_3", "Get a coupon once a day through contents");
-
+            "CouponDuplicationError_400_3", "Get a coupon once a day through contents"),
+    INVALID_COUPON_ROUTE("CouponRouteError_400_4", "Wrong coupon route");
     private String code;
     private String reason;
 

@@ -21,5 +21,9 @@ public class Coupon extends BaseTime {
     @NotNull
     private String couponType;
 
+    @Column(length = 20)
+    @NotNull
+    private String route;
+
     @NotNull private Long userId;
 }
