@@ -5,6 +5,7 @@ import static com.sieum.quiz.exception.CustomExceptionStatus.DUPLICATE_COUPON_RE
 import com.sieum.quiz.controller.feign.TokenAuthClient;
 import com.sieum.quiz.domain.Coupon;
 import com.sieum.quiz.domain.CouponHistory;
+import com.sieum.quiz.domain.enums.CouponRoute;
 import com.sieum.quiz.domain.enums.CouponType;
 import com.sieum.quiz.dto.response.CreateCouponResponse;
 import com.sieum.quiz.exception.BadRequestException;
@@ -25,15 +26,23 @@ public class CouponService {
     private final CouponReposistory couponRepository;
     private final CouponHistoryRepository couponHistoryRepository;
 
-    public CreateCouponResponse createCoupon(final long userId) {
-        if (couponHistoryRepository.existsByCreatedAtAfter(LocalDate.now().atStartOfDay())) {
+    public CreateCouponResponse createCoupon(final long userId, final String route) {
+        final String couponRoute = CouponRoute.findByName(route);
+
+        if (couponRepository.existsByCreatedAtAfterAndRouteAndUserId(
+                LocalDate.now().atStartOfDay(), couponRoute, userId)) {
             throw new BadRequestException(DUPLICATE_COUPON_REQUEST);
         }
 
         final String couponType = String.valueOf(generateCoupon().get());
+
         final Coupon coupon =
                 couponRepository.save(
-                        Coupon.builder().userId(userId).couponType(couponType).build());
+                        Coupon.builder()
+                                .userId(userId)
+                                .couponType(couponType)
+                                .route(couponRoute)
+                                .build());
         createCouponHistory(coupon);
         return CreateCouponResponse.of(coupon);
     }
