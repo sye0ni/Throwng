@@ -5,6 +5,7 @@ import static com.sieum.music.exception.CustomExceptionStatus.*;
 import com.sieum.music.controller.feign.TokenAuthClient;
 import com.sieum.music.domain.*;
 import com.sieum.music.domain.ThrowItem;
+import com.sieum.music.domain.dao.ThrowCurrentDao;
 import com.sieum.music.domain.enums.ThrowStatus;
 import com.sieum.music.dto.request.NearItemPointRequest;
 import com.sieum.music.dto.request.ReverseGeoCodeRequest;
@@ -177,7 +178,11 @@ public class MusicService {
             final ThrownItemRequest thrownItemRequest) {
         final long userId = userLevelInfoResponse.getUserId();
 
-        final String key = "user_throw_" + userId + "_" + localDateUtil.GetDate(LocalDate.now());
+        final String nowDate = localDateUtil.GetDate(LocalDate.now());
+
+        //        final String key = "user_throw_" + userId + "_" +
+        // localDateUtil.GetDate(LocalDate.now());
+        final String key = "user_throw_" + userId + "_" + nowDate;
         final Object value = redisUtil.getData(key);
 
         int thrownCount = 0;
@@ -196,17 +201,17 @@ public class MusicService {
                 GeomUtil.createPoint(
                         thrownItemRequest.getLongitude(), thrownItemRequest.getLatitude());
 
-        // **Not temporarily applied for initial data collection**
-        //        List<PoiResponse> poiResponses =
-        //                throwQueryDSLRepository.findNearItemsPointsByDistance(point, 1000.0,
-        // 100.0).stream()
-        //                        .filter(item ->
-        // item.getStatus().equals(ThrowStatus.valueOf("VISIBLE")))
-        //                        .map(PoiResponse::fromItemPoint)
-        //                        .collect(Collectors.toList());
-        //        if (poiResponses.size() > 0) {
-        //            throw new BadRequestException(NOT_THROW_ITEM_IN_LIMITED_RADIUS);
-        //        }
+        // Verification: The same user cannot throw the same song again within 100m
+        ThrowCurrentDao throwDao =
+                throwQueryDSLRepository
+                        .findNearItemsPointsByDistanceAndUserIdAndCreatedAtAndYoutubeId(
+                                point, 100.0, userId, nowDate, youtubeId);
+
+        if (throwDao != null) {
+            if (throwDao.getStatus().equals(ThrowStatus.valueOf("VISIBLE"))) {
+                throw new BadRequestException(NOT_THROW_ITEM_IN_LIMITED_RADIUS);
+            }
+        }
 
         // String[] zipArray = thrownItemRequest.getLocation().split("\\s");
         Zipcode zipcode =
