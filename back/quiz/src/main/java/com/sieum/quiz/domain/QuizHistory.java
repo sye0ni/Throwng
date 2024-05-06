@@ -21,7 +21,7 @@ public class QuizHistory extends BaseTime {
     @NotNull
     private String submit;
 
-    @NotNull private boolean result;
+    @NotNull @Column private boolean result;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "quiz_id")
