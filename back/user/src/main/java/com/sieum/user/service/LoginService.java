@@ -73,7 +73,11 @@ public class LoginService {
     }
 
     public void logout(String accessToken) {
-        redisUtil.deleteData(jwtProvider.getUserId(accessToken));
+        final String socialId = jwtProvider.getUserId(accessToken);
+        final User user = userRepository.findBySocialId(socialId).get();
+        user.setFcmToken(null);
+        userRepository.save(user);
+        redisUtil.deleteData(socialId);
     }
 
     public long getUsername(String accessToken) {
