@@ -6,8 +6,6 @@ import com.sieum.quiz.domain.Quiz;
 import com.sieum.quiz.domain.enums.QuizType;
 import com.sieum.quiz.repository.QuizRepository;
 import java.util.Map;
-
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,6 +45,5 @@ public class QuizRepositoryTest {
         // then
         assertThat(savedQuiz.getChoice().get(1)).isEqualTo("first choice");
         assertThat(QuizType.valueOf(savedQuiz.getQuizType()).getValue()).isEqualTo("객관식");
-
     }
 }
