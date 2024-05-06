@@ -3,6 +3,7 @@ package com.sieum.quiz.exception.global;
 import static com.sieum.quiz.exception.CustomExceptionStatus.*;
 
 import com.sieum.quiz.exception.BadRequestException;
+import com.sieum.quiz.util.NotificationManagerUtil;
 import java.util.Enumeration;
 import java.util.Objects;
 import javax.servlet.http.HttpServletRequest;
@@ -22,6 +23,8 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 @RestControllerAdvice
 @RequiredArgsConstructor
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
+
+    private final NotificationManagerUtil notificationManagerUtil;
 
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(
@@ -57,7 +60,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<ExceptionResponse> handleException(
             final Exception e, HttpServletRequest req) {
         log.error(e.getMessage(), e);
-        //        notificationManagerUtil.sendNotification(e, req.getRequestURI(), getParams(req));
+        notificationManagerUtil.sendNotification(e, req.getRequestURI(), getParams(req));
 
         return ResponseEntity.internalServerError()
                 .body(
@@ -70,7 +73,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<ExceptionResponse> illegalArgumentException(
             IllegalArgumentException e, HttpServletRequest req) {
         logger.error(e.getMessage());
-        //        notificationManagerUtil.sendNotification(e, req.getRequestURI(), getParams(req));
+        notificationManagerUtil.sendNotification(e, req.getRequestURI(), getParams(req));
         return ResponseEntity.badRequest()
                 .body(new ExceptionResponse(REQUEST_ERROR.getCode(), REQUEST_ERROR.getReason()));
     }
