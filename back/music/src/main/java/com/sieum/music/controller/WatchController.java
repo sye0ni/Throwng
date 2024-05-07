@@ -43,4 +43,13 @@ public class WatchController {
         watchService.createPickup(userId, throwId);
         return ResponseEntity.noContent().build();
     }
+
+    @Operation(summary = "Search for list of popular dropped music within legal dong")
+    @GetMapping("/popular-items")
+    public ResponseEntity<?> findPopularMusicAtLegalDong(
+            @RequestParam("lon") final double longitude,
+            @RequestParam("lat") final double latitude) {
+        return ResponseEntity.ok()
+                .body(watchService.findPopularMusicAtLegalDong(longitude, latitude));
+    }
 }
