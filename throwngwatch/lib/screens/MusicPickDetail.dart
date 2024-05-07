@@ -34,39 +34,9 @@ class _MusicPickDetailState extends State<MusicPickDetail> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           ClockTime(),
-          SizedBox(height: 10),
-          Container(
-            child: Row(
-              children: [
-                SizedBox(width: 40),
-                Image(
-                  image: AssetImage(widget.musicData['albumImage']),
-                  width: 35,
-                  height: 35,
-                ),
-                SizedBox(width: 5),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      trimText(widget.musicData['title'], 10),
-                      style: TextStyle(fontSize: 12),
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    Text(
-                      trimText(widget.musicData['artist'], 10),
-                      style: TextStyle(
-                        color: PLACEHOLDER,
-                        fontSize: 10,
-                      ),
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ],
-                )
-              ],
-            ),
-          ),
-          SizedBox(height: 10),
+          SizedBox(height: 5),
+          Text(trimText('${widget.musicData['title']} - ${widget.musicData['artist']}', 10)),
+          SizedBox(height: 5),
           Row(
             children: [
               IconButton(
@@ -74,8 +44,9 @@ class _MusicPickDetailState extends State<MusicPickDetail> {
                 onPressed: () => Navigator.of(context).pop(),
               ),
               Container(
-                width: 157,
-                padding: EdgeInsets.all(10),
+                width: 130,
+                height: 85,
+                padding: EdgeInsets.all(5),
                 decoration: BoxDecoration(
                   color: Color(0xff1F2127),
                   borderRadius: BorderRadius.circular(5),
@@ -83,41 +54,27 @@ class _MusicPickDetailState extends State<MusicPickDetail> {
                 child: Text(
                   widget.musicData['comment'],
                   style: TextStyle(
-                    fontSize: 13,
+                    fontSize: 10,
                   ),
-                  maxLines: 2,
+                  maxLines: 4,
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
             ],
           ),
-          SizedBox(height: 10),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              CustomElevatedButton(
-                text: '바로 듣기',
-                onPressed: () async {
-                  goMusic();
-                },
-                backgroundColor: BTN_COLOR,
-                textColor: Colors.white,
-                icon: Image.asset(
-                  'assets/images/youtubeIcon.png',
-                  width: 20,
-                  height: 20,
-                ),
-              ),
-              SizedBox(width: 5),
-              CustomElevatedButton(
-                text: '줍기',
-                onPressed: () async {
-                  print(widget.musicData);
-                },
-                backgroundColor: BTN_COLOR,
-                textColor: Colors.white,
-              ),
-            ],
+          SizedBox(height: 5),
+          CustomElevatedButton(
+            text: '바로 듣기',
+            onPressed: () async {
+              goMusic();
+            },
+            backgroundColor: BTN_COLOR,
+            textColor: Colors.white,
+            icon: Image.asset(
+              'assets/images/youtubeIcon.png',
+              width: 15,
+              height: 15,
+            ),
           )
         ],
       ),

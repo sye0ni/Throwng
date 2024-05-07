@@ -4,6 +4,7 @@ import 'package:flutter/widgets.dart';
 import 'package:throwngwatch/const/color.dart';
 import 'package:wear/wear.dart';
 import '../widgets/ClockTime.dart';
+import '../widgets/RetrieveAndStoreLocation.dart';
 import 'MusicListPage.dart';
 import 'MyPlayListPage.dart';
 
@@ -22,6 +23,7 @@ class _MainPageState extends State<MainPage> {
   void initState() {
     super.initState();
     _pageController = PageController(initialPage: _currentPageIndex);
+    retrieveAndStoreLocation();
   }
 
   @override
@@ -42,36 +44,26 @@ class _MainPageState extends State<MainPage> {
       builder: (BuildContext context, WearShape shape, Widget? child) {
         return Scaffold(
           body: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               ClockTime(),
               Expanded(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                child: Stack(
+                  alignment: AlignmentDirectional.centerStart,
                   children: [
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: List.generate(2, (index) {
-                        return Container(
-                          margin: const EdgeInsets.all(4),
-                          width: 7,
-                          height: 7,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: _currentPageIndex == index ? MAIN_COLOR : Colors.grey,
-                          ),
-                        );
-                      }),
+                    PageView(
+                      controller: _pageController,
+                      onPageChanged: _onPageChanged,
+                      scrollDirection: Axis.vertical,
+                      children: <Widget>[
+                        MusicListPage(),
+                        MyPlayListPage(),
+                      ],
                     ),
-                    Expanded(
-                      child: PageView(
-                        controller: _pageController,
-                        onPageChanged: _onPageChanged,
-                        scrollDirection: Axis.vertical,
-                        children: <Widget>[
-                          MusicListPage(),
-                          MyPlayListPage(),
-                        ],
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: List.generate(2, (index) => buildDot(index: index)),
                       ),
                     ),
                   ],
@@ -81,6 +73,18 @@ class _MainPageState extends State<MainPage> {
           ),
         );
       },
+    );
+  }
+
+  Widget buildDot({required int index}) {
+    return Container(
+      height: 8,
+      width: 8,
+      margin: EdgeInsets.symmetric(vertical: 4),
+      decoration: BoxDecoration(
+        color: _currentPageIndex == index ? MAIN_COLOR : Colors.grey,
+        shape: BoxShape.circle,
+      ),
     );
   }
 }

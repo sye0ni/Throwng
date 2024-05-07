@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:wear/wear.dart';
 import '../const/color.dart';
+import '../services/MusicListAPi.dart';
+import '../widgets/ClockTime.dart';
 import 'MusicDrop.dart';
 
 class MyPlayList extends StatefulWidget {
@@ -10,110 +13,177 @@ class MyPlayList extends StatefulWidget {
 }
 
 class _MyPlayListState extends State<MyPlayList> {
-  final List<Map<String, dynamic>> dummyData = [
+  final List<Map<String, dynamic>> myPlayList = [
     {
-      'id': '1',
-      'title': '사랑하긴 했었나요 스쳐가는 인연이었나요 짧지않은 우리 함께했던 시간들이 자꾸 내 마음을 가둬두네',
-      'artist': '잔나비',
-      'albumImage': "assets/images/albumImage.png",
-      'youtubeId': 'WuUQX7Fz8SM',
-      'previewUrl': "미리듣기 url (없으면 null)"
+      "playlistId": 11,
+      "title": "Magnetic",
+      "artist": "아일릿",
+      "albumImage": "https://popcon-s3-bucket.s3.ap-southeast-2.amazonaws.com/throwng/superrealme.jpg",
+      "youtubeId": "69q7FmDh1JXekNKOOxDmdM",
+      "previewUrl": "String"
     },
     {
-      'id': '2',
-      'title': '홀씨홀씨홀씨홀씨홀씨홀씨홀씨홀씨',
-      'artist': '아이유아이유아이유아이유아이유아이유',
-      'albumImage': "assets/images/albumImage.png",
-      'youtubeId': 'WuUQX7Fz8SM',
-      'previewUrl': "미리듣기 url (없으면 null)"
+      "playlistId": 11,
+      "title": "Magnetic",
+      "artist": "아일릿",
+      "albumImage": "https://popcon-s3-bucket.s3.ap-southeast-2.amazonaws.com/throwng/superrealme.jpg",
+      "youtubeId": "69q7FmDh1JXekNKOOxDmdM",
+      "previewUrl": "String"
     },
   ];
-
-  final ScrollController _scrollController = ScrollController();
 
   String trimText(String text, int limit) {
     return text.length > limit ? '${text.substring(0, limit)}...' : text;
   }
 
+  PageController _pageController = PageController();
+  int _currentPageIndex = 0;
+
+  int get currentPageGroup => (_currentPageIndex ~/ 5);
+  String _currentMusicTitleAndArtist = "";
+
+  @override
+  void initState() {
+    super.initState();
+    // fetchMyPlayList();
+    _pageController = PageController(initialPage: _currentPageIndex);
+    Map<String, dynamic> initialMusic = myPlayList[0];
+    _currentMusicTitleAndArtist = "${initialMusic['title']}-${initialMusic['artist']}";
+  }
+
+  Future<void> fetchMyPlayList() async {
+    var res = await getMyPlayList();
+    setState(() {
+      myPlayList.addAll(res.data);
+      Map<String, dynamic> initialMusic = myPlayList[0];
+      _currentMusicTitleAndArtist = "${initialMusic['title']}-${initialMusic['artist']}";
+    });
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
+
+  void _onPageChanged(int pageIndex) {
+    setState(() {
+      _currentPageIndex = pageIndex;
+      Map<String, dynamic> currentMusic = myPlayList[pageIndex];
+      _currentMusicTitleAndArtist = "${currentMusic['title']}-${currentMusic['artist']}";
+    });
+  }
+
+  Widget buildDot({required int index, required int total}) {
+    bool isInCurrentGroup = (index ~/ 5) == currentPageGroup;
+    int lastDotIndexInGroup = ((currentPageGroup + 1) * 5) - 1;
+
+    if (index == lastDotIndexInGroup) {
+      return Icon(
+        Icons.expand_more,
+        color: MAIN_COLOR,
+        size: 10,
+      );
+    } else if (isInCurrentGroup && (index + 1) % 5 == 0) {
+      return Icon(
+        Icons.expand_more,
+        color: Colors.white,
+        size: 10,
+      );
+    }
+
+    return isInCurrentGroup
+        ? Container(
+            height: 7,
+            width: 7,
+            margin: EdgeInsets.symmetric(vertical: 3),
+            decoration: BoxDecoration(
+              color: _currentPageIndex % 5 == index % 5 ? MAIN_COLOR : Colors.grey,
+              shape: BoxShape.circle,
+            ),
+          )
+        : Container();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Text(
-              '플레이리스트',
-              style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
-            ),
-            SizedBox(height: 10),
-            Expanded(
-              child: ListView.builder(
-                controller: _scrollController,
-                itemCount: dummyData.length,
-                itemBuilder: (context, index) {
-                  return GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => MusicDrop(
-                            musicData: dummyData[index],
-                          ),
-                        ),
-                      );
-                    },
-                    child: Center(
+    return WatchShape(
+      builder: (BuildContext context, WearShape shape, Widget? child) {
+        return Scaffold(
+          body: Center(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                ClockTime(),
+                Text(
+                  '내 플레이리스트',
+                  style: TextStyle(fontSize: 13),
+                ),
+                SizedBox(height: 5),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    IconButton(
+                      icon: Icon(Icons.arrow_back, color: Colors.white),
+                      onPressed: () => Navigator.of(context).pop(),
+                    ),
+                    SizedBox(
                       child: Container(
-                        margin: EdgeInsets.only(bottom: 8),
-                        decoration: BoxDecoration(
-                          color: Color(0xff1F2127),
-                          borderRadius: BorderRadius.circular(5),
-                        ),
-                        height: 45,
-                        child: Row(
-                          children: <Widget>[
-                            Padding(
-                              padding: const EdgeInsets.all(5),
-                              child: Image(
-                                image: AssetImage(dummyData[index]['albumImage']),
-                                width: 35,
-                                height: 35,
-                              ),
-                            ),
-                            Expanded(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    trimText(dummyData[index]['title'], 14),
-                                    style: TextStyle(fontSize: 12),
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                  Text(
-                                    trimText(dummyData[index]['artist'], 15),
-                                    style: TextStyle(
-                                      color: PLACEHOLDER,
-                                      fontSize: 10,
+                        height: 110,
+                        width: 110,
+                        child: myPlayList.isEmpty
+                            ? Center(child: Text('플레이리스트가 비어있습니다.'))
+                            : PageView.builder(
+                                itemCount: myPlayList.length,
+                                scrollDirection: Axis.vertical,
+                                controller: _pageController,
+                                onPageChanged: _onPageChanged,
+                                itemBuilder: (context, playlistId) {
+                                  return GestureDetector(
+                                    onTap: () {
+                                      Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                          builder: (context) => MusicDrop(
+                                            musicData: myPlayList[playlistId],
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                    child: Container(
+                                      height: 110,
+                                      width: 110,
+                                      child: ClipRRect(
+                                        borderRadius: BorderRadius.circular(100),
+                                        child: Image.network(
+                                          myPlayList[playlistId]['albumImage'],
+                                          fit: BoxFit.cover,
+                                        ),
+                                      ),
                                     ),
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ],
+                                  );
+                                },
                               ),
-                            )
-                          ],
-                        ),
                       ),
                     ),
-                  );
-                },
-              ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: List.generate(myPlayList.length, (index) => buildDot(index: index, total: myPlayList.length)),
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 5),
+                Text(
+                  trimText(_currentMusicTitleAndArtist, 12),
+                  style: TextStyle(fontSize: 12),
+                ),
+              ],
             ),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 }
