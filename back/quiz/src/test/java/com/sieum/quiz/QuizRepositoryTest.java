@@ -24,12 +24,12 @@ public class QuizRepositoryTest {
     @Test
     public void save_test() {
         // given
-        Map<Integer, String> choice =
+        Map<String, Object> choice =
                 Map.of(
-                        1, "first choice",
-                        2, "second choice",
-                        3, "third choice",
-                        4, "fourth choice");
+                        "1", "first choice",
+                        "2", "second choice",
+                        "3", "third choice",
+                        "4", "fourth choice");
 
         Quiz quiz =
                 Quiz.builder()
@@ -43,7 +43,7 @@ public class QuizRepositoryTest {
         Quiz savedQuiz = quizRepository.save(quiz);
 
         // then
-        assertThat(savedQuiz.getChoice().get(1)).isEqualTo("first choice");
+        assertThat(savedQuiz.getChoice().get("1")).isEqualTo("first choice");
         assertThat(QuizType.valueOf(savedQuiz.getQuizType()).getValue()).isEqualTo("객관식");
     }
 }
