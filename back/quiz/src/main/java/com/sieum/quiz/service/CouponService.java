@@ -7,14 +7,17 @@ import com.sieum.quiz.domain.Coupon;
 import com.sieum.quiz.domain.CouponHistory;
 import com.sieum.quiz.domain.enums.CouponRoute;
 import com.sieum.quiz.domain.enums.CouponType;
+import com.sieum.quiz.dto.response.CouponeInquiryResponse;
 import com.sieum.quiz.dto.response.CreateCouponResponse;
 import com.sieum.quiz.exception.BadRequestException;
 import com.sieum.quiz.repository.CouponHistoryRepository;
 import com.sieum.quiz.repository.CouponReposistory;
 import java.time.LocalDate;
 import java.util.EnumSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Random;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -61,5 +64,20 @@ public class CouponService {
     public void createCouponHistory(final Coupon coupon) {
         couponHistoryRepository.save(
                 CouponHistory.builder().coupon(coupon).couponStatus("NONE").build());
+    }
+
+    public List<CouponeInquiryResponse> getCouponHistory(final long userId) {
+        List<Coupon> coupons = couponRepository.findByUserId(userId);
+
+        return coupons.stream()
+                .filter(coupon -> !coupon.getCouponType().equals("BOOM"))
+                .map(
+                        coupon ->
+                                CouponeInquiryResponse.of(
+                                        coupon,
+                                        couponHistoryRepository
+                                                .findTopByCouponIdOrderByCreatedAtDesc(
+                                                        coupon.getId())))
+                .collect(Collectors.toList());
     }
 }

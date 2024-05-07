@@ -21,4 +21,10 @@ public class CouponController {
         final long userId = couponService.getCurrentUserId(authorization);
         return ResponseEntity.ok().body(couponService.createCoupon(userId, route));
     }
+
+    @Operation(summary = "feign client")
+    @GetMapping("/{userId}/history")
+    public ResponseEntity<?> getCouponHistory(@PathVariable final long userId) {
+        return ResponseEntity.ok().body(couponService.getCouponHistory(userId));
+    }
 }
