@@ -13,7 +13,8 @@ public enum CustomExceptionStatus implements BaseErrorCode {
     DUPLICATE_COUPON_REQUEST(
             "CouponDuplicationError_400_3", "Get a coupon once a day through contents"),
     INVALID_COUPON_ROUTE("CouponRouteError_400_4", "Wrong coupon route"),
-    INVALID_QUIZ_ID("QuizIdError_400_5", "Wrong quiz id");
+    INVALID_QUIZ_ID("QuizIdError_400_5", "Invalid quiz id"),
+    NOT_TODAY_QUIZ_ID("QuizIdError_400_6", "Not today's quiz id");
 
     private String code;
     private String reason;
