@@ -18,20 +18,20 @@ import lombok.NoArgsConstructor;
 public class CouponeInquiryResponse {
     private static final int EXPIRATION_PERIOD = 7;
 
-    @Schema(description = "coupon type")
-    private Long id;
+    @Schema(description = "coupon id")
+    private Long couponId;
 
     @Schema(description = "coupon name")
-    private String name;
+    private String couponName;
 
     @Schema(description = "coupon description")
-    private String description;
+    private String couponDescription;
 
     @Schema(description = "coupon endDate")
-    private LocalDateTime endDate;
+    private LocalDateTime couponEndDate;
 
     @Schema(description = "coupon status")
-    private String status;
+    private String couponStatus;
 
     public static LocalDateTime createEndDate(LocalDateTime createdAt) {
         return createdAt.plusDays(EXPIRATION_PERIOD);
