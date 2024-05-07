@@ -37,14 +37,21 @@ public class QuizService {
         return EnumSet.allOf(CouponRoute.class).stream()
                 .map(
                         route -> {
-                            boolean result =
-                                    couponRepository.existsByCreatedAtAfterAndRouteAndUserId(
-                                            LocalDate.now().atStartOfDay(),
-                                            CouponRoute.findByName(String.valueOf(route)),
-                                            userId);
+                            boolean result;
+                            if (route.getName().equals("quiz")) {
+                                result =
+                                        quizHistoryRepository.existsByCreatedAtAfterAndUserId(
+                                                LocalDate.now().atStartOfDay(), userId);
+                            } else {
+                                result =
+                                        couponRepository.existsByCreatedAtAfterAndRouteAndUserId(
+                                                LocalDate.now().atStartOfDay(),
+                                                CouponRoute.findByName(String.valueOf(route)),
+                                                userId);
+                            }
                             return CouponIssuanceStatusResponse.builder()
                                     .status(result)
-                                    .name(CouponRoute.findByName(String.valueOf(route)))
+                                    .name(route.getName())
                                     .build();
                         })
                 .collect(Collectors.toList());
