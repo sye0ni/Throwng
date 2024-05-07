@@ -4,13 +4,11 @@ import static com.sieum.user.common.CustomExceptionStatus.NOT_FOUND_ACCOUNT;
 import static com.sieum.user.common.CustomExceptionStatus.VIOLATE_ACCOUNT;
 
 import com.sieum.user.controller.feign.MusicFeignClient;
+import com.sieum.user.controller.feign.QuizFeignClient;
 import com.sieum.user.domain.User;
 import com.sieum.user.domain.enums.Level;
 import com.sieum.user.dto.request.FcmTokenRequest;
-import com.sieum.user.dto.response.PickedUpSongResponse;
-import com.sieum.user.dto.response.ThrownSongResponse;
-import com.sieum.user.dto.response.UserInfoResponse;
-import com.sieum.user.dto.response.UserLevelInfoResponse;
+import com.sieum.user.dto.response.*;
 import com.sieum.user.exception.AuthException;
 import com.sieum.user.repository.UserRepository;
 import java.util.List;
@@ -27,6 +25,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final MusicFeignClient musicFeignClient;
     private final LoginService loginService;
+    private final QuizFeignClient quizFeignClient;
 
     public UserInfoResponse getUserLevel(long userId) {
         User user =
@@ -82,5 +81,9 @@ public class UserService {
         return userRepository.findByFcmTokenIsNotNull().stream()
                 .map(User::getFcmToken)
                 .collect(Collectors.toList());
+    }
+
+    public List<CouponeInquiryResponse> getUserCouponHistory(final long userId) {
+        return quizFeignClient.getCouponHistory(userId);
     }
 }
