@@ -68,10 +68,10 @@ public class QuizService {
 
         final String key =
                 "quiz_" + LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-        final List<QuizResponse> todayQuiz= (List<QuizResponse>) redisUtil.getObject(key);
+        final List<QuizResponse> todayQuiz = (List<QuizResponse>) redisUtil.getObject(key);
 
-        if(!todayQuiz.stream()
-                .anyMatch(q->q.getQuizId()==quizHistoryCreationRequest.getQuizId())){
+        if (!todayQuiz.stream()
+                .anyMatch(q -> q.getQuizId() == quizHistoryCreationRequest.getQuizId())) {
             throw new BadRequestException(NOT_TODAY_QUIZ_ID);
         }
 
