@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '../const/color.dart';
+import '../services/MusicListAPi.dart';
 import '../widgets/ClockTime.dart';
 import '../widgets/ElevateBTN.dart';
 
@@ -19,6 +21,7 @@ class _MusicDropState extends State<MusicDrop> {
 
   String userComment = '';
   late TextEditingController commentController;
+  final FlutterSecureStorage storage = FlutterSecureStorage();
 
   @override
   void initState() {
@@ -33,8 +36,53 @@ class _MusicDropState extends State<MusicDrop> {
   }
 
   Future<void> handlePress() async {
-    print(widget.musicData);
-    print(userComment);
+    loadUserInfo(context);
+  }
+
+  Future<void> loadUserInfo(BuildContext context) async {
+    String? latStr = await storage.read(key: 'latitude');
+    String? lonStr = await storage.read(key: 'longitude');
+
+    double? latitude = latStr != null ? double.tryParse(latStr) : null;
+    double? longitude = lonStr != null ? double.tryParse(lonStr) : null;
+
+    if (latitude != null && longitude != null) {
+      final data = {
+        'latitude': latitude,
+        'longitude': longitude,
+        'SongId': widget.musicData['playlistId'],
+        'userComment': userComment,
+      };
+      await fetchThrowng(context, data);
+    } else {
+      print("위도없다~~ 경도없다~~");
+    }
+  }
+
+  Future<void> fetchThrowng(BuildContext context, data) async {
+    var res = await postThrowng(data);
+    if (res?.statusCode == 204) {
+      Navigator.of(context).pushNamedAndRemoveUntil('/', (Route<dynamic> route) => false);
+    } else if (res?.statusCode == 400 && res?.data['error'] == 'Song_400_2') {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text("알림"),
+            content: Text("하루 쓰롱개수를 초과하였습니다."),
+            actions: <Widget>[
+              TextButton(
+                child: Text("확인"),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  Navigator.of(context).pushNamedAndRemoveUntil('/', (Route<dynamic> route) => false);
+                },
+              ),
+            ],
+          );
+        },
+      );
+    }
   }
 
   @override
@@ -44,39 +92,9 @@ class _MusicDropState extends State<MusicDrop> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           ClockTime(),
-          SizedBox(height: 10),
-          Container(
-            child: Row(
-              children: [
-                SizedBox(width: 40),
-                Image(
-                  image: AssetImage(widget.musicData['albumImage']),
-                  width: 35,
-                  height: 35,
-                ),
-                SizedBox(width: 5),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      trimText(widget.musicData['title'], 8),
-                      style: TextStyle(fontSize: 12),
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    Text(
-                      trimText(widget.musicData['artist'], 8),
-                      style: TextStyle(
-                        color: PLACEHOLDER,
-                        fontSize: 10,
-                      ),
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ],
-                )
-              ],
-            ),
-          ),
-          SizedBox(height: 10),
+          SizedBox(height: 5),
+          Text(trimText('${widget.musicData['title']} - ${widget.musicData['artist']}', 8)),
+          SizedBox(height: 5),
           Row(
             children: [
               IconButton(
@@ -84,50 +102,48 @@ class _MusicDropState extends State<MusicDrop> {
                 onPressed: () => Navigator.of(context).pop(),
               ),
               SizedBox(
-                width: 157,
-                height: 80,
-                child: Container(
-                  padding: EdgeInsets.symmetric(horizontal: 5),
-                  decoration: BoxDecoration(
-                    color: Color(0xff1F2127),
-                    borderRadius: BorderRadius.circular(5),
+                width: 130,
+                height: 85,
+                child: TextField(
+                  controller: commentController,
+                  maxLength: 50,
+                  minLines: 1,
+                  maxLines: 5,
+                  onChanged: (value) {
+                    setState(() {
+                      userComment = value.trim();
+                    });
+                  },
+                  style: TextStyle(
+                    fontSize: 13,
+                    color: Colors.white,
                   ),
-                  child: TextField(
-                    controller: commentController,
-                    maxLength: 50,
-                    onChanged: (value) {
-                      setState(() {
-                        userComment = value.trim();
-                      });
-                    },
-                    style: TextStyle(
-                      fontSize: 13,
-                      color: Colors.white,
-                    ),
-                    decoration: InputDecoration(
-                      border: InputBorder.none,
-                      hintStyle: TextStyle(color: PLACEHOLDER),
-                      hintText: '떠오르는 말을 적어보세요',
-                    ),
-                    textInputAction: TextInputAction.done,
-                    onSubmitted: (value) {
-                      setState(() {
-                        userComment = value;
-                      });
-                      FocusScope.of(context).unfocus();
-                    },
+                  decoration: InputDecoration(
+                    border: InputBorder.none,
+                    hintStyle: TextStyle(color: PLACEHOLDER),
+                    hintText: '떠오르는 말을 적어보세요',
                   ),
+                  textInputAction: TextInputAction.done,
+                  onSubmitted: (value) {
+                    setState(() {
+                      userComment = value;
+                    });
+                    FocusScope.of(context).unfocus();
+                  },
                 ),
               ),
             ],
           ),
-          SizedBox(height: 10),
           CustomElevatedButton(
             text: '쓰롱하기',
-            onPressed: userComment.isNotEmpty ? () => handlePress() : null,
+            onPressed: userComment.trim().isEmpty
+                ? null
+                : () async {
+                    handlePress();
+                  },
             backgroundColor: BTN_COLOR,
             textColor: Colors.white,
-          ),
+          )
         ],
       ),
     );
