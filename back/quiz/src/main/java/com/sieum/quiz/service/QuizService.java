@@ -1,6 +1,7 @@
 package com.sieum.quiz.service;
 
 import static com.sieum.quiz.exception.CustomExceptionStatus.INVALID_QUIZ_ID;
+import static com.sieum.quiz.exception.CustomExceptionStatus.NOT_TODAY_QUIZ_ID;
 
 import com.sieum.quiz.controller.feign.TokenAuthClient;
 import com.sieum.quiz.domain.Quiz;
@@ -61,9 +62,17 @@ public class QuizService {
             final long userId, final QuizHistoryCreationRequest quizHistoryCreationRequest) {
 
         final Optional<Quiz> quiz = quizRepository.findById(quizHistoryCreationRequest.getQuizId());
-
         if (quiz.isEmpty()) {
             throw new BadRequestException(INVALID_QUIZ_ID);
+        }
+
+        final String key =
+                "quiz_" + LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        final List<QuizResponse> todayQuiz= (List<QuizResponse>) redisUtil.getObject(key);
+
+        if(!todayQuiz.stream()
+                .anyMatch(q->q.getQuizId()==quizHistoryCreationRequest.getQuizId())){
+            throw new BadRequestException(NOT_TODAY_QUIZ_ID);
         }
 
         quizHistoryRepository.save(
