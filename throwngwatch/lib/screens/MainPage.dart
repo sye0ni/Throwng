@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/widgets.dart';
 import 'package:throwngwatch/const/color.dart';
 import 'package:wear/wear.dart';
 import '../widgets/ClockTime.dart';
-import 'MusicList.dart';
-import 'MyPlayList.dart';
+import 'MusicListPage.dart';
+import 'MyPlayListPage.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({super.key});
@@ -40,32 +42,40 @@ class _MainPageState extends State<MainPage> {
       builder: (BuildContext context, WearShape shape, Widget? child) {
         return Scaffold(
           body: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               ClockTime(),
-              SizedBox(height: 5),
               Expanded(
-                child: PageView(
-                  controller: _pageController,
-                  onPageChanged: _onPageChanged,
-                  children: <Widget>[
-                    MusicList(),
-                    MyPlayList(),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: List.generate(2, (index) {
+                        return Container(
+                          margin: const EdgeInsets.all(4),
+                          width: 7,
+                          height: 7,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: _currentPageIndex == index ? MAIN_COLOR : Colors.grey,
+                          ),
+                        );
+                      }),
+                    ),
+                    Expanded(
+                      child: PageView(
+                        controller: _pageController,
+                        onPageChanged: _onPageChanged,
+                        scrollDirection: Axis.vertical,
+                        children: <Widget>[
+                          MusicListPage(),
+                          MyPlayListPage(),
+                        ],
+                      ),
+                    ),
                   ],
                 ),
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: List.generate(2, (index) {
-                  return Container(
-                    margin: const EdgeInsets.all(4),
-                    width: 7,
-                    height: 7,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: _currentPageIndex == index ? MAIN_COLOR : Colors.grey,
-                    ),
-                  );
-                }),
               ),
             ],
           ),
