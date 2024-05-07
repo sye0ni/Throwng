@@ -4,6 +4,7 @@ import static com.sieum.music.domain.QArtist.artist;
 import static com.sieum.music.domain.QSong.song;
 import static com.sieum.music.domain.QThrowHistory.throwHistory;
 import static com.sieum.music.domain.QThrowItem.throwItem;
+import static com.sieum.music.domain.QZipcode.zipcode;
 import static com.sieum.music.repository.MySqlSpatialFunction.mySqlDistanceSphereFunction;
 
 import com.querydsl.core.types.Projections;
@@ -13,6 +14,7 @@ import com.sieum.music.domain.ThrowItem;
 import com.sieum.music.domain.dao.ThrowCurrentDao;
 import com.sieum.music.domain.dao.ThrowDao;
 import com.sieum.music.domain.enums.ThrowStatus;
+import com.sieum.music.dto.response.WatchFamousMusicResponse;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.locationtech.jts.geom.Point;
@@ -76,5 +78,25 @@ public class ThrowQueryDSLRepository {
                                 .eq(nowDate),
                         throwItem.song.youtubeId.eq(youtubeId))
                 .fetchFirst();
+    }
+
+    public List<WatchFamousMusicResponse> findByZipCodeIdAndIsPopular(String code) {
+        return queryFactory
+                .select(
+                        Projections.fields(
+                                WatchFamousMusicResponse.class,
+                                throwItem.id,
+                                throwItem.song.title,
+                                artist.name,
+                                throwItem.song.albumImage))
+                .from(throwItem)
+                .join(throwItem.zipcode, zipcode)
+                .on(throwItem.zipcode.zipcodeId.eq(zipcode.zipcodeId))
+                .join(throwItem.song, song)
+                .on(throwItem.song.id.eq(song.id))
+                .join(song.artist, artist)
+                .on(song.artist.id.eq(artist.id))
+                .where(throwItem.zipcode.code.eq(code), throwItem.isPopular.eq(true))
+                .fetch();
     }
 }
