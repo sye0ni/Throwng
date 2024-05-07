@@ -3,9 +3,7 @@ package com.sieum.music.service;
 import static com.sieum.music.exception.CustomExceptionStatus.*;
 
 import com.sieum.music.controller.feign.TokenAuthClient;
-import com.sieum.music.domain.Song;
-import com.sieum.music.domain.ThrowItem;
-import com.sieum.music.domain.Zipcode;
+import com.sieum.music.domain.*;
 import com.sieum.music.domain.dao.ThrowCurrentDao;
 import com.sieum.music.domain.enums.ThrowStatus;
 import com.sieum.music.dto.request.WatchThrownItemRequest;
@@ -20,6 +18,7 @@ import com.sieum.music.util.LocalDateUtil;
 import com.sieum.music.util.RedisUtil;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.locationtech.jts.geom.Point;
@@ -33,9 +32,10 @@ public class WatchService {
     private final MusicRepository musicRepository;
     private final TokenAuthClient tokenAuthClient;
     private final PlaylistRepository playlistRepository;
-    private final ArtistRepository artistRepository;
+    private final PlaylistHistoryRepository playlistHistoryRepository;
     private final SongRepository songRepository;
     private final ZipCodeRepository zipCodeRepository;
+    private final ThrowHistoryRepository throwHistoryRepository;
     private final ThrowQueryDSLRepository throwQueryDSLRepository;
     private final LocalDateUtil localDateUtil;
     private final RedisUtil redisUtil;
@@ -123,5 +123,62 @@ public class WatchService {
         thrownCount--;
 
         redisUtil.setData(key, String.valueOf(thrownCount));
+    }
+
+    @Transactional
+    public void createPickup(final long userId, final long throwId) {
+        final ThrowItem throwItem =
+                musicRepository
+                        .findById(throwId)
+                        .orElseThrow(() -> new BadRequestException(NOT_FOUND_THROW_ITEM_ID));
+
+        if (throwHistoryRepository.existsByUserIdAndThrowItemId(userId, throwId)) {
+            throw new BadRequestException(DUPLICATE_PICKUP_REQUEST);
+        }
+
+        createThrowHistory(userId, throwItem);
+        findPlaylist(userId, throwItem.getSong(), true)
+                .orElseGet(
+                        () -> {
+                            createPlaylistHistory(
+                                    createPlaylist(userId, throwItem.getSong()), true);
+                            return null;
+                        });
+    }
+
+    private void createThrowHistory(final long userId, final ThrowItem throwItem) {
+        final String key = "user_" + userId + "_pickup_count";
+        final Object value = redisUtil.getData(key);
+        int pickupCount = 0;
+
+        if (value != null) {
+            redisUtil.deleteData(key);
+            pickupCount = Integer.valueOf((String) value);
+        }
+
+        pickupCount++;
+        redisUtil.setData(key, String.valueOf(pickupCount));
+
+        final ThrowHistory throwHistory =
+                throwHistoryRepository.save(
+                        ThrowHistory.builder().userId(userId).throwItem(throwItem).build());
+
+        throwHistory.setThrowItem(throwItem);
+    }
+
+    // @Transactional(readOnly = true)
+    private Optional<Playlist> findPlaylist(
+            final long userId, final Song song, final boolean status) {
+        return playlistRepository.findByUserIdAndSongIdAndStatus(userId, song.getId(), status);
+    }
+
+    private void createPlaylistHistory(final Playlist playlist, final boolean status) {
+        playlistHistoryRepository.save(
+                PlaylistHistory.builder().playlist(playlist).status(status).build());
+    }
+
+    private Playlist createPlaylist(final long userId, final Song song) {
+        return playlistRepository.save(
+                Playlist.builder().userId(userId).song(song).status(true).build());
     }
 }

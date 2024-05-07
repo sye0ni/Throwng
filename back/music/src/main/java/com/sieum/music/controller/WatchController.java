@@ -33,4 +33,14 @@ public class WatchController {
         watchService.thrownSong(userLevelInfoResponse, watchThrownItemRequest);
         return ResponseEntity.noContent().build();
     }
+
+    @Operation(summary = "Pick up a song")
+    @PostMapping("/pick/{throwId}")
+    public ResponseEntity<?> createPickup(
+            @RequestHeader("Authorization") final String authorization,
+            @PathVariable("throwId") final long throwId) {
+        final long userId = watchService.getCurrentUserId(authorization);
+        watchService.createPickup(userId, throwId);
+        return ResponseEntity.noContent().build();
+    }
 }
