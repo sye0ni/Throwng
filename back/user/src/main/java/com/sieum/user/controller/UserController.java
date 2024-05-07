@@ -60,4 +60,12 @@ public class UserController {
     public ResponseEntity<?> getUserFcmList() {
         return ResponseEntity.ok().body(userService.getUserFcmList());
     }
+
+    @Operation(summary = "Checking my coupon history")
+    @GetMapping("/coupon")
+    public ResponseEntity<?> getUserCouponHistory(
+            @RequestHeader("Authorization") String accessToken) {
+        long userId = loginService.getUsername(accessToken);
+        return ResponseEntity.ok().body(userService.getUserCouponHistory(userId));
+    }
 }
