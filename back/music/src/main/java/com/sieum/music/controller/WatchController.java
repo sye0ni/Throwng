@@ -1,7 +1,10 @@
 package com.sieum.music.controller;
 
+import com.sieum.music.dto.request.WatchThrownItemRequest;
+import com.sieum.music.dto.response.UserLevelInfoResponse;
 import com.sieum.music.service.WatchService;
 import io.swagger.v3.oas.annotations.Operation;
+import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,5 +22,15 @@ public class WatchController {
             @RequestHeader("Authorization") final String authorization) {
         final long userId = watchService.getCurrentUserId(authorization);
         return ResponseEntity.ok().body(watchService.getPlaylist(userId));
+    }
+
+    @Operation(summary = "Throw song")
+    @PostMapping("/thrown-song")
+    public ResponseEntity<?> thrownSong(
+            @RequestHeader("Authorization") final String authorization,
+            @RequestBody @Valid WatchThrownItemRequest watchThrownItemRequest) {
+        UserLevelInfoResponse userLevelInfoResponse = watchService.getLimitAccount(authorization);
+        watchService.thrownSong(userLevelInfoResponse, watchThrownItemRequest);
+        return ResponseEntity.noContent().build();
     }
 }
