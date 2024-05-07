@@ -6,16 +6,18 @@ import com.sieum.quiz.controller.feign.TokenAuthClient;
 import com.sieum.quiz.domain.Quiz;
 import com.sieum.quiz.domain.QuizHistory;
 import com.sieum.quiz.domain.enums.CouponRoute;
+import com.sieum.quiz.domain.enums.QuizType;
 import com.sieum.quiz.dto.request.QuizHistoryCreationRequest;
 import com.sieum.quiz.dto.response.CouponIssuanceStatusResponse;
+import com.sieum.quiz.dto.response.QuizResponse;
 import com.sieum.quiz.exception.BadRequestException;
 import com.sieum.quiz.repository.CouponReposistory;
 import com.sieum.quiz.repository.QuizHistoryRepository;
 import com.sieum.quiz.repository.QuizRepository;
+import com.sieum.quiz.util.RedisUtil;
 import java.time.LocalDate;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Optional;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -24,6 +26,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class QuizService {
 
+    private final RedisUtil redisUtil;
     private final TokenAuthClient tokenAuthClient;
     private final CouponReposistory couponRepository;
     private final QuizRepository quizRepository;
@@ -67,5 +70,54 @@ public class QuizService {
 
     public long getCurrentUserId(final String authorization) {
         return tokenAuthClient.getUserId(authorization);
+    }
+
+    public List<QuizResponse> getQuizList() {
+        final String key =
+                "quiz_" + LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+
+        if (redisUtil.getObject(key) != null) {
+            return (List<QuizResponse>) redisUtil.getObject(key);
+        }
+
+        final List<QuizResponse> quizlist =
+                quizRepository.findAll().stream()
+                        .map(
+                                quiz ->
+                                        QuizResponse.builder()
+                                                .quizId(quiz.getId())
+                                                .question(quiz.getQuestion())
+                                                .answer(quiz.getAnswer())
+                                                .quizType(
+                                                        QuizType.valueOf(quiz.getQuizType())
+                                                                .getValue())
+                                                .quizImage(quiz.getQuizImage())
+                                                .previewUrl(quiz.getPreviewUrl())
+                                                .choice(quiz.getChoice())
+                                                .build())
+                        .collect(Collectors.toList());
+
+        final List<Integer> indexes = createRandomQuiz(quizlist.size());
+        final List<QuizResponse> todayQuizList = new ArrayList<>();
+
+        indexes.stream().forEach(index -> todayQuizList.add(quizlist.get(index)));
+
+        redisUtil.setObject(key, todayQuizList);
+
+        return todayQuizList;
+    }
+
+    private List<Integer> createRandomQuiz(final int size) {
+        final Random random = new Random();
+
+        final List<Integer> selectedNumbers = new ArrayList<>();
+        while (selectedNumbers.size() < 3) {
+            final int randomNumber = random.nextInt(size);
+            if (!selectedNumbers.contains(randomNumber)) {
+                selectedNumbers.add(randomNumber);
+            }
+        }
+
+        return selectedNumbers;
     }
 }

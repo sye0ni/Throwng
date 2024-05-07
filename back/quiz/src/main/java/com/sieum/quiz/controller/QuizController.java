@@ -13,6 +13,12 @@ public class QuizController {
 
     private final QuizService quizService;
 
+    @GetMapping
+    public ResponseEntity<?> getQuizList(
+            @RequestHeader("Authorization") final String authorization) {
+        return ResponseEntity.ok().body(quizService.getQuizList());
+    }
+
     @Operation(summary = "Return whether or not to issue a coupon for the day")
     @GetMapping("/contents")
     public ResponseEntity<?> getCouponIssuanceStatus(

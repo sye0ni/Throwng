@@ -35,5 +35,11 @@ public class Quiz {
 
     @Type(type = "json")
     @Column(columnDefinition = "json")
-    private Map<Integer, String> choice;
+    private Map<String, Object> choice;
+
+    @Column(length = 200)
+    private String quizImage;
+
+    @Column(length = 200)
+    private String previewUrl;
 }
