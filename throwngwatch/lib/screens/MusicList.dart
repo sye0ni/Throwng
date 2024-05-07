@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import '../components/MusicListBody.dart';
 import '../const/color.dart';
+import '../widgets/ClockTime.dart';
 import 'MusicPickDetail.dart';
 
 class MusicList extends StatefulWidget {
@@ -56,91 +58,37 @@ class _MusicListState extends State<MusicList> {
     },
   ];
 
-  final ScrollController _scrollController = ScrollController();
-
   String trimText(String text, int limit) {
     return text.length > limit ? '${text.substring(0, limit)}...' : text;
   }
 
+  final PageController _pageController = PageController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Text(
-              '내 주변 인기 음악',
-              style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
-            ),
-            SizedBox(height: 10),
-            Expanded(
-              child: ListView.builder(
-                controller: _scrollController,
-                itemCount: dummyData.length,
-                itemBuilder: (context, index) {
-                  return GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => MusicPickDetail(
-                            musicData: dummyData[index],
-                          ),
-                        ),
-                      );
-                    },
-                    child: Center(
-                      child: Container(
-                        margin: EdgeInsets.only(bottom: 8),
-                        decoration: BoxDecoration(
-                          color: Color(0xff1F2127),
-                          borderRadius: BorderRadius.circular(5),
-                        ),
-                        height: 45,
-                        child: Row(
-                          children: <Widget>[
-                            Padding(
-                              padding: const EdgeInsets.all(5),
-                              child: Image(
-                                image: AssetImage(dummyData[index]['albumImage']),
-                                width: 35,
-                                height: 35,
-                              ),
-                            ),
-                            Expanded(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    trimText(dummyData[index]['title'], 14),
-                                    style: TextStyle(fontSize: 12),
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                  Text(
-                                    trimText(dummyData[index]['artist'], 15),
-                                    style: TextStyle(
-                                      color: PLACEHOLDER,
-                                      fontSize: 10,
-                                    ),
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ],
-                              ),
-                            )
-                          ],
-                        ),
-                      ),
-                    ),
-                  );
-                },
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          ClockTime(),
+          SizedBox(height: 5),
+          Text(
+            '내 주변 인기 음악',
+            style: TextStyle(fontSize: 13),
+          ),
+          Row(
+            children: [
+              IconButton(
+                icon: Icon(Icons.arrow_back, color: Colors.white),
+                onPressed: () => Navigator.of(context).pop(),
               ),
-            ),
-            SizedBox(height: 10),
-          ],
-        ),
+              MusicPageView(
+                pageController: _pageController,
+                dummyData: dummyData,
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }
