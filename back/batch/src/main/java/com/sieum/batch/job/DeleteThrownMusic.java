@@ -1,8 +1,6 @@
 package com.sieum.batch.job;
 
 import com.sieum.batch.feign.MusicFeignClient;
-import com.sieum.batch.parameter.DateTimeJobParameter;
-import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.Job;
@@ -26,15 +24,33 @@ public class DeleteThrownMusic {
     // private final ThrowItemAdaptor throwItemAdaptor;
     private final MusicFeignClient musicFeignClient;
 
-    @Bean(BEAN_PREFIX + "dateTimeJobParameter")
+    /*@Bean(BEAN_PREFIX + "dateTimeJobParameter")
     @JobScope
     public DateTimeJobParameter dateTimeJobParameter() {
         return new DateTimeJobParameter();
-    }
+    }*/
 
     @Bean(JOB_NAME)
     public Job eventCreateJob() {
         return jobBuilderFactory.get(JOB_NAME).preventRestart().start(eventCreationStep()).build();
+    }
+
+    @Bean("NONE")
+    public Job eventNoneJob() {
+        return jobBuilderFactory.get("NONE").preventRestart().start(eventCreationStep()).build();
+    }
+
+    @Bean("_NONE" + "step")
+    @JobScope
+    public Step noneStep() {
+        return stepBuilderFactory
+                .get(BEAN_PREFIX + "step")
+                .tasklet(
+                        (contribution, chunkContext) -> {
+                            log.info("none job");
+                            return RepeatStatus.FINISHED;
+                        })
+                .build();
     }
 
     @Bean(BEAN_PREFIX + "step")
@@ -45,10 +61,9 @@ public class DeleteThrownMusic {
                 .tasklet(
                         (contribution, chunkContext) -> {
                             log.info(">>>>> Run Deleting thrown music");
-                            LocalDateTime time = dateTimeJobParameter().getTime();
+                            // LocalDateTime time = dateTimeJobParameter().getTime();
                             // List<Event> events =
                             // eventService.closeExpiredEventsEndAtBefore(time);
-                            // MattaMost와 연동하기
                             final long successCount = musicFeignClient.deleteNotFamousMusic();
                             log.info(
                                     ">>>>> {} successful executions of throwing music deletion",

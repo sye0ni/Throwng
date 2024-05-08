@@ -4,6 +4,7 @@ server:
 spring:
   application:
     name: batch
+  batch.job.names: ${job.name:NONE}
 
 eureka:
   instance:
