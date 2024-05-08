@@ -86,4 +86,8 @@ public class UserService {
     public List<CouponeInquiryResponse> getUserCouponHistory(final long userId) {
         return quizFeignClient.getCouponHistory(userId);
     }
+
+    public String getUserFcmToken(final long userId) {
+        return userRepository.findById(userId).get().getFcmToken();
+    }
 }

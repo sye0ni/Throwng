@@ -68,4 +68,10 @@ public class UserController {
         long userId = loginService.getUsername(accessToken);
         return ResponseEntity.ok().body(userService.getUserCouponHistory(userId));
     }
+
+    @Operation(summary = "Feign Client")
+    @GetMapping("/{userId}/fcm")
+    public ResponseEntity<?> getUserFcmList(@PathVariable final long userId) {
+        return ResponseEntity.ok().body(userService.getUserFcmToken(userId));
+    }
 }
