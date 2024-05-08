@@ -1,7 +1,9 @@
 package com.sieum.user.infrastructure;
 
+import static com.sieum.user.common.CustomExceptionStatus.NOT_AUTHENTICATED_ACCOUNT;
+
 import com.sieum.user.dto.MemberTokens;
-import com.sieum.user.exception.UnAuthorizedException;
+import com.sieum.user.exception.BadRequestException;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import java.nio.charset.StandardCharsets;
@@ -97,7 +99,7 @@ public class JwtProvider {
                             .parseClaimsJws(authorization);
         } catch (Exception e) {
             log.error(e.getMessage());
-            throw new UnAuthorizedException();
+            throw new BadRequestException(NOT_AUTHENTICATED_ACCOUNT);
         }
         Map<String, Object> value = claims.getBody();
         log.info("value: {}", value);
