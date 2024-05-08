@@ -9,6 +9,7 @@ import com.sieum.music.domain.enums.ThrowStatus;
 import com.sieum.music.dto.request.WatchThrownItemRequest;
 import com.sieum.music.dto.response.KakaoMapReverseGeoResponse;
 import com.sieum.music.dto.response.UserLevelInfoResponse;
+import com.sieum.music.dto.response.WatchFamousMusicResponse;
 import com.sieum.music.dto.response.WatchPlaylistItemResponse;
 import com.sieum.music.exception.BadRequestException;
 import com.sieum.music.repository.*;
@@ -180,5 +181,14 @@ public class WatchService {
     private Playlist createPlaylist(final long userId, final Song song) {
         return playlistRepository.save(
                 Playlist.builder().userId(userId).song(song).status(true).build());
+    }
+
+    @Transactional(readOnly = true)
+    public List<WatchFamousMusicResponse> findPopularMusicAtLegalDong(
+            final double longitude, final double latitude) {
+        KakaoMapReverseGeoResponse kakaoMapReverseGeoResponse =
+                kakaoMapReverseGeoUtil.getReverseGeo(latitude, longitude);
+        return throwQueryDSLRepository.findByZipCodeIdAndIsPopular(
+                kakaoMapReverseGeoResponse.getDocuments().get(0).code);
     }
 }
