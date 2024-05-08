@@ -26,7 +26,7 @@ class _MyPlayListState extends State<MyPlayList> {
       "playlistId": 11,
       "title": "Magnetic",
       "artist": "아일릿",
-      "albumImage": "https://popcon-s3-bucket.s3.ap-southeast-2.amazonaws.com/throwng/superrealme.jpg",
+      "albumImage": "https://image.bugsm.co.kr/album/images/500/40935/4093534.jpg",
       "youtubeId": "69q7FmDh1JXekNKOOxDmdM",
       "previewUrl": "String"
     },

@@ -19,8 +19,11 @@ class MyPlayListPage extends StatelessWidget {
           children: [
             Image.asset(
               'assets/images/MyPlayList.png',
-              width: 50,
-              height: 50,
+              width: 100,
+              height: 100,
+            ),
+            SizedBox(
+              height: 5,
             ),
             Text("내 플레이리스트")
           ],
