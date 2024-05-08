@@ -18,7 +18,6 @@ public class QuizHistory extends BaseTime {
     private Long id;
 
     @Column(length = 200)
-    @NotNull
     private String submit;
 
     @NotNull @Column private boolean result;
