@@ -46,7 +46,11 @@ public class CouponService {
                                 .couponType(couponType)
                                 .route(couponRoute)
                                 .build());
-        createCouponHistory(coupon);
+
+        if (!couponType.equals("BOOM")) {
+            createCouponHistory(coupon);
+        }
+
         return CreateCouponResponse.of(coupon);
     }
 
