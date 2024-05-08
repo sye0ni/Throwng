@@ -13,7 +13,7 @@ public class QuizController {
 
     private final QuizService quizService;
 
-    @GetMapping
+    @GetMapping("/list")
     public ResponseEntity<?> getQuizList(
             @RequestHeader("Authorization") final String authorization) {
         return ResponseEntity.ok().body(quizService.getQuizList());
