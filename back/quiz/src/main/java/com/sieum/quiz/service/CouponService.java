@@ -7,6 +7,7 @@ import com.sieum.quiz.domain.Coupon;
 import com.sieum.quiz.domain.CouponHistory;
 import com.sieum.quiz.domain.enums.CouponRoute;
 import com.sieum.quiz.domain.enums.CouponType;
+import com.sieum.quiz.dto.request.CouponNotificationRequest;
 import com.sieum.quiz.dto.response.CouponeInquiryResponse;
 import com.sieum.quiz.dto.response.CreateCouponResponse;
 import com.sieum.quiz.exception.BadRequestException;
@@ -19,7 +20,9 @@ import java.util.Optional;
 import java.util.Random;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -80,4 +83,44 @@ public class CouponService {
                                                         coupon.getId())))
                 .collect(Collectors.toList());
     }
+
+    @Transactional
+//    @Scheduled(cron="0 0 15 * * *", zone="Asia/Seoul")
+    public void sendCouponExpirationNotification() {
+        System.out.println("스케줄러 가동!!");
+
+        final List<CouponHistory> couponHistoryList=
+                couponRepository.findAll().stream()
+                        .map(
+                                coupon->couponHistoryRepository.findTopByCouponIdOrderByCreatedAtDesc(coupon.getId())
+                        ).collect(Collectors.toList());
+
+        final List<Long> userIdList=
+                couponHistoryList.stream()
+                        .filter(
+                                couponHistory -> couponHistory.getCouponStatus().equals("NONE") && couponHistory.getCreatedAt().toLocalDate().isEqual(LocalDate.now().minusDays(6))
+                        )
+                        .map(
+                            couponHistory -> couponHistory.getCoupon().getUserId()
+                        )
+                        .distinct()
+                        .collect(Collectors.toList());
+
+        final List<CouponNotificationRequest> couponNotificationRequestList = userIdList.stream()
+                .map(
+                        userId->{
+                            final String fcmToken=getUserFcm(userId);
+                            return CouponNotificationRequest.builder()
+                                    .userId(userId)
+                                    .fcmToken(fcmToken).build();
+                        }
+                ).collect(Collectors.toList());
+
+        System.out.println(couponNotificationRequestList);
+    }
+
+    public String getUserFcm(final long userId) {
+        return tokenAuthClient.getUserFcm(userId);
+    }
+
 }

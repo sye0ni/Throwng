@@ -27,4 +27,10 @@ public class CouponController {
     public ResponseEntity<?> getCouponHistory(@PathVariable final long userId) {
         return ResponseEntity.ok().body(couponService.getCouponHistory(userId));
     }
+
+    @GetMapping("/test")
+    public ResponseEntity<?> test(){
+        couponService.sendCouponExpirationNotification();
+        return null;
+    }
 }
