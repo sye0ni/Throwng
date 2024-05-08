@@ -53,7 +53,8 @@ class _MusicDropState extends State<MusicDrop> {
         'SongId': widget.musicData['playlistId'],
         'userComment': userComment,
       };
-      await fetchThrowng(context, data);
+      print(data);
+      // await fetchThrowng(context, data);
     } else {
       print("위도없다~~ 경도없다~~");
     }
@@ -88,63 +89,76 @@ class _MusicDropState extends State<MusicDrop> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          ClockTime(),
-          SizedBox(height: 5),
-          Text(trimText('${widget.musicData['title']} - ${widget.musicData['artist']}', 8)),
-          SizedBox(height: 5),
-          Row(
+      body: Container(
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: NetworkImage(widget.musicData['albumImage']),
+            fit: BoxFit.cover,
+          ),
+        ),
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.black.withOpacity(0.7),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              IconButton(
-                icon: Icon(Icons.arrow_back, color: Colors.white),
-                onPressed: () => Navigator.of(context).pop(),
-              ),
-              SizedBox(
-                width: 130,
-                height: 85,
-                child: TextField(
-                  controller: commentController,
-                  maxLength: 50,
-                  minLines: 1,
-                  maxLines: 5,
-                  onChanged: (value) {
-                    setState(() {
-                      userComment = value.trim();
-                    });
-                  },
-                  style: TextStyle(
-                    fontSize: 13,
-                    color: Colors.white,
+              ClockTime(),
+              SizedBox(height: 5),
+              Text(trimText('${widget.musicData['title']} - ${widget.musicData['artist']}', 8)),
+              SizedBox(height: 5),
+              Row(
+                children: [
+                  IconButton(
+                    icon: Icon(Icons.arrow_back, color: Colors.white),
+                    onPressed: () => Navigator.of(context).pop(),
                   ),
-                  decoration: InputDecoration(
-                    border: InputBorder.none,
-                    hintStyle: TextStyle(color: PLACEHOLDER),
-                    hintText: '떠오르는 말을 적어보세요',
+                  SizedBox(
+                    width: 130,
+                    height: 85,
+                    child: TextField(
+                      controller: commentController,
+                      maxLength: 50,
+                      minLines: 1,
+                      maxLines: 5,
+                      onChanged: (value) {
+                        setState(() {
+                          userComment = value.trim();
+                        });
+                      },
+                      style: TextStyle(
+                        fontSize: 13,
+                        color: Colors.white,
+                      ),
+                      decoration: InputDecoration(
+                        border: InputBorder.none,
+                        hintStyle: TextStyle(color: PLACEHOLDER),
+                        hintText: '떠오르는 말을 적어보세요',
+                      ),
+                      textInputAction: TextInputAction.done,
+                      onSubmitted: (value) {
+                        setState(() {
+                          userComment = value;
+                        });
+                        FocusScope.of(context).unfocus();
+                      },
+                    ),
                   ),
-                  textInputAction: TextInputAction.done,
-                  onSubmitted: (value) {
-                    setState(() {
-                      userComment = value;
-                    });
-                    FocusScope.of(context).unfocus();
-                  },
-                ),
+                ],
               ),
+              CustomElevatedButton(
+                text: '쓰롱하기',
+                onPressed: userComment.trim().isEmpty
+                    ? null
+                    : () async {
+                        handlePress();
+                      },
+                backgroundColor: BTN_COLOR,
+                textColor: Colors.white,
+              )
             ],
           ),
-          CustomElevatedButton(
-            text: '쓰롱하기',
-            onPressed: userComment.trim().isEmpty
-                ? null
-                : () async {
-                    handlePress();
-                  },
-            backgroundColor: BTN_COLOR,
-            textColor: Colors.white,
-          )
-        ],
+        ),
       ),
     );
   }
