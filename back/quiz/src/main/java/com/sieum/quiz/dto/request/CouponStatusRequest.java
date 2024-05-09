@@ -13,17 +13,13 @@ import org.springframework.validation.annotation.Validated;
 @Validated
 @NoArgsConstructor
 @AllArgsConstructor
-public class CouponValidationRequest {
-
-    @Schema(description = "userId to user coupon")
-    @NotNull
-    private Long userId;
+public class CouponStatusRequest {
 
     @Schema(description = "id of the nickname change coupon you are currently using")
     @NotNull
-    private Long couponId;
+    private long couponId;
 
-    @Schema(description = "types of coupons that can be used")
+    @Schema(description = "userId to user coupon")
     @NotNull
-    private String type;
+    private long userId;
 }

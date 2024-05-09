@@ -19,17 +19,28 @@ public class CouponValidator {
     private final CouponHistoryRepository couponHistoryRepository;
     private final String COUPON_STATUS = "NONE";
 
-    public void validateCoupon(final CouponValidationRequest couponValidationRequest) {
+    public Boolean validateCoupon(final CouponValidationRequest couponValidationRequest) {
         Coupon coupon =
-                couponRepository
-                        .findByIdAndUserId(
-                                couponValidationRequest.getCouponId(),
-                                couponValidationRequest.getUserId())
-                        .orElseThrow(() -> new BadRequestException(NOT_MATCH_COUPON_USER));
+                findCurrentCoupon(
+                        couponValidationRequest.getCouponId(), couponValidationRequest.getUserId());
+        if (!coupon.getCouponType().equals(couponValidationRequest.getType())) {
+            throw new BadRequestException(NOT_MATCH_COUPON_TYPE);
+        }
 
+        findCurrentCouponHistoryByCurrentCoupon(couponValidationRequest.getCouponId());
+
+        return true;
+    }
+
+    public Coupon findCurrentCoupon(final long couponId, final long userId) {
+        return couponRepository
+                .findByIdAndUserId(couponId, userId)
+                .orElseThrow(() -> new BadRequestException(NOT_MATCH_COUPON_USER));
+    }
+
+    public void findCurrentCouponHistoryByCurrentCoupon(final long couponId) {
         CouponHistory couponHistory =
-                couponHistoryRepository.findTopByCouponIdOrderByCreatedAtDesc(
-                        couponValidationRequest.getCouponId());
+                couponHistoryRepository.findTopByCouponIdOrderByCreatedAtDesc(couponId);
 
         if (couponHistory == null) {
             throw new BadRequestException(NOT_FOUND_COUPON_ID);
