@@ -62,8 +62,8 @@ public class MusicController {
     //    }
 
     @Operation(summary = "Search for songs on Spotify")
-    @GetMapping("/search/{keyword}")
-    public ResponseEntity<?> searchSong2(@PathVariable("keyword") final String keyword) {
+    @GetMapping("/search")
+    public ResponseEntity<?> searchSong2(@RequestParam("keyword") final String keyword) {
         return ResponseEntity.ok().body(spotifyUtil.searchSongInSpotify(keyword));
     }
 
