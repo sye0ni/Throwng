@@ -43,4 +43,8 @@ public class User extends BaseTime {
     public void setFcmToken(final String fcmToken) {
         this.fcmToken = fcmToken;
     }
+
+    public void updateNickName(final String nickName) {
+        this.nickName = nickName;
+    }
 }
