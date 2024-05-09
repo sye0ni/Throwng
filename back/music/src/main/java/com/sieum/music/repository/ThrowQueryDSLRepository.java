@@ -88,7 +88,9 @@ public class ThrowQueryDSLRepository {
                                 throwItem.id,
                                 throwItem.song.title,
                                 artist.name,
-                                throwItem.song.albumImage))
+                                throwItem.song.albumImage,
+                                song.youtubeId,
+                                throwItem.content))
                 .from(throwItem)
                 .join(throwItem.zipcode, zipcode)
                 .on(throwItem.zipcode.zipcodeId.eq(zipcode.zipcodeId))

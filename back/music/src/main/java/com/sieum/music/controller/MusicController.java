@@ -1,5 +1,6 @@
 package com.sieum.music.controller;
 
+import com.sieum.music.dto.request.MusicExperienceCountReqeust;
 import com.sieum.music.dto.request.NearItemPointRequest;
 import com.sieum.music.dto.request.ReverseGeoCodeRequest;
 import com.sieum.music.dto.request.ThrownItemRequest;
@@ -137,5 +138,13 @@ public class MusicController {
     @Operation(summary = "Feign Client - update status to HIDDEN")
     public ResponseEntity<?> deleteNotFamousMusic() {
         return ResponseEntity.ok().body(musicService.deleteNotFamousMusic());
+    }
+
+    @Operation(summary = "Feign Client")
+    @PostMapping("/music-experience")
+    public ResponseEntity<?> getMusicExperienceCount(
+            @RequestBody MusicExperienceCountReqeust musicExperienceCountReqeust) {
+        return ResponseEntity.ok()
+                .body(musicService.getMusicExperienceCount(musicExperienceCountReqeust));
     }
 }
