@@ -1,7 +1,6 @@
 package com.sieum.quiz.service;
 
 import static com.sieum.quiz.exception.CustomExceptionStatus.INVALID_QUIZ_ID;
-import static com.sieum.quiz.exception.CustomExceptionStatus.NOT_TODAY_QUIZ_ID;
 
 import com.sieum.quiz.controller.feign.TokenAuthClient;
 import com.sieum.quiz.domain.Quiz;
@@ -17,7 +16,6 @@ import com.sieum.quiz.repository.QuizHistoryRepository;
 import com.sieum.quiz.repository.QuizRepository;
 import com.sieum.quiz.util.RedisUtil;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -66,14 +64,16 @@ public class QuizService {
             throw new BadRequestException(INVALID_QUIZ_ID);
         }
 
-//        final String key =
-//                "quiz_" + LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-//        final List<QuizResponse> todayQuiz = (List<QuizResponse>) redisUtil.getObject(key);
+        //        final String key =
+        //                "quiz_" +
+        // LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        //        final List<QuizResponse> todayQuiz = (List<QuizResponse>)
+        // redisUtil.getObject(key);
 
-//        if (!todayQuiz.stream()
-//                .anyMatch(q -> q.getQuizId() == quizHistoryCreationRequest.getQuizId())) {
-//            throw new BadRequestException(NOT_TODAY_QUIZ_ID);
-//        }
+        //        if (!todayQuiz.stream()
+        //                .anyMatch(q -> q.getQuizId() == quizHistoryCreationRequest.getQuizId())) {
+        //            throw new BadRequestException(NOT_TODAY_QUIZ_ID);
+        //        }
 
         quizHistoryRepository.save(
                 QuizHistory.builder()
