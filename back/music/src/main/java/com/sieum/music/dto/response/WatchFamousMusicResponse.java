@@ -22,4 +22,10 @@ public class WatchFamousMusicResponse {
             description = "album image URL",
             example = "https://i.scdn.co/image/ab67616d0000b2739d28fd01859073a3ae6ea209")
     String albumImage;
+
+    @Schema(description = "youtube ID", example = "0a4MMyCrzT0En247IhqZbD")
+    String youtubeId;
+
+    @Schema(description = "thrown song comment", example = "I like NewJeans")
+    String content;
 }
