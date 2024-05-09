@@ -1,12 +1,14 @@
 package com.sieum.quiz.service;
 
 import static com.sieum.quiz.exception.CustomExceptionStatus.DUPLICATE_COUPON_REQUEST;
+import static com.sieum.quiz.exception.CustomExceptionStatus.NOT_FOUND_COUPON_ID;
 
 import com.sieum.quiz.controller.feign.TokenAuthClient;
 import com.sieum.quiz.domain.Coupon;
 import com.sieum.quiz.domain.CouponHistory;
 import com.sieum.quiz.domain.enums.CouponRoute;
 import com.sieum.quiz.domain.enums.CouponType;
+import com.sieum.quiz.dto.request.CouponStatusRequest;
 import com.sieum.quiz.dto.response.CouponeInquiryResponse;
 import com.sieum.quiz.dto.response.CreateCouponResponse;
 import com.sieum.quiz.exception.BadRequestException;
@@ -28,6 +30,7 @@ public class CouponService {
     private final TokenAuthClient tokenAuthClient;
     private final CouponReposistory couponRepository;
     private final CouponHistoryRepository couponHistoryRepository;
+    private final String COMPLETION_STATUS = "COMPLETION";
 
     public CreateCouponResponse createCoupon(final long userId, final String route) {
         final String couponRoute = CouponRoute.findByName(route);
@@ -83,5 +86,18 @@ public class CouponService {
                                                 .findTopByCouponIdOrderByCreatedAtDesc(
                                                         coupon.getId())))
                 .collect(Collectors.toList());
+    }
+
+    public void modifyCouponStatus(final CouponStatusRequest couponStatusRequest) {
+        CouponHistory couponHistory =
+                couponHistoryRepository.findTopByCouponIdOrderByCreatedAtDesc(
+                        couponStatusRequest.getCouponId());
+
+        if (couponHistory == null) {
+            throw new BadRequestException(NOT_FOUND_COUPON_ID);
+        }
+
+        couponHistory.changeCouponStatus(COMPLETION_STATUS);
+        couponHistoryRepository.save(couponHistory);
     }
 }

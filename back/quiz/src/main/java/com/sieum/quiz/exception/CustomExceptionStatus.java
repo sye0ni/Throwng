@@ -17,7 +17,8 @@ public enum CustomExceptionStatus implements BaseErrorCode {
     NOT_TODAY_QUIZ_ID("QuizIdError_400_6", "Not today's quiz id"),
     NOT_MATCH_COUPON_USER("CouponValidationError_400_1", "Coupon issuer and user do not match"),
     NOT_FOUND_COUPON_ID("CouponValidationError_400_2", "Coupon ID not found"),
-    NOT_USE_COUPON_STATUS("CouponValidationError_400_3", "The status of the coupon is unavailable");
+    NOT_USE_COUPON_STATUS("CouponValidationError_400_3", "The status of the coupon is unavailable"),
+    NOT_MATCH_COUPON_TYPE("CouponValidationError_400_4", "This coupon cannot be used");
 
     private String code;
     private String reason;

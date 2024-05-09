@@ -1,5 +1,6 @@
 package com.sieum.quiz.controller;
 
+import com.sieum.quiz.dto.request.CouponStatusRequest;
 import com.sieum.quiz.dto.request.CouponValidationRequest;
 import com.sieum.quiz.service.CouponService;
 import com.sieum.quiz.validator.CouponValidator;
@@ -32,10 +33,17 @@ public class CouponController {
     }
 
     @Operation(summary = "feign client")
-    @GetMapping("/validation")
-    public ResponseEntity<?> getCouponHistory(
+    @PostMapping("/validation")
+    public ResponseEntity<?> validateCoupon(
             @RequestBody final CouponValidationRequest couponValidationRequest) {
-        couponValidator.validateCoupon(couponValidationRequest);
+        return ResponseEntity.ok(couponValidator.validateCoupon(couponValidationRequest));
+    }
+
+    @Operation(summary = "feign client")
+    @PutMapping("/status")
+    public ResponseEntity<?> modifyCouponStatus(
+            @RequestBody final CouponStatusRequest couponStatusRequest) {
+        couponService.modifyCouponStatus(couponStatusRequest);
         return ResponseEntity.noContent().build();
     }
 }
