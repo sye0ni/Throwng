@@ -4,6 +4,7 @@ import static com.sieum.user.common.CustomExceptionStatus.*;
 
 import com.sieum.user.controller.feign.MusicFeignClient;
 import com.sieum.user.controller.feign.QuizFeignClient;
+import com.sieum.user.domain.LevelHistory;
 import com.sieum.user.domain.User;
 import com.sieum.user.domain.enums.Level;
 import com.sieum.user.dto.request.CouponNickNameRequest;
@@ -14,6 +15,7 @@ import com.sieum.user.dto.response.*;
 import com.sieum.user.exception.AuthException;
 import com.sieum.user.exception.BadRequestException;
 import com.sieum.user.exception.FeignClientException;
+import com.sieum.user.repository.LevelHistoryRepository;
 import com.sieum.user.repository.UserRepository;
 import feign.FeignException;
 import java.util.List;
@@ -31,6 +33,7 @@ public class UserService {
     private final MusicFeignClient musicFeignClient;
     private final LoginService loginService;
     private final QuizFeignClient quizFeignClient;
+    private final LevelHistoryRepository levelHistoryRepository;
 
     public UserInfoResponse getUserLevel(long userId) {
         User user =
@@ -50,11 +53,18 @@ public class UserService {
                         .findById(userId)
                         .orElseThrow(() -> new AuthException(NOT_FOUND_ACCOUNT));
 
+        LevelHistory levelHistory =
+                levelHistoryRepository.findTopByUserIdOrderByCreatedAtDesc(user.getId());
+
+        if (levelHistory == null) {
+            throw new BadRequestException(NOT_FOUND_LEVEL_HISTORY_ID);
+        }
+
         if (!user.getViolation().equals("NONE")) {
             throw new AuthException(VIOLATE_ACCOUNT);
         }
 
-        return UserLevelInfoResponse.of(userId, Level.getCount(user.getLevel()));
+        return UserLevelInfoResponse.of(userId, levelHistory.getLevel().getThrowngLimit());
     }
 
     public int getUserLevelInfo(long userId) {
