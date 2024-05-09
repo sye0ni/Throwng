@@ -5,8 +5,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestHeader;
 
+
 @FeignClient(name = "USER")
-public interface TokenAuthClient {
+public interface UserAuthClient {
 
     @GetMapping("/users/auth/id")
     long getUserId(@RequestHeader("Authorization") String accessToken);
