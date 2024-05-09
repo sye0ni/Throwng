@@ -1,12 +1,12 @@
 package com.sieum.user.controller;
 
+import com.sieum.user.dto.request.OTPRequest;
 import com.sieum.user.service.WatchService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/watch")
@@ -18,5 +18,10 @@ public class WatchController {
     @GetMapping("/otp")
     public ResponseEntity<?> getOTP(@RequestHeader("Authorization") String accessToken) {
         return ResponseEntity.ok().body(watchService.createOTP(accessToken));
+    }
+
+    @PostMapping("/auth")
+    public ResponseEntity<?> authenticate(@Valid @RequestBody final OTPRequest otpRequest) {
+        return ResponseEntity.ok().body(watchService.authenticate(otpRequest));
     }
 }
