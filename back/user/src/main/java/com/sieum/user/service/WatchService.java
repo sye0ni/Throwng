@@ -20,7 +20,7 @@ public class WatchService {
     private final CreateOTPUtil createOTPUtil;
     private final JwtProvider jwtProvider;
     private final RedisUtil redisUtil;
-    private static final int OTP_VALIDITY = 120;
+    private static final int OTP_VALIDITY = 60;
     private static final String TOKEN_SUBJECT = "watch_access_token";
 
     /*

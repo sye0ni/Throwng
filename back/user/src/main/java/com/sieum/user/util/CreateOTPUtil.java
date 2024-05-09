@@ -13,6 +13,6 @@ public class CreateOTPUtil {
     private static final Random random = new Random();
 
     public Integer createOTP() {
-        return random.nextInt(1000000);
+        return random.nextInt(900000) + 100000;
     }
 }
