@@ -2,6 +2,7 @@ package com.sieum.user.controller;
 
 import com.sieum.user.dto.request.CouponNickNameRequest;
 import com.sieum.user.dto.request.FcmTokenRequest;
+import com.sieum.user.dto.request.UpdateExperiencePointRequest;
 import com.sieum.user.service.LoginService;
 import com.sieum.user.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -84,5 +85,13 @@ public class UserController {
     @GetMapping("/{userId}/fcm")
     public ResponseEntity<?> getUserFcmList(@PathVariable final long userId) {
         return ResponseEntity.ok().body(userService.getUserFcmToken(userId));
+    }
+
+    @Operation(summary = "Feign Client")
+    @PostMapping("/experience-point")
+    public ResponseEntity<?> upgradeExperiencePoint(
+            @RequestBody final UpdateExperiencePointRequest updateExperiencePointRequest) {
+        userService.upgradeExperiencePoint(updateExperiencePointRequest);
+        return ResponseEntity.noContent().build();
     }
 }
