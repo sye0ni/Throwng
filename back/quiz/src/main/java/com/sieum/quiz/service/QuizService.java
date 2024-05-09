@@ -66,14 +66,14 @@ public class QuizService {
             throw new BadRequestException(INVALID_QUIZ_ID);
         }
 
-        final String key =
-                "quiz_" + LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-        final List<QuizResponse> todayQuiz = (List<QuizResponse>) redisUtil.getObject(key);
+//        final String key =
+//                "quiz_" + LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+//        final List<QuizResponse> todayQuiz = (List<QuizResponse>) redisUtil.getObject(key);
 
-        if (!todayQuiz.stream()
-                .anyMatch(q -> q.getQuizId() == quizHistoryCreationRequest.getQuizId())) {
-            throw new BadRequestException(NOT_TODAY_QUIZ_ID);
-        }
+//        if (!todayQuiz.stream()
+//                .anyMatch(q -> q.getQuizId() == quizHistoryCreationRequest.getQuizId())) {
+//            throw new BadRequestException(NOT_TODAY_QUIZ_ID);
+//        }
 
         quizHistoryRepository.save(
                 QuizHistory.builder()
