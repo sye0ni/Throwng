@@ -46,7 +46,7 @@ class _MusicPickDetailState extends State<MusicPickDetail> {
             children: [
               ClockTime(),
               SizedBox(height: 5),
-              Text(trimText('${widget.musicData['title']} - ${widget.musicData['artist']}', 6)),
+              Text(trimText('${widget.musicData['title']} - ${widget.musicData['name']}', 6)),
               SizedBox(height: 5),
               Row(
                 children: [
@@ -63,7 +63,7 @@ class _MusicPickDetailState extends State<MusicPickDetail> {
                       borderRadius: BorderRadius.circular(5),
                     ),
                     child: Text(
-                      widget.musicData['comment'],
+                      widget.musicData['content'],
                       style: TextStyle(
                         fontSize: 13,
                       ),

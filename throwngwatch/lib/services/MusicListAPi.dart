@@ -16,7 +16,6 @@ Future<Response> getMusicList(lat, lon) async {
 Future<Response> getMyPlayList() async {
   try {
     final res = await api.get('/music/watch/playlists');
-    print(res);
     return res;
   } catch (e) {
     print(e);
@@ -26,7 +25,7 @@ Future<Response> getMyPlayList() async {
 
 Future<Response?> postThrowng(data) async {
   try {
-    final res = await api.post('/music/watch/throw-items', data: data);
+    final res = await api.post('/music/watch/thrown-song', data: data);
     return res;
   } on DioError catch (e) {
     if (e.response != null) {

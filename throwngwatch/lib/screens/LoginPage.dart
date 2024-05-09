@@ -35,7 +35,7 @@ class _LoginPageState extends State<LoginPage> {
     String refreshToken = res.data['refreshToken'];
 
     await UserManager().saveUserInfo(newAccessToken: accessToken, newRefreshToken: refreshToken);
-    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => MainPage()));
+    Navigator.push(context, MaterialPageRoute(builder: (context) => MainPage()));
   }
 
   @override
