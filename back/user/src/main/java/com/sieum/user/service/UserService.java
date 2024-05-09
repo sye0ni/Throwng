@@ -41,6 +41,7 @@ public class UserService {
     private final String PICKUP = "PICKUP";
     private final int INITIAL_STATUS = 0;
     private final int PLUS_NUMBER = 1;
+    private final int PERCENTAGE = 100;
 
     public UserInfoResponse getUserLevel(long userId) {
         User user =
@@ -48,10 +49,22 @@ public class UserService {
                         .findById(userId)
                         .orElseThrow(() -> new AuthException(NOT_FOUND_ACCOUNT));
 
+        LevelHistory levelHistory =
+                levelHistoryRepository.findTopByUserIdOrderByCreatedAtDesc(userId);
+
+        if (levelHistory == null) {
+            throw new BadRequestException(NOT_FOUND_LEVEL_HISTORY_ID);
+        }
+
         return UserInfoResponse.of(
                 user,
-                musicFeignClient.countThrownSong(userId),
-                musicFeignClient.countPickUpSong(userId));
+                levelHistory.getLevel().getGrade(),
+                calculateExp(
+                        levelHistory,
+                        getExperienceCountByRedis(
+                                levelHistory.getLevel().getGrade(),
+                                userId,
+                                levelHistory.getCreatedAt())));
     }
 
     public UserLevelInfoResponse getLimitAccount(long userId) {
@@ -226,5 +239,30 @@ public class UserService {
                         * ExperiencePointType.valueOf(THROWNG).getPoint()
                 + musicExperienceCountResponse.getPickedupCount()
                         * ExperiencePointType.valueOf(PICKUP).getPoint());
+    }
+
+    public long getExperienceCountByRedis(
+            final int grade, final long userId, final LocalDateTime createdAt) {
+        final String key = "user_exp_" + grade + "_" + userId;
+        final Object value = redisUtil.getData(key);
+
+        long expCount = 0;
+        if (value == null) {
+            expCount = getMusicExperienceCount(userId, createdAt);
+            if (expCount != 0) {
+                redisUtil.setData(key, String.valueOf(expCount));
+            }
+        } else {
+            expCount = Long.valueOf((String) value);
+        }
+
+        return expCount;
+    }
+
+    public int calculateExp(final LevelHistory levelHistory, final long exp) {
+        return (int)
+                Math.floor(
+                        (((double) exp / (double) levelHistory.getLevel().getNextPoint()))
+                                * PERCENTAGE);
     }
 }
