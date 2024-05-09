@@ -89,6 +89,7 @@ public class QuizService {
     }
 
     public List<QuizResponse> getQuizList() {
+
         //        final String key =
         //                "quiz_" +
         // LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
@@ -116,9 +117,9 @@ public class QuizService {
 
         //        final List<Integer> indexes = createRandomQuiz(quizlist.size());
         final List<Integer> indexes = new ArrayList<>();
-        indexes.add(6);
-        indexes.add(7);
-        indexes.add(19);
+        indexes.add(0);
+        indexes.add(3);
+        indexes.add(4);
         final List<QuizResponse> todayQuizList = new ArrayList<>();
 
         indexes.stream().forEach(index -> todayQuizList.add(quizlist.get(index)));
