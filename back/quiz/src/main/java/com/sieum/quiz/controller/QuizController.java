@@ -34,8 +34,7 @@ public class QuizController {
             @RequestBody final QuizHistoryCreationRequest quizHistoryCreationRequest) {
 
         final long userId = quizService.getCurrentUserId(authorization);
-        quizService.createQuizHistory(userId, quizHistoryCreationRequest);
-
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok()
+                .body(quizService.createQuizHistory(userId, quizHistoryCreationRequest));
     }
 }
