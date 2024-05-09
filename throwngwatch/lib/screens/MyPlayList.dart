@@ -13,24 +13,7 @@ class MyPlayList extends StatefulWidget {
 }
 
 class _MyPlayListState extends State<MyPlayList> {
-  final List<Map<String, dynamic>> myPlayList = [
-    {
-      "playlistId": 11,
-      "title": "Magnetic",
-      "artist": "아일릿",
-      "albumImage": "https://popcon-s3-bucket.s3.ap-southeast-2.amazonaws.com/throwng/superrealme.jpg",
-      "youtubeId": "69q7FmDh1JXekNKOOxDmdM",
-      "previewUrl": "String"
-    },
-    {
-      "playlistId": 11,
-      "title": "Magnetic",
-      "artist": "아일릿",
-      "albumImage": "https://image.bugsm.co.kr/album/images/500/40935/4093534.jpg",
-      "youtubeId": "69q7FmDh1JXekNKOOxDmdM",
-      "previewUrl": "String"
-    },
-  ];
+  final List<Map<String, dynamic>> myPlayList = [];
 
   String trimText(String text, int limit) {
     return text.length > limit ? '${text.substring(0, limit)}...' : text;
@@ -45,19 +28,26 @@ class _MyPlayListState extends State<MyPlayList> {
   @override
   void initState() {
     super.initState();
-    // fetchMyPlayList();
+    fetchMyPlayList();
     _pageController = PageController(initialPage: _currentPageIndex);
-    Map<String, dynamic> initialMusic = myPlayList[0];
-    _currentMusicTitleAndArtist = "${initialMusic['title']}-${initialMusic['artist']}";
   }
 
-  Future<void> fetchMyPlayList() async {
-    var res = await getMyPlayList();
-    setState(() {
-      myPlayList.addAll(res.data);
-      Map<String, dynamic> initialMusic = myPlayList[0];
-      _currentMusicTitleAndArtist = "${initialMusic['title']}-${initialMusic['artist']}";
-    });
+  void fetchMyPlayList() async {
+    try {
+      final res = await getMyPlayList();
+      if (mounted) {
+        setState(() {
+          final List<Map<String, dynamic>> tempList = List<Map<String, dynamic>>.from(res.data.map((item) => Map<String, dynamic>.from(item)));
+          myPlayList.addAll(tempList);
+          if (myPlayList.isNotEmpty) {
+            Map<String, dynamic> initialMusic = myPlayList[0];
+            _currentMusicTitleAndArtist = "${initialMusic['title']}-${initialMusic['artist']}";
+          }
+        });
+      }
+    } catch (e) {
+      print(e);
+    }
   }
 
   @override

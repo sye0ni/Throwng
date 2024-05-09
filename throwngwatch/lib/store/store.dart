@@ -4,7 +4,8 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 class UserManager with ChangeNotifier {
   final FlutterSecureStorage storage = FlutterSecureStorage();
 
-  String? jwtToken;
+  String? accessToken;
+  String? refreshToken;
   double? latitude;
   double? longitude;
 
@@ -16,15 +17,18 @@ class UserManager with ChangeNotifier {
   UserManager._internal();
 
   Future<void> saveUserInfo({
-    String? newJwtToken,
+    String? newAccessToken,
+    String? newRefreshToken,
     double? newLatitude,
     double? newLongitude,
   }) async {
-    jwtToken = newJwtToken ?? jwtToken;
+    accessToken = newAccessToken ?? accessToken;
+    refreshToken = newRefreshToken ?? refreshToken;
     latitude = newLatitude ?? latitude;
     longitude = newLongitude ?? longitude;
 
-    await storage.write(key: 'jwtToken', value: jwtToken);
+    await storage.write(key: 'accessToken', value: accessToken);
+    await storage.write(key: 'refreshToken', value: refreshToken);
     if (latitude != null) await storage.write(key: 'latitude', value: latitude.toString());
     if (longitude != null) await storage.write(key: 'longitude', value: longitude.toString());
 
@@ -32,7 +36,8 @@ class UserManager with ChangeNotifier {
   }
 
   Future<void> loadUserInfo() async {
-    jwtToken = await storage.read(key: 'jwtToken');
+    accessToken = await storage.read(key: 'accessToken');
+    refreshToken = await storage.read(key: 'refreshToken');
     String? latStr = await storage.read(key: 'latitude');
     String? lonStr = await storage.read(key: 'longitude');
 
@@ -43,7 +48,8 @@ class UserManager with ChangeNotifier {
   }
 
   Future<void> clearUserInfo() async {
-    jwtToken = null;
+    accessToken = null;
+    refreshToken = null;
     latitude = null;
     longitude = null;
     await storage.deleteAll();
