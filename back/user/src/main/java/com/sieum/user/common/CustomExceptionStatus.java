@@ -14,6 +14,7 @@ public enum CustomExceptionStatus {
     NOT_FOUND_ACCOUNT("User_400_7", "This account does not exist."),
     NOT_FOUND_LEVEL("User_400_8", "This level does not exist."),
     VIOLATE_ACCOUNT("User_400_9", "This account is in violation of regulations"),
+    NOT_USE_COUPON_FROM_FEIGN("Feign_400_1", "This coupon cannot be used."),
     NOT_VALID_OTP("Otp_code_400_1", "Not valid OTP code");
 
     private final String code;
