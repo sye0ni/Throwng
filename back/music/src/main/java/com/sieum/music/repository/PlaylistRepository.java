@@ -11,5 +11,5 @@ public interface PlaylistRepository extends JpaRepository<Playlist, Integer> {
 
     Optional<Playlist> findByIdAndUserId(final int playlistId, final long userId);
 
-    List<Playlist> findByUserId(final long userId);
+    List<Playlist> findTop50ByUserIdOrderByIdDesc(final long userId);
 }

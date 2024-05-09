@@ -48,7 +48,7 @@ public class WatchService {
 
     @Transactional(readOnly = true)
     public List<WatchPlaylistItemResponse> getPlaylist(final long userId) {
-        return playlistRepository.findByUserId(userId).stream()
+        return playlistRepository.findTop50ByUserIdOrderByIdDesc(userId).stream()
                 .map(WatchPlaylistItemResponse::of)
                 .collect(Collectors.toList());
     }
