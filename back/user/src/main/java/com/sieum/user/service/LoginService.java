@@ -1,16 +1,21 @@
 package com.sieum.user.service;
 
 import static com.sieum.user.common.CustomExceptionStatus.FAIL_TO_GENERATE_RANDOM_NICKNAME;
+import static com.sieum.user.common.CustomExceptionStatus.NOT_FOUND_LEVEL_ID;
 
+import com.sieum.user.domain.Level;
+import com.sieum.user.domain.LevelHistory;
 import com.sieum.user.domain.User;
 import com.sieum.user.domain.UserHistory;
-import com.sieum.user.domain.enums.Level;
 import com.sieum.user.domain.enums.Violation;
 import com.sieum.user.exception.AuthException;
+import com.sieum.user.exception.BadRequestException;
 import com.sieum.user.infrastructure.JwtProvider;
 import com.sieum.user.infrastructure.oauthprovider.OauthProvider;
 import com.sieum.user.infrastructure.oauthprovider.OauthProviders;
 import com.sieum.user.infrastructure.oauthuserinfo.OauthUserInfo;
+import com.sieum.user.repository.LevelHistoryRepository;
+import com.sieum.user.repository.LevelRepository;
 import com.sieum.user.repository.UserHistoryRepository;
 import com.sieum.user.repository.UserRepository;
 import com.sieum.user.util.RandomNicknameUtil;
@@ -32,6 +37,9 @@ public class LoginService {
     private final RedisUtil redisUtil;
     private final JwtProvider jwtProvider;
     private final UserHistoryRepository userHistoryRepository;
+    private final LevelRepository levelRepsitory;
+    private final LevelHistoryRepository levelHistoryRepository;
+    private final int INITIAL_LEVEL_ID = 1;
 
     public User login(final String providerName, final String code) {
         final OauthProvider provider = oauthProviders.mapping(providerName);
@@ -56,16 +64,25 @@ public class LoginService {
         while (tryCount < MAX_TRY_COUNT) {
             final String nicknameWithRandom = RandomNicknameUtil.getRamdomNinkname();
             if (!userRepository.existsByNickName(nicknameWithRandom)) {
-                return userRepository.save(
-                        User.builder()
-                                .socialId(socialLoginId)
-                                .platform(providerName)
-                                .name(nickName)
-                                .nickName(nicknameWithRandom)
-                                .level(Level.EARPHONES.getValue())
-                                .violation(Violation.NONE.getValue())
-                                .isSignIn(isSignIn)
-                                .build());
+                User user =
+                        userRepository.save(
+                                User.builder()
+                                        .socialId(socialLoginId)
+                                        .platform(providerName)
+                                        .name(nickName)
+                                        .nickName(nicknameWithRandom)
+                                        .violation(Violation.NONE.getValue())
+                                        .isSignIn(isSignIn)
+                                        .build());
+
+                Level level =
+                        levelRepsitory
+                                .findById(INITIAL_LEVEL_ID)
+                                .orElseThrow(() -> new BadRequestException(NOT_FOUND_LEVEL_ID));
+
+                levelHistoryRepository.save(LevelHistory.builder().user(user).level(level).build());
+
+                return user;
             }
             tryCount += 1;
         }
