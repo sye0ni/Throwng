@@ -1,16 +1,21 @@
 package com.sieum.user.service;
 
-import static com.sieum.user.common.CustomExceptionStatus.NOT_FOUND_ACCOUNT;
-import static com.sieum.user.common.CustomExceptionStatus.VIOLATE_ACCOUNT;
+import static com.sieum.user.common.CustomExceptionStatus.*;
 
 import com.sieum.user.controller.feign.MusicFeignClient;
 import com.sieum.user.controller.feign.QuizFeignClient;
 import com.sieum.user.domain.User;
 import com.sieum.user.domain.enums.Level;
+import com.sieum.user.dto.request.CouponNickNameRequest;
+import com.sieum.user.dto.request.CouponStatusRequest;
+import com.sieum.user.dto.request.CouponValidationRequest;
 import com.sieum.user.dto.request.FcmTokenRequest;
 import com.sieum.user.dto.response.*;
 import com.sieum.user.exception.AuthException;
+import com.sieum.user.exception.BadRequestException;
+import com.sieum.user.exception.FeignClientException;
 import com.sieum.user.repository.UserRepository;
+import feign.FeignException;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.transaction.Transactional;
@@ -85,6 +90,31 @@ public class UserService {
 
     public List<CouponeInquiryResponse> getUserCouponHistory(final long userId) {
         return quizFeignClient.getCouponHistory(userId);
+    }
+
+    public void modifyNickName(
+            final long userId, final CouponNickNameRequest couponNickNameRequest) {
+        // ValidVating Coupon
+        CouponValidationRequest couponValidationRequest =
+                CouponValidationRequest.of(
+                        userId,
+                        couponNickNameRequest.getCouponId(),
+                        couponNickNameRequest.getType());
+
+        try {
+            if (quizFeignClient.validateCoupon(couponValidationRequest)) {
+                final User user =
+                        userRepository
+                                .findById(userId)
+                                .orElseThrow(
+                                        () -> new BadRequestException(NOT_AUTHENTICATED_ACCOUNT));
+
+                user.updateNickName(couponNickNameRequest.getNickName());
+                quizFeignClient.modifyCouponStatus(CouponStatusRequest.of(couponValidationRequest));
+            }
+        } catch (FeignException feignException) {
+            throw new FeignClientException(NOT_USE_COUPON_FROM_FEIGN);
+        }
     }
 
     public String getUserFcmToken(final long userId) {

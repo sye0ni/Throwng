@@ -1,5 +1,6 @@
 package com.sieum.user.controller;
 
+import com.sieum.user.dto.request.CouponNickNameRequest;
 import com.sieum.user.dto.request.FcmTokenRequest;
 import com.sieum.user.service.LoginService;
 import com.sieum.user.service.UserService;
@@ -67,6 +68,16 @@ public class UserController {
             @RequestHeader("Authorization") String accessToken) {
         long userId = loginService.getUsername(accessToken);
         return ResponseEntity.ok().body(userService.getUserCouponHistory(userId));
+    }
+
+    @Operation(summary = "Change my nickName with a coupon")
+    @PutMapping("/nickname")
+    public ResponseEntity<?> updateUserNickName(
+            @RequestHeader("Authorization") final String accessToken,
+            @RequestBody final CouponNickNameRequest couponNickNameRequest) {
+        long userId = loginService.getUsername(accessToken);
+        userService.modifyNickName(userId, couponNickNameRequest);
+        return ResponseEntity.noContent().build();
     }
 
     @Operation(summary = "Feign Client")
