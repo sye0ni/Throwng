@@ -87,6 +87,7 @@ public class UserController {
         return ResponseEntity.ok().body(userService.getUserFcmToken(userId));
     }
 
+    @Operation(summary = "Feign Client")
     @PostMapping("/experience-point")
     public ResponseEntity<?> upgradeExperiencePoint(
             @RequestBody final UpdateExperiencePointRequest updateExperiencePointRequest) {
