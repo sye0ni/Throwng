@@ -32,7 +32,7 @@ dependencies:
     sdk: flutter
   wear: ^1.1.0
   wearable_rotary: ^2.0.2
-  location: ^6.0.2
+  geolocator: ^11.0.0
   dio: ^5.4.3
   url_launcher: ^6.2.6
   flutter_dotenv: ^5.1.0

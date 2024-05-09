@@ -105,7 +105,7 @@ class _MusicDropState extends State<MusicDrop> {
             children: [
               ClockTime(),
               SizedBox(height: 5),
-              Text(trimText('${widget.musicData['title']} - ${widget.musicData['artist']}', 8)),
+              Text(trimText('${widget.musicData['title']} - ${widget.musicData['artist']}', 6)),
               SizedBox(height: 5),
               Row(
                 children: [
@@ -127,11 +127,11 @@ class _MusicDropState extends State<MusicDrop> {
                         });
                       },
                       style: TextStyle(
-                        fontSize: 13,
+                        fontSize: 15,
                         color: Colors.white,
                       ),
                       decoration: InputDecoration(
-                        border: InputBorder.none,
+                        // border: InputBorder,
                         hintStyle: TextStyle(color: PLACEHOLDER),
                         hintText: '떠오르는 말을 적어보세요',
                       ),

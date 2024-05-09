@@ -5,7 +5,7 @@ final api = ApiClient();
 
 Future<Response> getMusicList(lat, lon) async {
   try {
-    final res = await api.get('/watch/throw-items?lat=${lat}&lon=${lon}');
+    final res = await api.get('/music/watch/popular-items?lat=${lat}&lon=${lon}');
     return res;
   } catch (e) {
     print(e);
@@ -15,7 +15,8 @@ Future<Response> getMusicList(lat, lon) async {
 
 Future<Response> getMyPlayList() async {
   try {
-    final res = await api.get('/watch/playlists');
+    final res = await api.get('/music/watch/playlists');
+    print(res);
     return res;
   } catch (e) {
     print(e);
@@ -25,7 +26,7 @@ Future<Response> getMyPlayList() async {
 
 Future<Response?> postThrowng(data) async {
   try {
-    final res = await api.post('/watch/throw-items', data: data);
+    final res = await api.post('/music/watch/throw-items', data: data);
     return res;
   } on DioError catch (e) {
     if (e.response != null) {
@@ -42,5 +43,15 @@ Future<Response?> postThrowng(data) async {
   } catch (e) {
     print(e);
     return null;
+  }
+}
+
+Future<Response> postWatchAuth(String otp) async {
+  try {
+    final res = await api.post('/users/watch/auth', data: {"otp": otp});
+    return res;
+  } catch (err) {
+    print(err);
+    throw Exception('Failed to post user info');
   }
 }
