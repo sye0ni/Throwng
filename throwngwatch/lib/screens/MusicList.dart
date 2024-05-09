@@ -4,6 +4,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:throwngwatch/services/MusicListAPi.dart';
 import 'package:wear/wear.dart';
 import '../const/color.dart';
+import '../store/store.dart';
 import '../widgets/ClockTime.dart';
 import 'MusicPickDetail.dart';
 
@@ -29,16 +30,17 @@ class _MusicListState extends State<MusicList> {
   @override
   void initState() {
     super.initState();
-    // loadUserInfo();
+    loadUserInfo();
     _pageController = PageController(initialPage: _currentPageIndex);
   }
 
   Future<void> loadUserInfo() async {
-    String? latStr = await storage.read(key: 'latitude');
-    String? lonStr = await storage.read(key: 'longitude');
-
-    double? latitude = latStr != null ? double.tryParse(latStr) : null;
-    double? longitude = lonStr != null ? double.tryParse(lonStr) : null;
+    var userManager = UserManager();
+    userManager.loadUserInfo();
+    double? latitude = await userManager.latitude;
+    double? longitude = await userManager.longitude;
+    print('33333: ${latitude}');
+    print('33333: ${longitude}');
 
     if (latitude != null && longitude != null) {
       await fetchMusicList(latitude, longitude);
@@ -48,12 +50,22 @@ class _MusicListState extends State<MusicList> {
   }
 
   Future<void> fetchMusicList(double lat, double lon) async {
-    var res = await getMusicList(lat, lon);
-    setState(() {
-      popularMusic.addAll(res.data);
-      Map<String, dynamic> initialMusic = popularMusic[0];
-      _currentMusicTitleAndArtist = "${initialMusic['title']}-${initialMusic['artist']}";
-    });
+    try {
+      final res = await getMusicList(lat, lon);
+      print(res);
+      if (mounted) {
+        setState(() {
+          final List<Map<String, dynamic>> tempList = List<Map<String, dynamic>>.from(res.data.map((item) => Map<String, dynamic>.from(item)));
+          popularMusic.addAll(tempList);
+          if (popularMusic.isNotEmpty) {
+            Map<String, dynamic> initialMusic = popularMusic[0];
+            _currentMusicTitleAndArtist = "${initialMusic['title']}-${initialMusic['name']}";
+          }
+        });
+      }
+    } catch (e) {
+      print(e);
+    }
   }
 
   @override
@@ -66,7 +78,7 @@ class _MusicListState extends State<MusicList> {
     setState(() {
       _currentPageIndex = pageIndex;
       Map<String, dynamic> currentMusic = popularMusic[pageIndex];
-      _currentMusicTitleAndArtist = "${currentMusic['title']}-${currentMusic['artist']}";
+      _currentMusicTitleAndArtist = "${currentMusic['title']}-${currentMusic['name']}";
     });
   }
 
@@ -132,7 +144,7 @@ class _MusicListState extends State<MusicList> {
                           scrollDirection: Axis.vertical,
                           controller: _pageController,
                           onPageChanged: _onPageChanged,
-                          itemBuilder: (context, dropId) {
+                          itemBuilder: (context, index) {
                             if (popularMusic.isEmpty) {
                               return Center(
                                 child: Text('비어있는 리스트입니다.', style: TextStyle(fontSize: 12, color: Colors.white)),
@@ -142,7 +154,7 @@ class _MusicListState extends State<MusicList> {
                               onTap: () {
                                 Navigator.of(context).push(MaterialPageRoute(
                                   builder: (context) => MusicPickDetail(
-                                    musicData: popularMusic[dropId],
+                                    musicData: popularMusic[index],
                                   ),
                                 ));
                               },
@@ -152,7 +164,7 @@ class _MusicListState extends State<MusicList> {
                                 child: ClipRRect(
                                   borderRadius: BorderRadius.circular(100),
                                   child: Image.network(
-                                    popularMusic[dropId]['albumImage'],
+                                    popularMusic[index]['albumImage'],
                                     fit: BoxFit.cover,
                                   ),
                                 ),

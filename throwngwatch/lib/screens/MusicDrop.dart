@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '../const/color.dart';
 import '../services/MusicListAPi.dart';
+import '../store/store.dart';
 import '../widgets/ClockTime.dart';
 import '../widgets/ElevateBTN.dart';
 
@@ -40,21 +41,20 @@ class _MusicDropState extends State<MusicDrop> {
   }
 
   Future<void> loadUserInfo(BuildContext context) async {
-    String? latStr = await storage.read(key: 'latitude');
-    String? lonStr = await storage.read(key: 'longitude');
-
-    double? latitude = latStr != null ? double.tryParse(latStr) : null;
-    double? longitude = lonStr != null ? double.tryParse(lonStr) : null;
+    var userManager = UserManager();
+    userManager.loadUserInfo();
+    double? latitude = await userManager.latitude;
+    double? longitude = await userManager.longitude;
 
     if (latitude != null && longitude != null) {
       final data = {
         'latitude': latitude,
         'longitude': longitude,
-        'SongId': widget.musicData['playlistId'],
-        'userComment': userComment,
+        'songId': widget.musicData['songId'],
+        'comment': userComment,
       };
       print(data);
-      // await fetchThrowng(context, data);
+      await fetchThrowng(context, data);
     } else {
       print("위도없다~~ 경도없다~~");
     }

@@ -10,23 +10,32 @@ class ClockTime extends StatefulWidget {
 
 class _ClockTimeState extends State<ClockTime> {
   String time = "";
+  Timer? timer;
 
   @override
   void initState() {
     super.initState();
     time = _formatDateTime(DateTime.now());
-    Timer.periodic(Duration(seconds: 1), (Timer t) => _getTime());
+    timer = Timer.periodic(Duration(seconds: 1), (Timer t) => _getTime());
   }
 
   void _getTime() {
     final String formattedDateTime = _formatDateTime(DateTime.now());
-    setState(() {
-      time = formattedDateTime;
-    });
+    if (mounted) {
+      setState(() {
+        time = formattedDateTime;
+      });
+    }
   }
 
   String _formatDateTime(DateTime dateTime) {
     return "${dateTime.hour.toString().padLeft(2, '0')}:${dateTime.minute.toString().padLeft(2, '0')}";
+  }
+
+  @override
+  void dispose() {
+    timer?.cancel();
+    super.dispose();
   }
 
   @override

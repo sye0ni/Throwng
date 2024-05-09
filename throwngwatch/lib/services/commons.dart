@@ -9,7 +9,7 @@ class ApiClient {
   ApiClient() {
     dio = Dio();
     userManager.loadUserInfo();
-    dio.options.baseUrl = "https://throwng.store/api";
+    dio.options.baseUrl = '${dotenv.env['BASE_URL']}/api';
     dio.options.headers['Content-Type'] = 'application/json';
     dio.interceptors.add(InterceptorsWrapper(onRequest: (options, handler) async {
       final accessToken = await userManager.accessToken;
