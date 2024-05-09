@@ -1,5 +1,7 @@
 package com.sieum.user.service;
 
+import static com.sieum.user.common.CustomExceptionStatus.NOT_VALID_OTP;
+
 import com.sieum.user.dto.MemberTokens;
 import com.sieum.user.dto.request.OTPRequest;
 import com.sieum.user.exception.BadRequestException;
@@ -9,8 +11,6 @@ import com.sieum.user.util.RedisUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-
-import static com.sieum.user.common.CustomExceptionStatus.NOT_VALID_OTP;
 
 @Service
 @Slf4j
@@ -36,7 +36,7 @@ public class WatchService {
 
     public MemberTokens authenticate(final OTPRequest otpRequest) {
         String value = redisUtil.getData(otpRequest.getOtp());
-        if(value == null) {
+        if (value == null) {
             log.error("Not valid OTP code");
             throw new BadRequestException(NOT_VALID_OTP);
         }
