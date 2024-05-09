@@ -46,7 +46,8 @@ public class JwtProvider {
     }
 
     public MemberTokens generateTokenForWatch(final String socialId) {
-        final String refreshToken = createToken(socialId, "watchRefreshToken", refreshExpirationTime);
+        final String refreshToken =
+                createToken(socialId, "watchRefreshToken", refreshExpirationTime);
         final String accessToken = createToken(socialId, "watchAccessToken", accessExpirationTime);
         return new MemberTokens(refreshToken, accessToken);
     }

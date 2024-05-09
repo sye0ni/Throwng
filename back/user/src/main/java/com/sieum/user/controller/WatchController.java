@@ -2,11 +2,10 @@ package com.sieum.user.controller;
 
 import com.sieum.user.dto.request.OTPRequest;
 import com.sieum.user.service.WatchService;
+import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/watch")
