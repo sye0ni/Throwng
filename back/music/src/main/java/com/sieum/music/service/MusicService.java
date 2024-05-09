@@ -7,9 +7,7 @@ import com.sieum.music.domain.*;
 import com.sieum.music.domain.ThrowItem;
 import com.sieum.music.domain.dao.ThrowCurrentDao;
 import com.sieum.music.domain.enums.ThrowStatus;
-import com.sieum.music.dto.request.NearItemPointRequest;
-import com.sieum.music.dto.request.ReverseGeoCodeRequest;
-import com.sieum.music.dto.request.ThrownItemRequest;
+import com.sieum.music.dto.request.*;
 import com.sieum.music.dto.response.*;
 import com.sieum.music.dto.response.PlaylistItemResponse;
 import com.sieum.music.dto.response.PoiResponse;
@@ -51,6 +49,8 @@ public class MusicService {
     private final ArtistRepository artistRepository;
     private final S3FileUploadService s3FileUploadService;
     private final KakaoMapReverseGeoUtil kakaoMapReverseGeoUtil;
+    private final String THROWNG_TYPE = "THROWNG";
+    private final String PICKUP_TYPE = "PICKUP";
 
     public long getCurrentUserId(String authorization) {
         return tokenAuthClient.getUserId(authorization);
@@ -103,6 +103,10 @@ public class MusicService {
                         ThrowHistory.builder().userId(userId).throwItem(throwItem).build());
 
         throwHistory.setThrowItem(throwItem);
+
+        // upgrade experiencePoint
+        tokenAuthClient.upgradeExperiencePoint(
+                UpdateExperiencePointRequest.of(userId, PICKUP_TYPE));
     }
 
     private Playlist createPlaylist(final long userId, final Song song) {
@@ -256,6 +260,10 @@ public class MusicService {
         thrownCount--;
 
         redisUtil.setData(key, String.valueOf(thrownCount));
+
+        // upgrade experiencePoint
+        tokenAuthClient.upgradeExperiencePoint(
+                UpdateExperiencePointRequest.of(userId, THROWNG_TYPE));
     }
 
     public List<ThrownSongResponse> getThrownSong(final long userId) {
@@ -290,5 +298,20 @@ public class MusicService {
         List<ThrowItem> throwItems = throwQueryDSLRepository.findThrowHistoryIsNull();
         throwItems.forEach(throwItem -> throwItem.changeThrowStatus(ThrowStatus.HIDDEN.getValue()));
         return throwItems.size();
+    }
+
+    public MusicExperienceCountResponse getMusicExperienceCount(
+            final MusicExperienceCountReqeust musicExperienceCountReqeust) {
+        List<ThrowItem> throwItems =
+                musicRepository.findByUserIdAndCreatedAtAfter(
+                        musicExperienceCountReqeust.getUserId(),
+                        musicExperienceCountReqeust.getCreatedAt());
+
+        List<ThrowHistory> pickedupItems =
+                throwHistoryRepository.findByUserIdAndCreatedAtAfter(
+                        musicExperienceCountReqeust.getUserId(),
+                        musicExperienceCountReqeust.getCreatedAt());
+
+        return MusicExperienceCountResponse.of(throwItems.size(), pickedupItems.size());
     }
 }
