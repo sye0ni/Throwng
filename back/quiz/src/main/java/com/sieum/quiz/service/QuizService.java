@@ -10,6 +10,7 @@ import com.sieum.quiz.domain.enums.QuizType;
 import com.sieum.quiz.dto.request.QuizHistoryCreationRequest;
 import com.sieum.quiz.dto.response.CouponIssuanceStatusResponse;
 import com.sieum.quiz.dto.response.QuizResponse;
+import com.sieum.quiz.dto.response.QuizResultResponse;
 import com.sieum.quiz.exception.BadRequestException;
 import com.sieum.quiz.repository.CouponReposistory;
 import com.sieum.quiz.repository.QuizHistoryRepository;
@@ -56,7 +57,7 @@ public class QuizService {
                 .collect(Collectors.toList());
     }
 
-    public void createQuizHistory(
+    public QuizResultResponse createQuizHistory(
             final long userId, final QuizHistoryCreationRequest quizHistoryCreationRequest) {
 
         final Optional<Quiz> quiz = quizRepository.findById(quizHistoryCreationRequest.getQuizId());
@@ -75,13 +76,27 @@ public class QuizService {
         //            throw new BadRequestException(NOT_TODAY_QUIZ_ID);
         //        }
 
+        final String answer =
+                quizRepository.findById(quizHistoryCreationRequest.getQuizId()).get().getAnswer();
+        final QuizResultResponse quizResultResponse;
+
+        if (answer.toLowerCase()
+                .replaceAll(" ", "")
+                .equals(quizHistoryCreationRequest.getSubmit().toLowerCase().replaceAll(" ", ""))) {
+            quizResultResponse = QuizResultResponse.builder().status(true).build();
+        } else {
+            quizResultResponse = QuizResultResponse.builder().status(false).build();
+        }
+
         quizHistoryRepository.save(
                 QuizHistory.builder()
                         .quiz(quiz.get())
                         .submit(quizHistoryCreationRequest.getSubmit())
-                        .result(quizHistoryCreationRequest.isResult())
+                        .result(quizResultResponse.isStatus())
                         .userId(userId)
                         .build());
+
+        return quizResultResponse;
     }
 
     public long getCurrentUserId(final String authorization) {
@@ -105,7 +120,6 @@ public class QuizService {
                                         QuizResponse.builder()
                                                 .quizId(quiz.getId())
                                                 .question(quiz.getQuestion())
-                                                .answer(quiz.getAnswer())
                                                 .quizType(
                                                         QuizType.valueOf(quiz.getQuizType())
                                                                 .getValue())
@@ -117,9 +131,9 @@ public class QuizService {
 
         //        final List<Integer> indexes = createRandomQuiz(quizlist.size());
         final List<Integer> indexes = new ArrayList<>();
-        indexes.add(0);
-        indexes.add(3);
-        indexes.add(4);
+        indexes.add(2);
+        indexes.add(6);
+        indexes.add(22);
         final List<QuizResponse> todayQuizList = new ArrayList<>();
 
         indexes.stream().forEach(index -> todayQuizList.add(quizlist.get(index)));
