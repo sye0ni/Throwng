@@ -30,7 +30,7 @@
           flex-direction: row;
           justify-content: end;
           color: var(--main-color);
-          font-size: 1.7dvh;
+          font-size: 1.5dvh;
 
           svg {
             font-size: 2dvh;
@@ -70,13 +70,13 @@
           }
 
           .item-artist {
-            font-size: 1.5dvh;
+            font-size: 1.4dvh;
 
             color: var(--subtitle-color);
           }
 
           .item-comment {
-            font-size: 1.4dvh;
+            font-size: 1.3dvh;
             color: var(--placeholder-color);
           }
         }
