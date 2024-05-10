@@ -29,7 +29,7 @@ public class CouponController {
     }
 
     @GetMapping("/test")
-    public ResponseEntity<?> test(){
+    public ResponseEntity<?> test() {
         couponService.sendCouponExpirationNotification();
         return null;
     }

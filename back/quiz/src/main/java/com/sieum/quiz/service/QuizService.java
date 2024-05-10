@@ -3,7 +3,7 @@ package com.sieum.quiz.service;
 import static com.sieum.quiz.exception.CustomExceptionStatus.INVALID_QUIZ_ID;
 import static com.sieum.quiz.exception.CustomExceptionStatus.NOT_TODAY_QUIZ_ID;
 
-import com.sieum.quiz.controller.feign.TokenAuthClient;
+import com.sieum.quiz.controller.feign.UserAuthClient;
 import com.sieum.quiz.domain.Quiz;
 import com.sieum.quiz.domain.QuizHistory;
 import com.sieum.quiz.domain.enums.CouponRoute;
@@ -28,7 +28,7 @@ import org.springframework.stereotype.Service;
 public class QuizService {
 
     private final RedisUtil redisUtil;
-    private final TokenAuthClient tokenAuthClient;
+    private final UserAuthClient userAuthClient;
     private final CouponReposistory couponRepository;
     private final QuizRepository quizRepository;
     private final QuizHistoryRepository quizHistoryRepository;
@@ -85,7 +85,7 @@ public class QuizService {
     }
 
     public long getCurrentUserId(final String authorization) {
-        return tokenAuthClient.getUserId(authorization);
+        return userAuthClient.getUserId(authorization);
     }
 
     public List<QuizResponse> getQuizList() {
