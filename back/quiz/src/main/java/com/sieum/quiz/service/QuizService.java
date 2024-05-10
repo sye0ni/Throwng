@@ -54,7 +54,7 @@ public class QuizService {
                                                 userId);
                             }
                             return CouponIssuanceStatusResponse.builder()
-                                    .status(false) // annotation will be removed
+                                    .status(result)
                                     .name(route.getName())
                                     .build();
                         })
