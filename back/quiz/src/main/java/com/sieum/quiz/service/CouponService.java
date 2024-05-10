@@ -17,14 +17,14 @@ import com.sieum.quiz.exception.BadRequestException;
 import com.sieum.quiz.repository.CouponHistoryQueryDSLRepository;
 import com.sieum.quiz.repository.CouponHistoryRepository;
 import com.sieum.quiz.repository.CouponReposistory;
+import com.sieum.quiz.util.RedisUtil;
 import java.time.LocalDate;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 import java.util.stream.Collectors;
-
-import com.sieum.quiz.util.RedisUtil;
+import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -99,38 +99,45 @@ public class CouponService {
     }
 
     @Transactional
-//    @Scheduled(cron="0 0 4 * * *", zone="Asia/Seoul")
+    //    @Scheduled(cron="0 0 4 * * *", zone="Asia/Seoul")
     public void sendCouponExpirationNotification() {
 
-        final List<CouponHistoryNewestResponse> couponHistoryNewestResponses=couponHistoryQueryDSLRepository.findNewestCouponHistory();
+        final List<CouponHistoryNewestResponse> couponHistoryNewestResponses =
+                couponHistoryQueryDSLRepository.findNewestCouponHistory();
 
-        final List<Long> couponIdList =couponHistoryNewestResponses.stream()
-                .filter(couponHistoryNewestResponse -> couponHistoryQueryDSLRepository.findExpirationCouponHistory(
-                        CouponHistoryNewestResponse.builder()
-                                .couponId(couponHistoryNewestResponse.getCouponId())
-                                .createdAt(couponHistoryNewestResponse.getCreatedAt()).build()
-                ) != 0).map(
-                        CouponHistoryNewestResponse::getCouponId
-                ).collect(Collectors.toList());
+        final List<Long> couponIdList =
+                couponHistoryNewestResponses.stream()
+                        .filter(
+                                couponHistoryNewestResponse ->
+                                        couponHistoryQueryDSLRepository.findExpirationCouponHistory(
+                                                        CouponHistoryNewestResponse.builder()
+                                                                .couponId(
+                                                                        couponHistoryNewestResponse
+                                                                                .getCouponId())
+                                                                .createdAt(
+                                                                        couponHistoryNewestResponse
+                                                                                .getCreatedAt())
+                                                                .build())
+                                                != 0)
+                        .map(CouponHistoryNewestResponse::getCouponId)
+                        .collect(Collectors.toList());
 
+        final List<Long> userIdList =
+                couponIdList.stream()
+                        .map(couponId -> couponRepository.findById(couponId).get().getUserId())
+                        .distinct()
+                        .collect(Collectors.toList());
 
-        final List<Long> userIdList=couponIdList.stream()
-                .map(
-                      couponId->  couponRepository.findById(couponId).get().getUserId()
-                ).distinct().collect(Collectors.toList());
+        final String key = "noti_coupon_expiration_" + LocalDate.now();
+        redisUtil.setObject(key, userIdList);
 
-        final String key="noti_coupon_expiration_"+LocalDate.now();
-        redisUtil.setObject(key,userIdList);
-
-//        sendCouponExpirationUserIdList(userIdList);
+        //        sendCouponExpirationUserIdList(userIdList);
 
     }
 
     public void sendCouponExpirationUserIdList(final List<Long> userIdList) {
         notificationAuthClient.sendCouponExpirationUserIdList(userIdList);
     }
-
-
 
     public void modifyCouponStatus(final CouponStatusRequest couponStatusRequest) {
         CouponHistory couponHistory =

@@ -7,13 +7,13 @@ import com.sieum.quiz.domain.Quiz;
 import com.sieum.quiz.domain.QuizHistory;
 import com.sieum.quiz.domain.enums.CouponRoute;
 import com.sieum.quiz.domain.enums.QuizType;
+import com.sieum.quiz.dto.request.QuizExperienceCountRequest;
 import com.sieum.quiz.dto.request.QuizHistoryCreationRequest;
 import com.sieum.quiz.dto.request.UpdateExperiencePointRequest;
-import com.sieum.quiz.dto.response.CouponIssuanceStatusResponse;
-import com.sieum.quiz.dto.response.QuizResponse;
-import com.sieum.quiz.dto.response.QuizResultResponse;
+import com.sieum.quiz.dto.response.*;
 import com.sieum.quiz.exception.BadRequestException;
 import com.sieum.quiz.repository.CouponReposistory;
+import com.sieum.quiz.repository.QuizHistoryQueryDSLRepository;
 import com.sieum.quiz.repository.QuizHistoryRepository;
 import com.sieum.quiz.repository.QuizRepository;
 import com.sieum.quiz.util.RedisUtil;
@@ -33,6 +33,7 @@ public class QuizService {
     private final CouponReposistory couponRepository;
     private final QuizRepository quizRepository;
     private final QuizHistoryRepository quizHistoryRepository;
+    private final QuizHistoryQueryDSLRepository quizHistoryQueryDSLRepository;
 
     public List<CouponIssuanceStatusResponse> getCouponIssuanceStatus(final long userId) {
 
@@ -82,9 +83,14 @@ public class QuizService {
                 quizRepository.findById(quizHistoryCreationRequest.getQuizId()).get().getAnswer();
         final QuizResultResponse quizResultResponse;
 
-        if (answer.toLowerCase()
-                .replaceAll(" ", "")
-                .equals(quizHistoryCreationRequest.getSubmit().toLowerCase().replaceAll(" ", ""))) {
+        if (quizHistoryCreationRequest.getSubmit() != null
+                && answer.toLowerCase()
+                        .replaceAll(" ", "")
+                        .equals(
+                                quizHistoryCreationRequest
+                                        .getSubmit()
+                                        .toLowerCase()
+                                        .replaceAll(" ", ""))) {
             quizResultResponse = QuizResultResponse.builder().status(true).build();
         } else {
             quizResultResponse = QuizResultResponse.builder().status(false).build();
@@ -92,7 +98,7 @@ public class QuizService {
 
         if (!quizHistoryRepository.existsByCreatedAtAfterAndUserId(
                 LocalDate.now().atStartOfDay(), userId)) {
-            tokenAuthClient.upgradeExperiencePoint(
+            userAuthClient.upgradeExperiencePoint(
                     UpdateExperiencePointRequest.of(userId, CONTENT_TYPE));
         }
 
@@ -163,5 +169,16 @@ public class QuizService {
         }
 
         return selectedNumbers;
+    }
+
+    public ContentExperienceCountResponse getQuizExperienceCount(
+            final QuizExperienceCountRequest quizExperienceCountRequest) {
+
+        List<QuizHistoryResponse> quizHistoryResponses =
+                quizHistoryQueryDSLRepository.findSolvedAtQuizHistory(
+                        quizExperienceCountRequest.getUserId(),
+                        quizExperienceCountRequest.getCreatedAt());
+
+        return ContentExperienceCountResponse.of(quizHistoryResponses.size());
     }
 }

@@ -1,5 +1,6 @@
 package com.sieum.quiz.controller;
 
+import com.sieum.quiz.dto.request.QuizExperienceCountRequest;
 import com.sieum.quiz.dto.request.QuizHistoryCreationRequest;
 import com.sieum.quiz.service.QuizService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -36,5 +37,14 @@ public class QuizController {
         final long userId = quizService.getCurrentUserId(authorization);
         return ResponseEntity.ok()
                 .body(quizService.createQuizHistory(userId, quizHistoryCreationRequest));
+    }
+
+    @Operation(summary = "Feign Client - Number of quizzes experienced by the user")
+    @PostMapping("/content-experience")
+    public ResponseEntity<?> getQuizExperienceCount(
+            @RequestBody final QuizExperienceCountRequest quizExperienceCountRequest) {
+
+        return ResponseEntity.ok()
+                .body(quizService.getQuizExperienceCount(quizExperienceCountRequest));
     }
 }
