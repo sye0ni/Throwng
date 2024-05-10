@@ -1,6 +1,9 @@
 package com.sieum.quiz.controller;
 
+import com.sieum.quiz.dto.request.CouponStatusRequest;
+import com.sieum.quiz.dto.request.CouponValidationRequest;
 import com.sieum.quiz.service.CouponService;
+import com.sieum.quiz.validator.CouponValidator;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 public class CouponController {
 
     private final CouponService couponService;
+    private final CouponValidator couponValidator;
 
     @Operation(summary = "Create a coupon")
     @GetMapping("/{route}")
@@ -28,9 +32,20 @@ public class CouponController {
         return ResponseEntity.ok().body(couponService.getCouponHistory(userId));
     }
 
-    @GetMapping("/test")
-    public ResponseEntity<?> test() {
-        couponService.sendCouponExpirationNotification();
-        return null;
+    @Operation(summary = "feign client")
+    @PostMapping("/validation")
+    public ResponseEntity<?> validateCoupon(
+            @RequestBody final CouponValidationRequest couponValidationRequest) {
+        return ResponseEntity.ok(couponValidator.validateCoupon(couponValidationRequest));
     }
+
+    @Operation(summary = "feign client")
+    @PutMapping("/status")
+    public ResponseEntity<?> modifyCouponStatus(
+            @RequestBody final CouponStatusRequest couponStatusRequest) {
+        couponService.modifyCouponStatus(couponStatusRequest);
+        return ResponseEntity.noContent().build();
+    }
+
+
 }

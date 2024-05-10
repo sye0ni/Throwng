@@ -1,10 +1,8 @@
 package com.sieum.quiz.controller.feign;
 
+import com.sieum.quiz.dto.request.UpdateExperiencePointRequest;
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestHeader;
-
+import org.springframework.web.bind.annotation.*;
 
 @FeignClient(name = "USER")
 public interface UserAuthClient {
@@ -12,6 +10,7 @@ public interface UserAuthClient {
     @GetMapping("/users/auth/id")
     long getUserId(@RequestHeader("Authorization") String accessToken);
 
-    @GetMapping("/users/user/{userId}/fcm")
-    String getUserFcm(@PathVariable final long userId);
+    @PostMapping("/users/user/experience-point")
+    void upgradeExperiencePoint(
+            @RequestBody final UpdateExperiencePointRequest updateExperiencePointRequest);
 }

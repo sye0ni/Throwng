@@ -20,9 +20,6 @@ public class QuizResponse implements Serializable {
     @Schema(description = "question")
     private String question;
 
-    @Schema(description = "answer")
-    private String answer;
-
     @Schema(description = "multiple choice")
     private Map<String, Object> choice;
 

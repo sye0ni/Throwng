@@ -94,6 +94,10 @@ compileQuerydsl {
 	options.annotationProcessorPath = configurations.querydsl
 }
 
+tasks.named("jar") {
+	enabled = false
+}
+
 spotless {
 	java {
 		target("**/*.java")

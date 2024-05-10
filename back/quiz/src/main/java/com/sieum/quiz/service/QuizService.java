@@ -1,7 +1,6 @@
 package com.sieum.quiz.service;
 
 import static com.sieum.quiz.exception.CustomExceptionStatus.INVALID_QUIZ_ID;
-import static com.sieum.quiz.exception.CustomExceptionStatus.NOT_TODAY_QUIZ_ID;
 
 import com.sieum.quiz.controller.feign.UserAuthClient;
 import com.sieum.quiz.domain.Quiz;
@@ -9,15 +8,16 @@ import com.sieum.quiz.domain.QuizHistory;
 import com.sieum.quiz.domain.enums.CouponRoute;
 import com.sieum.quiz.domain.enums.QuizType;
 import com.sieum.quiz.dto.request.QuizHistoryCreationRequest;
+import com.sieum.quiz.dto.request.UpdateExperiencePointRequest;
 import com.sieum.quiz.dto.response.CouponIssuanceStatusResponse;
 import com.sieum.quiz.dto.response.QuizResponse;
+import com.sieum.quiz.dto.response.QuizResultResponse;
 import com.sieum.quiz.exception.BadRequestException;
 import com.sieum.quiz.repository.CouponReposistory;
 import com.sieum.quiz.repository.QuizHistoryRepository;
 import com.sieum.quiz.repository.QuizRepository;
 import com.sieum.quiz.util.RedisUtil;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +27,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class QuizService {
 
+    private final String CONTENT_TYPE = "CONTENT";
     private final RedisUtil redisUtil;
     private final UserAuthClient userAuthClient;
     private final CouponReposistory couponRepository;
@@ -58,7 +59,7 @@ public class QuizService {
                 .collect(Collectors.toList());
     }
 
-    public void createQuizHistory(
+    public QuizResultResponse createQuizHistory(
             final long userId, final QuizHistoryCreationRequest quizHistoryCreationRequest) {
 
         final Optional<Quiz> quiz = quizRepository.findById(quizHistoryCreationRequest.getQuizId());
@@ -66,22 +67,44 @@ public class QuizService {
             throw new BadRequestException(INVALID_QUIZ_ID);
         }
 
-        final String key =
-                "quiz_" + LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-        final List<QuizResponse> todayQuiz = (List<QuizResponse>) redisUtil.getObject(key);
+        //        final String key =
+        //                "quiz_" +
+        // LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        //        final List<QuizResponse> todayQuiz = (List<QuizResponse>)
+        // redisUtil.getObject(key);
 
-        if (!todayQuiz.stream()
-                .anyMatch(q -> q.getQuizId() == quizHistoryCreationRequest.getQuizId())) {
-            throw new BadRequestException(NOT_TODAY_QUIZ_ID);
+        //        if (!todayQuiz.stream()
+        //                .anyMatch(q -> q.getQuizId() == quizHistoryCreationRequest.getQuizId())) {
+        //            throw new BadRequestException(NOT_TODAY_QUIZ_ID);
+        //        }
+
+        final String answer =
+                quizRepository.findById(quizHistoryCreationRequest.getQuizId()).get().getAnswer();
+        final QuizResultResponse quizResultResponse;
+
+        if (answer.toLowerCase()
+                .replaceAll(" ", "")
+                .equals(quizHistoryCreationRequest.getSubmit().toLowerCase().replaceAll(" ", ""))) {
+            quizResultResponse = QuizResultResponse.builder().status(true).build();
+        } else {
+            quizResultResponse = QuizResultResponse.builder().status(false).build();
+        }
+
+        if (!quizHistoryRepository.existsByCreatedAtAfterAndUserId(
+                LocalDate.now().atStartOfDay(), userId)) {
+            tokenAuthClient.upgradeExperiencePoint(
+                    UpdateExperiencePointRequest.of(userId, CONTENT_TYPE));
         }
 
         quizHistoryRepository.save(
                 QuizHistory.builder()
                         .quiz(quiz.get())
                         .submit(quizHistoryCreationRequest.getSubmit())
-                        .result(quizHistoryCreationRequest.isResult())
+                        .result(quizResultResponse.isStatus())
                         .userId(userId)
                         .build());
+
+        return quizResultResponse;
     }
 
     public long getCurrentUserId(final String authorization) {
@@ -89,6 +112,7 @@ public class QuizService {
     }
 
     public List<QuizResponse> getQuizList() {
+
         //        final String key =
         //                "quiz_" +
         // LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
@@ -104,7 +128,6 @@ public class QuizService {
                                         QuizResponse.builder()
                                                 .quizId(quiz.getId())
                                                 .question(quiz.getQuestion())
-                                                .answer(quiz.getAnswer())
                                                 .quizType(
                                                         QuizType.valueOf(quiz.getQuizType())
                                                                 .getValue())
@@ -116,9 +139,9 @@ public class QuizService {
 
         //        final List<Integer> indexes = createRandomQuiz(quizlist.size());
         final List<Integer> indexes = new ArrayList<>();
+        indexes.add(2);
         indexes.add(6);
-        indexes.add(7);
-        indexes.add(19);
+        indexes.add(23);
         final List<QuizResponse> todayQuizList = new ArrayList<>();
 
         indexes.stream().forEach(index -> todayQuizList.add(quizlist.get(index)));

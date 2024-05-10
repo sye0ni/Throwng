@@ -22,8 +22,4 @@ public class QuizHistoryCreationRequest {
     @NotNull(message = "submit is required")
     @Schema(description = "answer that a user submitted")
     private String submit;
-
-    @NotNull(message = "result is required")
-    @Schema(description = "result of quiz submission")
-    private boolean result;
 }

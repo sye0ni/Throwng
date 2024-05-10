@@ -1,6 +1,7 @@
 package com.sieum.quiz.service;
 
 import static com.sieum.quiz.exception.CustomExceptionStatus.DUPLICATE_COUPON_REQUEST;
+import static com.sieum.quiz.exception.CustomExceptionStatus.NOT_FOUND_COUPON_ID;
 
 import com.sieum.quiz.controller.feign.NotificationAuthClient;
 import com.sieum.quiz.controller.feign.UserAuthClient;
@@ -8,7 +9,7 @@ import com.sieum.quiz.domain.Coupon;
 import com.sieum.quiz.domain.CouponHistory;
 import com.sieum.quiz.domain.enums.CouponRoute;
 import com.sieum.quiz.domain.enums.CouponType;
-import com.sieum.quiz.dto.request.CouponNotificationRequest;
+import com.sieum.quiz.dto.request.CouponStatusRequest;
 import com.sieum.quiz.dto.response.CouponHistoryNewestResponse;
 import com.sieum.quiz.dto.response.CouponeInquiryResponse;
 import com.sieum.quiz.dto.response.CreateCouponResponse;
@@ -25,9 +26,9 @@ import java.util.stream.Collectors;
 
 import com.sieum.quiz.util.RedisUtil;
 import lombok.RequiredArgsConstructor;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+
+import javax.transaction.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -39,6 +40,7 @@ public class CouponService {
     private final CouponReposistory couponRepository;
     private final CouponHistoryRepository couponHistoryRepository;
     private final CouponHistoryQueryDSLRepository couponHistoryQueryDSLRepository;
+    private final String COMPLETION_STATUS = "COMPLETION";
 
     public CreateCouponResponse createCoupon(final long userId, final String route) {
         final String couponRoute = CouponRoute.findByName(route);
@@ -129,4 +131,17 @@ public class CouponService {
     }
 
 
+
+    public void modifyCouponStatus(final CouponStatusRequest couponStatusRequest) {
+        CouponHistory couponHistory =
+                couponHistoryRepository.findTopByCouponIdOrderByCreatedAtDesc(
+                        couponStatusRequest.getCouponId());
+
+        if (couponHistory == null) {
+            throw new BadRequestException(NOT_FOUND_COUPON_ID);
+        }
+
+        couponHistory.changeCouponStatus(COMPLETION_STATUS);
+        couponHistoryRepository.save(couponHistory);
+    }
 }
