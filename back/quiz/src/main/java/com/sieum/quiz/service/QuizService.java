@@ -8,6 +8,7 @@ import com.sieum.quiz.domain.QuizHistory;
 import com.sieum.quiz.domain.enums.CouponRoute;
 import com.sieum.quiz.domain.enums.QuizType;
 import com.sieum.quiz.dto.request.QuizHistoryCreationRequest;
+import com.sieum.quiz.dto.request.UpdateExperiencePointRequest;
 import com.sieum.quiz.dto.response.CouponIssuanceStatusResponse;
 import com.sieum.quiz.dto.response.QuizResponse;
 import com.sieum.quiz.dto.response.QuizResultResponse;
@@ -26,6 +27,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class QuizService {
 
+    private final String CONTENT_TYPE = "CONTENT";
     private final RedisUtil redisUtil;
     private final TokenAuthClient tokenAuthClient;
     private final CouponReposistory couponRepository;
@@ -88,6 +90,12 @@ public class QuizService {
             quizResultResponse = QuizResultResponse.builder().status(false).build();
         }
 
+        if (!quizHistoryRepository.existsByCreatedAtAfterAndUserId(
+                LocalDate.now().atStartOfDay(), userId)) {
+            tokenAuthClient.upgradeExperiencePoint(
+                    UpdateExperiencePointRequest.of(userId, CONTENT_TYPE));
+        }
+
         quizHistoryRepository.save(
                 QuizHistory.builder()
                         .quiz(quiz.get())
@@ -133,7 +141,7 @@ public class QuizService {
         final List<Integer> indexes = new ArrayList<>();
         indexes.add(2);
         indexes.add(6);
-        indexes.add(22);
+        indexes.add(23);
         final List<QuizResponse> todayQuizList = new ArrayList<>();
 
         indexes.stream().forEach(index -> todayQuizList.add(quizlist.get(index)));
