@@ -15,4 +15,6 @@ public interface ThrowHistoryRepository extends JpaRepository<ThrowHistory, Long
 
     List<ThrowHistory> findByUserIdAndCreatedAtAfter(
             final long userId, final LocalDateTime createdAt);
+
+    List<ThrowHistory> findByThrowItemId(final long throwId);
 }
