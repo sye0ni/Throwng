@@ -44,7 +44,11 @@ public class ThrownMusicDetailResponse {
     @Schema(description = "preview url")
     private String previewUrl;
 
-    public static ThrownMusicDetailResponse of(final ThrowItem throwItem, final long userId) {
+    @Schema(description = "otherPickedCount")
+    private long otherPickedCount;
+
+    public static ThrownMusicDetailResponse of(
+            final ThrowItem throwItem, final long userId, final long otherCount) {
         return ThrownMusicDetailResponse.builder()
                 .throwId(throwItem.getId())
                 .title(throwItem.getSong().getTitle())
@@ -65,6 +69,7 @@ public class ThrownMusicDetailResponse {
                                                         && throwHistory.getThrowItem().getId()
                                                                 == throwItem.getId()))
                 .previewUrl(throwItem.getSong().getPreviewUrl())
+                .otherPickedCount(otherCount)
                 .build();
     }
 }
