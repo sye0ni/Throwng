@@ -82,9 +82,14 @@ public class QuizService {
                 quizRepository.findById(quizHistoryCreationRequest.getQuizId()).get().getAnswer();
         final QuizResultResponse quizResultResponse;
 
-        if (answer.toLowerCase()
-                .replaceAll(" ", "")
-                .equals(quizHistoryCreationRequest.getSubmit().toLowerCase().replaceAll(" ", ""))) {
+        if (quizHistoryCreationRequest.getSubmit() != null
+                && answer.toLowerCase()
+                        .replaceAll(" ", "")
+                        .equals(
+                                quizHistoryCreationRequest
+                                        .getSubmit()
+                                        .toLowerCase()
+                                        .replaceAll(" ", ""))) {
             quizResultResponse = QuizResultResponse.builder().status(true).build();
         } else {
             quizResultResponse = QuizResultResponse.builder().status(false).build();
