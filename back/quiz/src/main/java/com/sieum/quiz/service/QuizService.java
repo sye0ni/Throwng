@@ -2,18 +2,18 @@ package com.sieum.quiz.service;
 
 import static com.sieum.quiz.exception.CustomExceptionStatus.INVALID_QUIZ_ID;
 
-import com.sieum.quiz.controller.feign.TokenAuthClient;
+import com.sieum.quiz.controller.feign.UserAuthClient;
 import com.sieum.quiz.domain.Quiz;
 import com.sieum.quiz.domain.QuizHistory;
 import com.sieum.quiz.domain.enums.CouponRoute;
 import com.sieum.quiz.domain.enums.QuizType;
+import com.sieum.quiz.dto.request.QuizExperienceCountRequest;
 import com.sieum.quiz.dto.request.QuizHistoryCreationRequest;
 import com.sieum.quiz.dto.request.UpdateExperiencePointRequest;
-import com.sieum.quiz.dto.response.CouponIssuanceStatusResponse;
-import com.sieum.quiz.dto.response.QuizResponse;
-import com.sieum.quiz.dto.response.QuizResultResponse;
+import com.sieum.quiz.dto.response.*;
 import com.sieum.quiz.exception.BadRequestException;
 import com.sieum.quiz.repository.CouponReposistory;
+import com.sieum.quiz.repository.QuizHistoryQueryDSLRepository;
 import com.sieum.quiz.repository.QuizHistoryRepository;
 import com.sieum.quiz.repository.QuizRepository;
 import com.sieum.quiz.util.RedisUtil;
@@ -29,10 +29,11 @@ public class QuizService {
 
     private final String CONTENT_TYPE = "CONTENT";
     private final RedisUtil redisUtil;
-    private final TokenAuthClient tokenAuthClient;
+    private final UserAuthClient userAuthClient;
     private final CouponReposistory couponRepository;
     private final QuizRepository quizRepository;
     private final QuizHistoryRepository quizHistoryRepository;
+    private final QuizHistoryQueryDSLRepository quizHistoryQueryDSLRepository;
 
     public List<CouponIssuanceStatusResponse> getCouponIssuanceStatus(final long userId) {
 
@@ -97,7 +98,7 @@ public class QuizService {
 
         if (!quizHistoryRepository.existsByCreatedAtAfterAndUserId(
                 LocalDate.now().atStartOfDay(), userId)) {
-            tokenAuthClient.upgradeExperiencePoint(
+            userAuthClient.upgradeExperiencePoint(
                     UpdateExperiencePointRequest.of(userId, CONTENT_TYPE));
         }
 
@@ -113,7 +114,7 @@ public class QuizService {
     }
 
     public long getCurrentUserId(final String authorization) {
-        return tokenAuthClient.getUserId(authorization);
+        return userAuthClient.getUserId(authorization);
     }
 
     public List<QuizResponse> getQuizList() {
@@ -168,5 +169,16 @@ public class QuizService {
         }
 
         return selectedNumbers;
+    }
+
+    public ContentExperienceCountResponse getQuizExperienceCount(
+            final QuizExperienceCountRequest quizExperienceCountRequest) {
+
+        List<QuizHistoryResponse> quizHistoryResponses =
+                quizHistoryQueryDSLRepository.findSolvedAtQuizHistory(
+                        quizExperienceCountRequest.getUserId(),
+                        quizExperienceCountRequest.getCreatedAt());
+
+        return ContentExperienceCountResponse.of(quizHistoryResponses.size());
     }
 }
