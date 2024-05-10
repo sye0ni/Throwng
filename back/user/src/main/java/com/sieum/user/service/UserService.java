@@ -18,7 +18,9 @@ import com.sieum.user.repository.LevelRepository;
 import com.sieum.user.repository.UserRepository;
 import com.sieum.user.util.RedisUtil;
 import feign.FeignException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.transaction.Transactional;
@@ -226,6 +228,17 @@ public class UserService {
             //            final String upKey = "user_exp_" +level.getGrade()
             //                    + "_"+updateExperiencePointRequest.getUserId();
             //            redisUtil.setData(upKey, String.valueOf(expCount));
+
+            // Delete the throwng count in redis
+            final String nowDate =
+                    LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd"));
+            final String currentKey =
+                    "user_throw_" + updateExperiencePointRequest.getUserId() + "_" + nowDate;
+
+            if (redisUtil.getData(currentKey) != null) {
+                redisUtil.deleteData(currentKey);
+            }
+
         } else {
             redisUtil.setData(key, String.valueOf(expCount));
         }
@@ -236,16 +249,16 @@ public class UserService {
                 musicFeignClient.getMusicExperienceCount(
                         MusicExperienceCountRequest.of(userId, createAt));
 
-        ContentExperienceCountResponse contentExperienceCountResponse =
-                quizFeignClient.getQuizExperienceCount(
-                        MusicExperienceCountRequest.of(userId, createAt));
+        //        ContentExperienceCountResponse contentExperienceCountResponse =
+        //                quizFeignClient.getQuizExperienceCount(
+        //                        MusicExperienceCountRequest.of(userId, createAt));
 
         return (musicExperienceCountResponse.getThrowngCount()
                         * ExperiencePointType.valueOf(THROWNG).getPoint()
                 + musicExperienceCountResponse.getPickedupCount()
-                        * ExperiencePointType.valueOf(PICKUP).getPoint()
-                + contentExperienceCountResponse.getContentCount()
-                        * ExperiencePointType.valueOf(CONTENTS).getPoint());
+                        * ExperiencePointType.valueOf(PICKUP).getPoint());
+        //                + contentExperienceCountResponse.getContentCount()
+        //                        * ExperiencePointType.valueOf(CONTENTS).getPoint());
     }
 
     public long getExperienceCountByRedis(
