@@ -3,23 +3,28 @@ package com.sieum.quiz.service;
 import static com.sieum.quiz.exception.CustomExceptionStatus.DUPLICATE_COUPON_REQUEST;
 import static com.sieum.quiz.exception.CustomExceptionStatus.NOT_FOUND_COUPON_ID;
 
-import com.sieum.quiz.controller.feign.TokenAuthClient;
+import com.sieum.quiz.controller.feign.NotificationAuthClient;
+import com.sieum.quiz.controller.feign.UserAuthClient;
 import com.sieum.quiz.domain.Coupon;
 import com.sieum.quiz.domain.CouponHistory;
 import com.sieum.quiz.domain.enums.CouponRoute;
 import com.sieum.quiz.domain.enums.CouponType;
 import com.sieum.quiz.dto.request.CouponStatusRequest;
+import com.sieum.quiz.dto.response.CouponHistoryNewestResponse;
 import com.sieum.quiz.dto.response.CouponeInquiryResponse;
 import com.sieum.quiz.dto.response.CreateCouponResponse;
 import com.sieum.quiz.exception.BadRequestException;
+import com.sieum.quiz.repository.CouponHistoryQueryDSLRepository;
 import com.sieum.quiz.repository.CouponHistoryRepository;
 import com.sieum.quiz.repository.CouponReposistory;
+import com.sieum.quiz.util.RedisUtil;
 import java.time.LocalDate;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 import java.util.stream.Collectors;
+import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -27,9 +32,12 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class CouponService {
     private static final Random random = new Random();
-    private final TokenAuthClient tokenAuthClient;
+    private final UserAuthClient userAuthClient;
+    private final NotificationAuthClient notificationAuthClient;
+    private final RedisUtil redisUtil;
     private final CouponReposistory couponRepository;
     private final CouponHistoryRepository couponHistoryRepository;
+    private final CouponHistoryQueryDSLRepository couponHistoryQueryDSLRepository;
     private final String COMPLETION_STATUS = "COMPLETION";
 
     public CreateCouponResponse createCoupon(final long userId, final String route) {
@@ -58,7 +66,7 @@ public class CouponService {
     }
 
     public long getCurrentUserId(final String authorization) {
-        return tokenAuthClient.getUserId(authorization);
+        return userAuthClient.getUserId(authorization);
     }
 
     private Optional<CouponType> generateCoupon() {
@@ -86,6 +94,47 @@ public class CouponService {
                                                 .findTopByCouponIdOrderByCreatedAtDesc(
                                                         coupon.getId())))
                 .collect(Collectors.toList());
+    }
+
+    @Transactional
+    //    @Scheduled(cron="0 0 4 * * *", zone="Asia/Seoul")
+    public void sendCouponExpirationNotification() {
+
+        final List<CouponHistoryNewestResponse> couponHistoryNewestResponses =
+                couponHistoryQueryDSLRepository.findNewestCouponHistory();
+
+        final List<Long> couponIdList =
+                couponHistoryNewestResponses.stream()
+                        .filter(
+                                couponHistoryNewestResponse ->
+                                        couponHistoryQueryDSLRepository.findExpirationCouponHistory(
+                                                        CouponHistoryNewestResponse.builder()
+                                                                .couponId(
+                                                                        couponHistoryNewestResponse
+                                                                                .getCouponId())
+                                                                .createdAt(
+                                                                        couponHistoryNewestResponse
+                                                                                .getCreatedAt())
+                                                                .build())
+                                                != 0)
+                        .map(CouponHistoryNewestResponse::getCouponId)
+                        .collect(Collectors.toList());
+
+        final List<Long> userIdList =
+                couponIdList.stream()
+                        .map(couponId -> couponRepository.findById(couponId).get().getUserId())
+                        .distinct()
+                        .collect(Collectors.toList());
+
+        final String key = "noti_coupon_expiration_" + LocalDate.now();
+        redisUtil.setObject(key, userIdList);
+
+        //        sendCouponExpirationUserIdList(userIdList);
+
+    }
+
+    public void sendCouponExpirationUserIdList(final List<Long> userIdList) {
+        notificationAuthClient.sendCouponExpirationUserIdList(userIdList);
     }
 
     public void modifyCouponStatus(final CouponStatusRequest couponStatusRequest) {
