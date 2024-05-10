@@ -18,6 +18,7 @@ import com.sieum.quiz.repository.QuizHistoryRepository;
 import com.sieum.quiz.repository.QuizRepository;
 import com.sieum.quiz.util.RedisUtil;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -53,7 +54,7 @@ public class QuizService {
                                                 userId);
                             }
                             return CouponIssuanceStatusResponse.builder()
-                                    .status(result)
+                                    .status(false) // annotation will be removed
                                     .name(route.getName())
                                     .build();
                         })
@@ -119,13 +120,12 @@ public class QuizService {
 
     public List<QuizResponse> getQuizList() {
 
-        //        final String key =
-        //                "quiz_" +
-        // LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        final String key =
+                "quiz_" + LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
 
-        //        if (redisUtil.getObject(key) != null) {
-        //            return (List<QuizResponse>) redisUtil.getObject(key);
-        //        }
+        if (redisUtil.getObject(key) != null) {
+            return (List<QuizResponse>) redisUtil.getObject(key);
+        }
 
         final List<QuizResponse> quizlist =
                 quizRepository.findAll().stream()
@@ -143,16 +143,13 @@ public class QuizService {
                                                 .build())
                         .collect(Collectors.toList());
 
-        //        final List<Integer> indexes = createRandomQuiz(quizlist.size());
-        final List<Integer> indexes = new ArrayList<>();
-        indexes.add(2);
-        indexes.add(6);
-        indexes.add(23);
+        final List<Integer> indexes = createRandomQuiz(quizlist.size());
+
         final List<QuizResponse> todayQuizList = new ArrayList<>();
 
         indexes.stream().forEach(index -> todayQuizList.add(quizlist.get(index)));
 
-        //        redisUtil.setObject(key, todayQuizList);
+        redisUtil.setObject(key, todayQuizList);
 
         return todayQuizList;
     }

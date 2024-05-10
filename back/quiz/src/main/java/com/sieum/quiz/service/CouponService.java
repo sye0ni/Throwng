@@ -1,6 +1,5 @@
 package com.sieum.quiz.service;
 
-import static com.sieum.quiz.exception.CustomExceptionStatus.DUPLICATE_COUPON_REQUEST;
 import static com.sieum.quiz.exception.CustomExceptionStatus.NOT_FOUND_COUPON_ID;
 
 import com.sieum.quiz.controller.feign.NotificationAuthClient;
@@ -43,10 +42,11 @@ public class CouponService {
     public CreateCouponResponse createCoupon(final long userId, final String route) {
         final String couponRoute = CouponRoute.findByName(route);
 
-        if (couponRepository.existsByCreatedAtAfterAndRouteAndUserId(
-                LocalDate.now().atStartOfDay(), couponRoute, userId)) {
-            throw new BadRequestException(DUPLICATE_COUPON_REQUEST);
-        }
+        //        if (couponRepository.existsByCreatedAtAfterAndRouteAndUserId(
+        //                LocalDate.now().atStartOfDay(), couponRoute, userId)) {
+        //            throw new BadRequestException(DUPLICATE_COUPON_REQUEST);
+        //        }
+        // annotation will be removed !
 
         final String couponType = String.valueOf(generateCoupon().get());
 
