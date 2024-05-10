@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { MyHistory } from "../../types/songType";
 import "@styles/myPage/MyThrowngHistroyList.scss";
 import { TiLocation } from "react-icons/ti";
-import { FaHeart } from "react-icons/fa";
 import { useRecoilValue, useResetRecoilState, useSetRecoilState } from "recoil";
 import {
   myPickHistoryList,
