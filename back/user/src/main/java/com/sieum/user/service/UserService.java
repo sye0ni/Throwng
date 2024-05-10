@@ -249,16 +249,16 @@ public class UserService {
                 musicFeignClient.getMusicExperienceCount(
                         MusicExperienceCountRequest.of(userId, createAt));
 
-        //        ContentExperienceCountResponse contentExperienceCountResponse =
-        //                quizFeignClient.getQuizExperienceCount(
-        //                        MusicExperienceCountRequest.of(userId, createAt));
+        ContentExperienceCountResponse contentExperienceCountResponse =
+                quizFeignClient.getQuizExperienceCount(
+                        MusicExperienceCountRequest.of(userId, createAt));
 
         return (musicExperienceCountResponse.getThrowngCount()
                         * ExperiencePointType.valueOf(THROWNG).getPoint()
                 + musicExperienceCountResponse.getPickedupCount()
-                        * ExperiencePointType.valueOf(PICKUP).getPoint());
-        //                + contentExperienceCountResponse.getContentCount()
-        //                        * ExperiencePointType.valueOf(CONTENTS).getPoint());
+                        * ExperiencePointType.valueOf(PICKUP).getPoint()
+                + contentExperienceCountResponse.getContentCount()
+                        * ExperiencePointType.valueOf(CONTENTS).getPoint());
     }
 
     public long getExperienceCountByRedis(
