@@ -61,7 +61,11 @@ public class MusicService {
                 musicRepository
                         .findById(throwId)
                         .orElseThrow(() -> new BadRequestException(NOT_FOUND_THROW_ITEM_ID));
-        return ThrownMusicDetailResponse.of(throwItem, userId);
+
+        return ThrownMusicDetailResponse.of(
+                throwItem,
+                userId,
+                throwHistoryRepository.findByThrowItemId(throwItem.getId()).size());
     }
 
     @Transactional
@@ -270,7 +274,12 @@ public class MusicService {
         List<ThrowItem> throwItems = musicRepository.findByUserId(userId);
         final List<ThrownSongResponse> thrwonSongResponse =
                 throwItems.stream()
-                        .map(throwItem -> ThrownSongResponse.of(throwItem))
+                        .map(
+                                throwItem ->
+                                        ThrownSongResponse.of(
+                                                throwItem,
+                                                throwHistoryRepository.findByThrowItemId(
+                                                        throwItem.getId())))
                         .collect(Collectors.toList());
 
         return thrwonSongResponse;
