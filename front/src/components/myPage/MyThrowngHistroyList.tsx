@@ -120,15 +120,7 @@ const MyThrowngHistroyList = ({ pageIdx, setHistoryCnt }: Props) => {
                 <div className="item-detail">
                   <div className="item-title">{song.title}</div>
                   <div className="item-artist">{song.artist}</div>
-                  <div className="item-how-many">
-                    <div className="item-comment">{song.comment}</div>
-                    {!pageIdx &&
-                    <div className="item-count">
-                      <FaHeart/>
-                      <div className="item-count-no">{song.otherPickedCount}</div>
-                    </div>
-                    }
-                  </div>
+                  <div className="item-comment">{song.comment}</div>
                 </div>
               </div>
             </div>
