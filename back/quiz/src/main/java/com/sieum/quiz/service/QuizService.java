@@ -27,7 +27,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class QuizService {
 
-    private final String CONTENT_TYPE = "CONTENT";
+    private final String CONTENT_TYPE = "CONTENTS";
     private final RedisUtil redisUtil;
     private final UserAuthClient userAuthClient;
     private final CouponReposistory couponRepository;
