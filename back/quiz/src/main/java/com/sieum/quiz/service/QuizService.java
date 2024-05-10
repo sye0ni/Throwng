@@ -92,7 +92,7 @@ public class QuizService {
 
         if (!quizHistoryRepository.existsByCreatedAtAfterAndUserId(
                 LocalDate.now().atStartOfDay(), userId)) {
-            tokenAuthClient.upgradeExperiencePoint(
+            userAuthClient.upgradeExperiencePoint(
                     UpdateExperiencePointRequest.of(userId, CONTENT_TYPE));
         }
 

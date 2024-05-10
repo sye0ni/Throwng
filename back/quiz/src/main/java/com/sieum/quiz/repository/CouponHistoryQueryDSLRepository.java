@@ -44,8 +44,9 @@ public class CouponHistoryQueryDSLRepository {
                         couponHistory.coupon.id.eq(couponHistoryNewestResponse.getCouponId()),
                         couponHistory.createdAt.eq(couponHistoryNewestResponse.getCreatedAt()),
                         couponHistory.couponStatus.eq("NONE"),
-                        Expressions.stringTemplate("DATE_FORMAT({0}, '%Y-%m-%d')", couponHistory.createdAt).eq(String.valueOf(LocalDate.now().minusDays(6)))
-                )
+                        Expressions.stringTemplate(
+                                        "DATE_FORMAT({0}, '%Y-%m-%d')", couponHistory.createdAt)
+                                .eq(String.valueOf(LocalDate.now().minusDays(6))))
                 .fetchOne();
     }
 }

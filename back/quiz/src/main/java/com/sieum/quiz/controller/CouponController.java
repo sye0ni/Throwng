@@ -46,6 +46,4 @@ public class CouponController {
         couponService.modifyCouponStatus(couponStatusRequest);
         return ResponseEntity.noContent().build();
     }
-
-
 }
