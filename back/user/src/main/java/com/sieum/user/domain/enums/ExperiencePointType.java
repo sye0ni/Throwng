@@ -8,7 +8,7 @@ import lombok.Getter;
 public enum ExperiencePointType {
     THROWNG(3),
     PICKUP(1),
-    CONTENT(2);
+    CONTENTS(2);
 
     private final int point;
 
