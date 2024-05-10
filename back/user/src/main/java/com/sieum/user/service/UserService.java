@@ -42,6 +42,7 @@ public class UserService {
     private final int INITIAL_STATUS = 0;
     private final int PLUS_NUMBER = 1;
     private final int PERCENTAGE = 100;
+    private final String CONTENTS = "CONTENTS";
 
     public UserInfoResponse getUserLevel(long userId) {
         User user =
@@ -235,10 +236,16 @@ public class UserService {
                 musicFeignClient.getMusicExperienceCount(
                         MusicExperienceCountRequest.of(userId, createAt));
 
+        ContentExperienceCountResponse contentExperienceCountResponse =
+                quizFeignClient.getQuizExperienceCount(
+                        MusicExperienceCountRequest.of(userId, createAt));
+
         return (musicExperienceCountResponse.getThrowngCount()
                         * ExperiencePointType.valueOf(THROWNG).getPoint()
                 + musicExperienceCountResponse.getPickedupCount()
-                        * ExperiencePointType.valueOf(PICKUP).getPoint());
+                        * ExperiencePointType.valueOf(PICKUP).getPoint()
+                + contentExperienceCountResponse.getContentCount()
+                        * ExperiencePointType.valueOf(CONTENTS).getPoint());
     }
 
     public long getExperienceCountByRedis(
