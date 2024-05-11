@@ -26,6 +26,7 @@ import java.util.Random;
 import java.util.stream.Collectors;
 import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -97,7 +98,7 @@ public class CouponService {
     }
 
     @Transactional
-    //    @Scheduled(cron="0 0 4 * * *", zone="Asia/Seoul")
+    @Scheduled(cron = "0 0 4 * * *", zone = "Asia/Seoul")
     public void sendCouponExpirationNotification() {
 
         final List<CouponHistoryNewestResponse> couponHistoryNewestResponses =
@@ -128,13 +129,6 @@ public class CouponService {
 
         final String key = "noti_coupon_expiration_" + LocalDate.now();
         redisUtil.setObject(key, userIdList);
-
-        //        sendCouponExpirationUserIdList(userIdList);
-
-    }
-
-    public void sendCouponExpirationUserIdList(final List<Long> userIdList) {
-        notificationAuthClient.sendCouponExpirationUserIdList(userIdList);
     }
 
     public void modifyCouponStatus(final CouponStatusRequest couponStatusRequest) {
