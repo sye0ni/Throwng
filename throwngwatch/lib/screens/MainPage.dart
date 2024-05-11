@@ -5,7 +5,6 @@ import 'package:throwngwatch/const/color.dart';
 import 'package:wear/wear.dart';
 import '../store/store.dart';
 import '../widgets/ClockTime.dart';
-import 'LoginPage.dart';
 import 'MusicListPage.dart';
 import 'MyPlayListPage.dart';
 import 'package:geolocator/geolocator.dart';
@@ -26,7 +25,6 @@ class _MainPageState extends State<MainPage> {
     super.initState();
     _pageController = PageController(initialPage: _currentPageIndex);
     getLocation();
-    _checkTokenAndNavigate();
   }
 
   @override
@@ -45,13 +43,6 @@ class _MainPageState extends State<MainPage> {
     LocationPermission permission = await Geolocator.requestPermission();
     Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
     await UserManager().saveUserInfo(newLatitude: position.latitude, newLongitude: position.longitude);
-  }
-
-  void _checkTokenAndNavigate() async {
-    await UserManager().loadUserInfo();
-    if (UserManager().accessToken == null) {
-      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => LoginPage()));
-    }
   }
 
   @override

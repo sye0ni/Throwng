@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:throwngwatch/screens/LoginPage.dart';
 import 'package:throwngwatch/screens/MainPage.dart';
 import 'package:throwngwatch/store/store.dart';
 import 'package:wear/wear.dart';
 import 'const/color.dart';
 
-Future main() async {
+Future<void> main() async {
   await dotenv.load(fileName: ".env");
+  WidgetsFlutterBinding.ensureInitialized();
+  await UserManager().loadUserInfo();
   runApp(MyApp());
 }
 
@@ -47,11 +50,11 @@ class _MyAppState extends State<MyApp> {
         body: Center(
           child: WatchShape(
             builder: (context, shape, child) {
-              return AmbientMode(
-                builder: (context, mode, child) {
-                  return MainPage();
-                },
-              );
+              if (UserManager().accessToken == null) {
+                return LoginPage();
+              } else {
+                return MainPage();
+              }
             },
           ),
         ),

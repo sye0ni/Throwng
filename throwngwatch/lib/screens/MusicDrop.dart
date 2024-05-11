@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '../const/color.dart';
@@ -92,7 +93,7 @@ class _MusicDropState extends State<MusicDrop> {
       body: Container(
         decoration: BoxDecoration(
           image: DecorationImage(
-            image: NetworkImage(widget.musicData['albumImage']),
+            image: CachedNetworkImageProvider(widget.musicData['albumImage']),
             fit: BoxFit.cover,
           ),
         ),
