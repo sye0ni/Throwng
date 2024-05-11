@@ -8,12 +8,13 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-@Document("content_notification")
+@Document("coupon_notification")
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Builder
-public class ContentNotification {
+public class CouponNotification {
+
     @Id private String id;
     private String usage;
     private String category;

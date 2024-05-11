@@ -13,16 +13,17 @@ public class NotificationController {
 
     private final NotificationService notificationService;
 
-    @Operation(summary = "Mongodb search api - for test")
-    @GetMapping("/mongo/search/{notificationName}")
-    public ResponseEntity<?> getDocument(@PathVariable final String notificationName) {
-        return ResponseEntity.ok().body(notificationService.mongoSearchTest(notificationName));
-    }
-
     @Operation(summary = "Sending coupon expiration notification - for test")
     @PostMapping("/coupons")
     public ResponseEntity<?> createCouponExpirationNotification() {
         notificationService.createCouponExpirationNotification();
+        return ResponseEntity.noContent().build();
+    }
+
+    @Operation(summary = "Sending content engagement notification - for test")
+    @PostMapping("/contents")
+    public ResponseEntity<?> createContentEngagementNotification() {
+        notificationService.createContentEngagementNotification();
         return ResponseEntity.noContent().build();
     }
 }
