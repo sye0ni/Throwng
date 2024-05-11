@@ -1,5 +1,6 @@
 package com.sieum.quiz.service;
 
+import static com.sieum.quiz.exception.CustomExceptionStatus.DUPLICATE_COUPON_REQUEST;
 import static com.sieum.quiz.exception.CustomExceptionStatus.NOT_FOUND_COUPON_ID;
 
 import com.sieum.quiz.controller.feign.NotificationAuthClient;
@@ -10,6 +11,7 @@ import com.sieum.quiz.domain.enums.CouponRoute;
 import com.sieum.quiz.domain.enums.CouponType;
 import com.sieum.quiz.dto.request.CouponStatusRequest;
 import com.sieum.quiz.dto.response.CouponHistoryNewestResponse;
+import com.sieum.quiz.dto.response.CouponIssuanceResponse;
 import com.sieum.quiz.dto.response.CouponeInquiryResponse;
 import com.sieum.quiz.dto.response.CreateCouponResponse;
 import com.sieum.quiz.exception.BadRequestException;
@@ -43,11 +45,10 @@ public class CouponService {
     public CreateCouponResponse createCoupon(final long userId, final String route) {
         final String couponRoute = CouponRoute.findByName(route);
 
-        //        if (couponRepository.existsByCreatedAtAfterAndRouteAndUserId(
-        //                LocalDate.now().atStartOfDay(), couponRoute, userId)) {
-        //            throw new BadRequestException(DUPLICATE_COUPON_REQUEST);
-        //        }
-        // annotation will be removed !
+        if (couponRepository.existsByCreatedAtAfterAndRouteAndUserId(
+                LocalDate.now().atStartOfDay(), couponRoute, userId)) {
+            throw new BadRequestException(DUPLICATE_COUPON_REQUEST);
+        }
 
         final String couponType = String.valueOf(generateCoupon().get());
 
@@ -142,5 +143,16 @@ public class CouponService {
 
         couponHistory.changeCouponStatus(COMPLETION_STATUS);
         couponHistoryRepository.save(couponHistory);
+    }
+
+    public CouponIssuanceResponse checkCoupon(final long userId, final String route) {
+
+        final String couponRoute = CouponRoute.findByName(route);
+
+        if (couponRepository.existsByCreatedAtAfterAndRouteAndUserId(
+                LocalDate.now().atStartOfDay(), couponRoute, userId)) {
+            return CouponIssuanceResponse.builder().couponStatus(true).build();
+        }
+        return CouponIssuanceResponse.builder().couponStatus(false).build();
     }
 }
