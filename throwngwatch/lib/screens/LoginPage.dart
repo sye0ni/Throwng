@@ -31,10 +31,7 @@ class _LoginPageState extends State<LoginPage> {
 
   void handlePress() async {
     final res = await postWatchAuth(otpInput);
-    String accessToken = res.data['accessToken'];
-    String refreshToken = res.data['refreshToken'];
-
-    await UserManager().saveUserInfo(newAccessToken: accessToken, newRefreshToken: refreshToken);
+    await UserManager().saveUserInfo(newAccessToken: res.data['accessToken'], newRefreshToken: res.data['refreshToken']);
     Navigator.push(context, MaterialPageRoute(builder: (context) => MainPage()));
   }
 

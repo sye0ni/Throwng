@@ -40,7 +40,6 @@ class _MyPlayListState extends State<MyPlayList> {
         isLoading = true;
       });
       final res = await getMyPlayList();
-      print(res.data);
       if (mounted) {
         setState(() {
           final List<Map<String, dynamic>> tempList = List<Map<String, dynamic>>.from(res.data.map((item) => Map<String, dynamic>.from(item)));
