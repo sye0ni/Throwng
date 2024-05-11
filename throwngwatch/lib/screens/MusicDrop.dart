@@ -54,7 +54,6 @@ class _MusicDropState extends State<MusicDrop> {
         'songId': widget.musicData['songId'],
         'comment': userComment,
       };
-      print(data);
       await fetchThrowng(context, data);
     } else {
       print("위도없다~~ 경도없다~~");

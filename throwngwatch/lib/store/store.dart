@@ -33,8 +33,6 @@ class UserManager with ChangeNotifier {
     if (latitude != null) await storage.write(key: 'latitude', value: latitude.toString());
     if (longitude != null) await storage.write(key: 'longitude', value: longitude.toString());
 
-    print('11111: ${latitude}');
-    print('11111: ${longitude}');
     notifyListeners();
   }
 
@@ -46,9 +44,6 @@ class UserManager with ChangeNotifier {
 
     latitude = latStr != null ? double.tryParse(latStr) : null;
     longitude = lonStr != null ? double.tryParse(lonStr) : null;
-
-    print('22222: ${latitude}');
-    print('22222: ${longitude}');
 
     notifyListeners();
   }
