@@ -298,4 +298,15 @@ public class UserService {
     public void createUserHistory(final String ip, final User user) {
         userHistoryRepository.save(UserHistory.builder().ip(ip).user(user).build());
     }
+
+    public int getLevelThrowngCount(final long userId) {
+        LevelHistory levelHistory =
+                levelHistoryRepository.findTopByUserIdOrderByCreatedAtDesc(userId);
+
+        if (levelHistory == null) {
+            throw new BadRequestException(NOT_FOUND_LEVEL_HISTORY_ID);
+        }
+
+        return levelHistory.getLevel().getThrowngLimit();
+    }
 }
