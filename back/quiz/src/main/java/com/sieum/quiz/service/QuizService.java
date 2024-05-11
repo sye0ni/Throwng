@@ -7,17 +7,18 @@ import com.sieum.quiz.domain.Quiz;
 import com.sieum.quiz.domain.QuizHistory;
 import com.sieum.quiz.domain.enums.CouponRoute;
 import com.sieum.quiz.domain.enums.QuizType;
+import com.sieum.quiz.dto.request.QuizExperienceCountRequest;
 import com.sieum.quiz.dto.request.QuizHistoryCreationRequest;
 import com.sieum.quiz.dto.request.UpdateExperiencePointRequest;
-import com.sieum.quiz.dto.response.CouponIssuanceStatusResponse;
-import com.sieum.quiz.dto.response.QuizResponse;
-import com.sieum.quiz.dto.response.QuizResultResponse;
+import com.sieum.quiz.dto.response.*;
 import com.sieum.quiz.exception.BadRequestException;
 import com.sieum.quiz.repository.CouponReposistory;
+import com.sieum.quiz.repository.QuizHistoryQueryDSLRepository;
 import com.sieum.quiz.repository.QuizHistoryRepository;
 import com.sieum.quiz.repository.QuizRepository;
 import com.sieum.quiz.util.RedisUtil;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -27,12 +28,13 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class QuizService {
 
-    private final String CONTENT_TYPE = "CONTENT";
+    private final String CONTENT_TYPE = "CONTENTS";
     private final RedisUtil redisUtil;
     private final UserAuthClient userAuthClient;
     private final CouponReposistory couponRepository;
     private final QuizRepository quizRepository;
     private final QuizHistoryRepository quizHistoryRepository;
+    private final QuizHistoryQueryDSLRepository quizHistoryQueryDSLRepository;
 
     public List<CouponIssuanceStatusResponse> getCouponIssuanceStatus(final long userId) {
 
@@ -82,9 +84,14 @@ public class QuizService {
                 quizRepository.findById(quizHistoryCreationRequest.getQuizId()).get().getAnswer();
         final QuizResultResponse quizResultResponse;
 
-        if (answer.toLowerCase()
-                .replaceAll(" ", "")
-                .equals(quizHistoryCreationRequest.getSubmit().toLowerCase().replaceAll(" ", ""))) {
+        if (quizHistoryCreationRequest.getSubmit() != null
+                && answer.toLowerCase()
+                        .replaceAll(" ", "")
+                        .equals(
+                                quizHistoryCreationRequest
+                                        .getSubmit()
+                                        .toLowerCase()
+                                        .replaceAll(" ", ""))) {
             quizResultResponse = QuizResultResponse.builder().status(true).build();
         } else {
             quizResultResponse = QuizResultResponse.builder().status(false).build();
@@ -113,13 +120,12 @@ public class QuizService {
 
     public List<QuizResponse> getQuizList() {
 
-        //        final String key =
-        //                "quiz_" +
-        // LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        final String key =
+                "quiz_" + LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
 
-        //        if (redisUtil.getObject(key) != null) {
-        //            return (List<QuizResponse>) redisUtil.getObject(key);
-        //        }
+        if (redisUtil.getObject(key) != null) {
+            return (List<QuizResponse>) redisUtil.getObject(key);
+        }
 
         final List<QuizResponse> quizlist =
                 quizRepository.findAll().stream()
@@ -137,16 +143,13 @@ public class QuizService {
                                                 .build())
                         .collect(Collectors.toList());
 
-        //        final List<Integer> indexes = createRandomQuiz(quizlist.size());
-        final List<Integer> indexes = new ArrayList<>();
-        indexes.add(2);
-        indexes.add(6);
-        indexes.add(23);
+        final List<Integer> indexes = createRandomQuiz(quizlist.size());
+
         final List<QuizResponse> todayQuizList = new ArrayList<>();
 
         indexes.stream().forEach(index -> todayQuizList.add(quizlist.get(index)));
 
-        //        redisUtil.setObject(key, todayQuizList);
+        redisUtil.setObject(key, todayQuizList);
 
         return todayQuizList;
     }
@@ -163,5 +166,16 @@ public class QuizService {
         }
 
         return selectedNumbers;
+    }
+
+    public ContentExperienceCountResponse getQuizExperienceCount(
+            final QuizExperienceCountRequest quizExperienceCountRequest) {
+
+        List<QuizHistoryResponse> quizHistoryResponses =
+                quizHistoryQueryDSLRepository.findSolvedAtQuizHistory(
+                        quizExperienceCountRequest.getUserId(),
+                        quizExperienceCountRequest.getCreatedAt());
+
+        return ContentExperienceCountResponse.of(quizHistoryResponses.size());
     }
 }
