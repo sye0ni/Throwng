@@ -33,6 +33,9 @@ public class CouponeInquiryResponse {
     @Schema(description = "coupon status")
     private String couponStatus;
 
+    @Schema(description = "coupon Type")
+    private String couponType;
+
     public static LocalDateTime createEndDate(LocalDateTime createdAt) {
         return createdAt.plusDays(EXPIRATION_PERIOD);
     }
@@ -43,6 +46,7 @@ public class CouponeInquiryResponse {
                 CouponType.valueOf(coupon.getCouponType()).getName(),
                 CouponType.valueOf(coupon.getCouponType()).getDescription(),
                 createEndDate(coupon.getCreatedAt()),
-                CouponStatus.valueOf(couponHistory.getCouponStatus()).getKr());
+                CouponStatus.valueOf(couponHistory.getCouponStatus()).getKr(),
+                coupon.getCouponType());
     }
 }
