@@ -11,4 +11,8 @@ public enum CouponStatus {
     COMPLETION("만료");
 
     private String kr;
+
+    public String getKr() {
+        return kr;
+    }
 }
