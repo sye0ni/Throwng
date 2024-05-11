@@ -44,8 +44,6 @@ class _MusicListState extends State<MusicList> {
     await userManager.loadUserInfo();
     double? latitude = await userManager.latitude;
     double? longitude = await userManager.longitude;
-    print('33333: ${latitude}');
-    print('33333: ${longitude}');
     setState(() {
       isLoading = false;
     });
@@ -60,7 +58,6 @@ class _MusicListState extends State<MusicList> {
   Future<void> fetchMusicList(double lat, double lon) async {
     try {
       final res = await getMusicList(lat, lon);
-      print(res);
       if (mounted) {
         setState(() {
           final List<Map<String, dynamic>> tempList = List<Map<String, dynamic>>.from(res.data.map((item) => Map<String, dynamic>.from(item)));
