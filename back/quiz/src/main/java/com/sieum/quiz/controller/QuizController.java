@@ -14,6 +14,7 @@ public class QuizController {
 
     private final QuizService quizService;
 
+    @Operation(summary = "Return daily quiz list")
     @GetMapping("/list")
     public ResponseEntity<?> getQuizList(
             @RequestHeader("Authorization") final String authorization) {
