@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../const/color.dart';
@@ -33,7 +34,7 @@ class _MusicPickDetailState extends State<MusicPickDetail> {
       body: Container(
         decoration: BoxDecoration(
           image: DecorationImage(
-            image: NetworkImage(widget.musicData['albumImage']),
+            image: CachedNetworkImageProvider(widget.musicData['albumImage']),
             fit: BoxFit.cover,
           ),
         ),

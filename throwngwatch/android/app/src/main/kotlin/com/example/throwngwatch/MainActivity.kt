@@ -12,6 +12,8 @@ import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.embedding.engine.dart.DartExecutor
 import io.flutter.plugin.common.MethodChannel
+import android.view.MotionEvent
+import com.samsung.wearable_rotary.WearableRotaryPlugin
 
 class MainActivity : FlutterActivity() {
 
@@ -59,6 +61,13 @@ class MainActivity : FlutterActivity() {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == 1 && grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             getLastLocation()
+        }
+    }
+
+    override fun onGenericMotionEvent(event: MotionEvent?): Boolean {
+        return when {
+            WearableRotaryPlugin.onGenericMotionEvent(event) -> true
+            else -> super.onGenericMotionEvent(event)
         }
     }
 }
