@@ -3,11 +3,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/widgets.dart';
 import 'package:throwngwatch/const/color.dart';
 import 'package:wear/wear.dart';
-import '../store/store.dart';
 import '../widgets/ClockTime.dart';
+import 'LocationService.dart';
 import 'MusicListPage.dart';
 import 'MyPlayListPage.dart';
-import 'package:geolocator/geolocator.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({super.key});
@@ -24,7 +23,7 @@ class _MainPageState extends State<MainPage> {
   void initState() {
     super.initState();
     _pageController = PageController(initialPage: _currentPageIndex);
-    getLocation();
+    LocationService.initialize();
   }
 
   @override
@@ -37,12 +36,6 @@ class _MainPageState extends State<MainPage> {
     setState(() {
       _currentPageIndex = pageIndex;
     });
-  }
-
-  Future<void> getLocation() async {
-    LocationPermission permission = await Geolocator.requestPermission();
-    Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
-    await UserManager().saveUserInfo(newLatitude: position.latitude, newLongitude: position.longitude);
   }
 
   @override

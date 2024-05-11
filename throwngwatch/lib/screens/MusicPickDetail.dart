@@ -24,7 +24,7 @@ class _MusicPickDetailState extends State<MusicPickDetail> {
     if (await canLaunch(url)) {
       await launch(url);
     } else {
-      print('Could not launch $url');
+      print('');
     }
   }
 
