@@ -26,6 +26,15 @@ public class CouponController {
         return ResponseEntity.ok().body(couponService.createCoupon(userId, route));
     }
 
+    @Operation(summary = "Check if you received a coupon today")
+    @GetMapping("/valid/{route}")
+    public ResponseEntity<?> checkCoupon(
+            @RequestHeader("Authorization") final String authorization,
+            @PathVariable final String route) {
+        final long userId = couponService.getCurrentUserId(authorization);
+        return ResponseEntity.ok().body(couponService.checkCoupon(userId, route));
+    }
+
     @Operation(summary = "feign client")
     @GetMapping("/{userId}/history")
     public ResponseEntity<?> getCouponHistory(@PathVariable final long userId) {
