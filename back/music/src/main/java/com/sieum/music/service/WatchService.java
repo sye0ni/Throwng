@@ -4,7 +4,6 @@ import static com.sieum.music.exception.CustomExceptionStatus.*;
 
 import com.sieum.music.controller.feign.TokenAuthClient;
 import com.sieum.music.domain.*;
-import com.sieum.music.domain.dao.ThrowCurrentDao;
 import com.sieum.music.domain.enums.ThrowStatus;
 import com.sieum.music.dto.request.WatchThrownItemRequest;
 import com.sieum.music.dto.response.KakaoMapReverseGeoResponse;
@@ -87,18 +86,6 @@ public class WatchService {
                 songRepository
                         .findById(watchThrownItemRequest.getSongId())
                         .orElseThrow(() -> new BadRequestException(NOT_FOUND_SONG_ID));
-
-        // Verification: The same user cannot throw the same song again within 100m
-        ThrowCurrentDao throwDao =
-                throwQueryDSLRepository
-                        .findNearItemsPointsByDistanceAndUserIdAndCreatedAtAndYoutubeId(
-                                point, 100.0, userId, nowDate, song.getYoutubeId());
-
-        if (throwDao != null) {
-            if (throwDao.getStatus().equals(ThrowStatus.valueOf("VISIBLE"))) {
-                throw new BadRequestException(NOT_THROW_ITEM_IN_LIMITED_RADIUS);
-            }
-        }
 
         KakaoMapReverseGeoResponse kakaoMapReverseGeoResponse =
                 kakaoMapReverseGeoUtil.getReverseGeo(
