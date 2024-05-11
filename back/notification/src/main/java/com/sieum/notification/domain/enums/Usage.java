@@ -6,7 +6,8 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum Usage {
-    CONTENT_QUIZ("coupon_content_notification", "컨텐츠");
+    COUPON("coupon_content_notification", "쿠폰"),
+    CONTENT("content_attendance_notification", "컨텐츠");
 
     private String value;
     private String kr;

@@ -5,5 +5,6 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 
 public interface ContentNotificationRepository
         extends MongoRepository<ContentNotification, String> {
-    ContentNotification findByUsage(String couponExpirationNotification);
+
+    ContentNotification findByUsage(final String usage);
 }
