@@ -7,6 +7,7 @@ import com.sieum.user.controller.feign.QuizFeignClient;
 import com.sieum.user.domain.Level;
 import com.sieum.user.domain.LevelHistory;
 import com.sieum.user.domain.User;
+import com.sieum.user.domain.UserHistory;
 import com.sieum.user.domain.enums.ExperiencePointType;
 import com.sieum.user.dto.request.*;
 import com.sieum.user.dto.response.*;
@@ -15,6 +16,7 @@ import com.sieum.user.exception.BadRequestException;
 import com.sieum.user.exception.FeignClientException;
 import com.sieum.user.repository.LevelHistoryRepository;
 import com.sieum.user.repository.LevelRepository;
+import com.sieum.user.repository.UserHistoryRepository;
 import com.sieum.user.repository.UserRepository;
 import com.sieum.user.util.RedisUtil;
 import feign.FeignException;
@@ -39,6 +41,8 @@ public class UserService {
     private final LevelHistoryRepository levelHistoryRepository;
     private final RedisUtil redisUtil;
     private final LevelRepository levelRepository;
+    private final UserHistoryRepository userHistoryRepository;
+
     private final String THROWNG = "THROWNG";
     private final String PICKUP = "PICKUP";
     private final int INITIAL_STATUS = 0;
@@ -249,16 +253,16 @@ public class UserService {
                 musicFeignClient.getMusicExperienceCount(
                         MusicExperienceCountRequest.of(userId, createAt));
 
-        ContentExperienceCountResponse contentExperienceCountResponse =
-                quizFeignClient.getQuizExperienceCount(
-                        MusicExperienceCountRequest.of(userId, createAt));
+        //        ContentExperienceCountResponse contentExperienceCountResponse =
+        //                quizFeignClient.getQuizExperienceCount(
+        //                        MusicExperienceCountRequest.of(userId, createAt));
 
         return (musicExperienceCountResponse.getThrowngCount()
                         * ExperiencePointType.valueOf(THROWNG).getPoint()
                 + musicExperienceCountResponse.getPickedupCount()
-                        * ExperiencePointType.valueOf(PICKUP).getPoint()
-                + contentExperienceCountResponse.getContentCount()
-                        * ExperiencePointType.valueOf(CONTENTS).getPoint());
+                        * ExperiencePointType.valueOf(PICKUP).getPoint());
+        //                + contentExperienceCountResponse.getContentCount()
+        //                        * ExperiencePointType.valueOf(CONTENTS).getPoint());
     }
 
     public long getExperienceCountByRedis(
@@ -284,5 +288,9 @@ public class UserService {
                 Math.floor(
                         (((double) exp / (double) levelHistory.getLevel().getNextPoint()))
                                 * PERCENTAGE);
+    }
+
+    public void createUserHistory(final String ip, final User user) {
+        userHistoryRepository.save(UserHistory.builder().ip(ip).user(user).build());
     }
 }
