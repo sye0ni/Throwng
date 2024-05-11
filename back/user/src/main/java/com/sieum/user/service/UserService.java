@@ -126,9 +126,14 @@ public class UserService {
         userRepository.save(user);
     }
 
-    public List<String> getUserFcmList() {
+    public List<UserFcmInfoResponse> getUserFcmList() {
         return userRepository.findByFcmTokenIsNotNull().stream()
-                .map(User::getFcmToken)
+                .map(
+                        user ->
+                                UserFcmInfoResponse.builder()
+                                        .fcmToken(user.getFcmToken())
+                                        .userId(user.getId())
+                                        .build())
                 .collect(Collectors.toList());
     }
 
