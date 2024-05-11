@@ -147,4 +147,12 @@ public class MusicController {
         return ResponseEntity.ok()
                 .body(musicService.getMusicExperienceCount(musicExperienceCountReqeust));
     }
+
+    @Operation(summary = "Check unlimited radius coupon usage")
+    @GetMapping("/check-radius-coupon")
+    public ResponseEntity<?> isUsingUnlimitedRadiusCoupon(
+            @RequestHeader("Authorization") final String authorization) {
+        final long userId = musicService.getCurrentUserId(authorization);
+        return ResponseEntity.ok().body(musicService.checkUsingUnlimitedRadiusCoupon(userId));
+    }
 }

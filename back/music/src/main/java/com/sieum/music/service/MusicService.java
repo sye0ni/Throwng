@@ -323,4 +323,12 @@ public class MusicService {
 
         return MusicExperienceCountResponse.of(throwItems.size(), pickedupItems.size());
     }
+
+    public boolean checkUsingUnlimitedRadiusCoupon(final long userId) {
+        String value = redisUtil.getData(userId + "_radius");
+        if (value == null) {
+            return false;
+        }
+        return true;
+    }
 }
