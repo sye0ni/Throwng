@@ -35,13 +35,13 @@ public class CouponController {
         return ResponseEntity.ok().body(couponService.checkCoupon(userId, route));
     }
 
-    @Operation(summary = "feign client")
+    @Operation(summary = "feign client - Check user's coupon history")
     @GetMapping("/{userId}/history")
     public ResponseEntity<?> getCouponHistory(@PathVariable final long userId) {
         return ResponseEntity.ok().body(couponService.getCouponHistory(userId));
     }
 
-    @Operation(summary = "feign client")
+    @Operation(summary = "feign client - Validating the coupon you are trying to use")
     @PostMapping("/validation")
     public ResponseEntity<?> validateCoupon(
             @RequestBody final CouponValidationRequest couponValidationRequest) {
