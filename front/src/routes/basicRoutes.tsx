@@ -16,7 +16,7 @@ const NonePermissionPage = lazy(() => import("@pages/NonePermissionPage"));
 const QuizClosePage = lazy(() => import("@pages/quiz/QuizClosePage"));
 const ContentPage = lazy(() => import("@pages/ContentPage"));
 const QuizCountDown = lazy(() => import("@pages/quiz/QuizCountDown"));
-const QuizCouponPage = lazy(() => import("@pages/quiz/QuizCouponPage"));
+const QuizCouponPage = lazy(() => import("@/pages/quiz/QuizCouponPage"));
 const QuizFailPage = lazy(() => import("@pages/quiz/QuizFailPage"));
 const QuizInfoPage = lazy(() => import("@pages/quiz/QuizInfoPage"));
 const QuizSolvePage = lazy(() => import("@pages/quiz/QuizSolvePage"));
