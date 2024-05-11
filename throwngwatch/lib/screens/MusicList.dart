@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -16,6 +17,7 @@ class MusicList extends StatefulWidget {
 class _MusicListState extends State<MusicList> {
   final List<Map<String, dynamic>> popularMusic = [];
   final FlutterSecureStorage storage = FlutterSecureStorage();
+  bool isLoading = true;
 
   String trimText(String text, int limit) {
     return text.length > limit ? '${text.substring(0, limit)}...' : text;
@@ -35,12 +37,18 @@ class _MusicListState extends State<MusicList> {
   }
 
   Future<void> loadUserInfo() async {
+    setState(() {
+      isLoading = true;
+    });
     var userManager = UserManager();
-    userManager.loadUserInfo();
+    await userManager.loadUserInfo();
     double? latitude = await userManager.latitude;
     double? longitude = await userManager.longitude;
     print('33333: ${latitude}');
     print('33333: ${longitude}');
+    setState(() {
+      isLoading = false;
+    });
 
     if (latitude != null && longitude != null) {
       await fetchMusicList(latitude, longitude);
@@ -119,77 +127,80 @@ class _MusicListState extends State<MusicList> {
       builder: (BuildContext context, WearShape shape, Widget? child) {
         return Scaffold(
           body: Center(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                ClockTime(),
-                Text(
-                  '내 주변 인기 음악',
-                  style: TextStyle(fontSize: 13),
-                ),
-                SizedBox(height: 5),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    IconButton(
-                      icon: Icon(Icons.arrow_back, color: Colors.white),
-                      onPressed: () => Navigator.of(context).pop(),
-                    ),
-                    SizedBox(
-                      child: Container(
-                        height: 110,
-                        width: 110,
-                        child: PageView.builder(
-                          itemCount: popularMusic.isEmpty ? 1 : popularMusic.length,
-                          scrollDirection: Axis.vertical,
-                          controller: _pageController,
-                          onPageChanged: _onPageChanged,
-                          itemBuilder: (context, index) {
-                            if (popularMusic.isEmpty) {
-                              return Center(
-                                child: Text('비어있는 리스트입니다.', style: TextStyle(fontSize: 12, color: Colors.white)),
-                              );
-                            }
-                            return GestureDetector(
-                              onTap: () {
-                                Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context) => MusicPickDetail(
-                                    musicData: popularMusic[index],
-                                  ),
-                                ));
-                              },
-                              child: Container(
-                                height: 110,
-                                width: 110,
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(100),
-                                  child: Image.network(
-                                    popularMusic[index]['albumImage'],
-                                    fit: BoxFit.cover,
-                                  ),
-                                ),
+            child: isLoading
+                ? CircularProgressIndicator()
+                : Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      ClockTime(),
+                      Text(
+                        '내 주변 인기 음악',
+                        style: TextStyle(fontSize: 13),
+                      ),
+                      SizedBox(height: 5),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          IconButton(
+                            icon: Icon(Icons.arrow_back, color: Colors.white),
+                            onPressed: () => Navigator.of(context).pop(),
+                          ),
+                          SizedBox(
+                            child: Container(
+                              height: 110,
+                              width: 110,
+                              child: PageView.builder(
+                                itemCount: popularMusic.isEmpty ? 1 : popularMusic.length,
+                                scrollDirection: Axis.vertical,
+                                controller: _pageController,
+                                onPageChanged: _onPageChanged,
+                                itemBuilder: (context, index) {
+                                  if (popularMusic.isEmpty) {
+                                    return Center(
+                                      child: Text('비어있는 리스트입니다.', style: TextStyle(fontSize: 12, color: Colors.white)),
+                                    );
+                                  }
+                                  return GestureDetector(
+                                    onTap: () {
+                                      Navigator.of(context).push(MaterialPageRoute(
+                                        builder: (context) => MusicPickDetail(
+                                          musicData: popularMusic[index],
+                                        ),
+                                      ));
+                                    },
+                                    child: Container(
+                                      height: 110,
+                                      width: 110,
+                                      child: ClipRRect(
+                                        borderRadius: BorderRadius.circular(100),
+                                        child: CachedNetworkImage(
+                                          imageUrl: popularMusic[index]['albumImage'],
+                                          placeholder: (context, url) => CircularProgressIndicator(),
+                                          fit: BoxFit.cover,
+                                        ),
+                                      ),
+                                    ),
+                                  );
+                                },
                               ),
-                            );
-                          },
-                        ),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: List.generate(popularMusic.length, (index) => buildDot(index: index, total: popularMusic.length)),
+                            ),
+                          ),
+                        ],
                       ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: List.generate(popularMusic.length, (index) => buildDot(index: index, total: popularMusic.length)),
+                      SizedBox(height: 5),
+                      Text(
+                        trimText(_currentMusicTitleAndArtist, 12),
+                        style: TextStyle(fontSize: 12),
                       ),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 5),
-                Text(
-                  trimText(_currentMusicTitleAndArtist, 12),
-                  style: TextStyle(fontSize: 12),
-                ),
-              ],
-            ),
+                    ],
+                  ),
           ),
         );
       },

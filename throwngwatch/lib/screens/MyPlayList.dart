@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:wear/wear.dart';
 import '../const/color.dart';
@@ -14,6 +15,7 @@ class MyPlayList extends StatefulWidget {
 
 class _MyPlayListState extends State<MyPlayList> {
   final List<Map<String, dynamic>> myPlayList = [];
+  bool isLoading = true;
 
   String trimText(String text, int limit) {
     return text.length > limit ? '${text.substring(0, limit)}...' : text;
@@ -34,7 +36,11 @@ class _MyPlayListState extends State<MyPlayList> {
 
   void fetchMyPlayList() async {
     try {
+      setState(() {
+        isLoading = true;
+      });
       final res = await getMyPlayList();
+      print(res.data);
       if (mounted) {
         setState(() {
           final List<Map<String, dynamic>> tempList = List<Map<String, dynamic>>.from(res.data.map((item) => Map<String, dynamic>.from(item)));
@@ -45,6 +51,9 @@ class _MyPlayListState extends State<MyPlayList> {
           }
         });
       }
+      setState(() {
+        isLoading = false;
+      });
     } catch (e) {
       print(e);
     }
@@ -101,76 +110,79 @@ class _MyPlayListState extends State<MyPlayList> {
       builder: (BuildContext context, WearShape shape, Widget? child) {
         return Scaffold(
           body: Center(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                ClockTime(),
-                Text(
-                  '내 플레이리스트',
-                  style: TextStyle(fontSize: 13),
-                ),
-                SizedBox(height: 5),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    IconButton(
-                      icon: Icon(Icons.arrow_back, color: Colors.white),
-                      onPressed: () => Navigator.of(context).pop(),
-                    ),
-                    SizedBox(
-                      child: Container(
-                        height: 110,
-                        width: 110,
-                        child: myPlayList.isEmpty
-                            ? Center(child: Text('플레이리스트가 비어있습니다.'))
-                            : PageView.builder(
-                                itemCount: myPlayList.length,
-                                scrollDirection: Axis.vertical,
-                                controller: _pageController,
-                                onPageChanged: _onPageChanged,
-                                itemBuilder: (context, playlistId) {
-                                  return GestureDetector(
-                                    onTap: () {
-                                      Navigator.of(context).push(
-                                        MaterialPageRoute(
-                                          builder: (context) => MusicDrop(
-                                            musicData: myPlayList[playlistId],
+            child: isLoading
+                ? CircularProgressIndicator()
+                : Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      ClockTime(),
+                      Text(
+                        '내 플레이리스트',
+                        style: TextStyle(fontSize: 13),
+                      ),
+                      SizedBox(height: 5),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          IconButton(
+                            icon: Icon(Icons.arrow_back, color: Colors.white),
+                            onPressed: () => Navigator.of(context).pop(),
+                          ),
+                          SizedBox(
+                            child: Container(
+                              height: 110,
+                              width: 110,
+                              child: myPlayList.isEmpty
+                                  ? Center(child: Text('플레이리스트가 비어있습니다.'))
+                                  : PageView.builder(
+                                      itemCount: myPlayList.length,
+                                      scrollDirection: Axis.vertical,
+                                      controller: _pageController,
+                                      onPageChanged: _onPageChanged,
+                                      itemBuilder: (context, playlistId) {
+                                        return GestureDetector(
+                                          onTap: () {
+                                            Navigator.of(context).push(
+                                              MaterialPageRoute(
+                                                builder: (context) => MusicDrop(
+                                                  musicData: myPlayList[playlistId],
+                                                ),
+                                              ),
+                                            );
+                                          },
+                                          child: Container(
+                                            height: 110,
+                                            width: 110,
+                                            child: ClipRRect(
+                                              borderRadius: BorderRadius.circular(100),
+                                              child: CachedNetworkImage(
+                                                imageUrl: myPlayList[playlistId]['albumImage'],
+                                                placeholder: (context, url) => CircularProgressIndicator(),
+                                                fit: BoxFit.cover,
+                                              ),
+                                            ),
                                           ),
-                                        ),
-                                      );
-                                    },
-                                    child: Container(
-                                      height: 110,
-                                      width: 110,
-                                      child: ClipRRect(
-                                        borderRadius: BorderRadius.circular(100),
-                                        child: Image.network(
-                                          myPlayList[playlistId]['albumImage'],
-                                          fit: BoxFit.cover,
-                                        ),
-                                      ),
+                                        );
+                                      },
                                     ),
-                                  );
-                                },
-                              ),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: List.generate(myPlayList.length, (index) => buildDot(index: index, total: myPlayList.length)),
+                            ),
+                          ),
+                        ],
                       ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: List.generate(myPlayList.length, (index) => buildDot(index: index, total: myPlayList.length)),
+                      SizedBox(height: 5),
+                      Text(
+                        trimText(_currentMusicTitleAndArtist, 12),
+                        style: TextStyle(fontSize: 12),
                       ),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 5),
-                Text(
-                  trimText(_currentMusicTitleAndArtist, 12),
-                  style: TextStyle(fontSize: 12),
-                ),
-              ],
-            ),
+                    ],
+                  ),
           ),
         );
       },
