@@ -15,7 +15,6 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Getter
 @Builder
 public class ContentNotificationLog {
-
     @Id private String id;
     private LocalDateTime time;
     private Long userId;
