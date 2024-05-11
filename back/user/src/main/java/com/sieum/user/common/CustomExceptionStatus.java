@@ -17,7 +17,8 @@ public enum CustomExceptionStatus {
     NOT_USE_COUPON_FROM_FEIGN("Feign_400_1", "This coupon cannot be used."),
     NOT_VALID_OTP("Otp_code_400_1", "Not valid OTP code"),
     NOT_FOUND_LEVEL_ID("Level_400_1", "Not found level id"),
-    NOT_FOUND_LEVEL_HISTORY_ID("Level_history_400_1", "Not found level history id");
+    NOT_FOUND_LEVEL_HISTORY_ID("Level_history_400_1", "Not found level history id"),
+    NOT_FOUND_USER_ID("User_400_10", "Not found user id");
 
     private final String code;
     private final String message;

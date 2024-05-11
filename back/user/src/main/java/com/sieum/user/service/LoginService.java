@@ -1,13 +1,14 @@
 package com.sieum.user.service;
 
-import static com.sieum.user.common.CustomExceptionStatus.FAIL_TO_GENERATE_RANDOM_NICKNAME;
-import static com.sieum.user.common.CustomExceptionStatus.NOT_FOUND_LEVEL_ID;
+import static com.sieum.user.common.CustomExceptionStatus.*;
 
 import com.sieum.user.domain.Level;
 import com.sieum.user.domain.LevelHistory;
 import com.sieum.user.domain.User;
 import com.sieum.user.domain.UserHistory;
 import com.sieum.user.domain.enums.Violation;
+import com.sieum.user.dto.MemberTokens;
+import com.sieum.user.dto.response.TokenInfoResponse;
 import com.sieum.user.exception.AuthException;
 import com.sieum.user.exception.BadRequestException;
 import com.sieum.user.infrastructure.JwtProvider;
@@ -20,9 +21,9 @@ import com.sieum.user.repository.UserHistoryRepository;
 import com.sieum.user.repository.UserRepository;
 import com.sieum.user.util.RandomNicknameUtil;
 import com.sieum.user.util.RedisUtil;
-import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional
@@ -104,5 +105,20 @@ public class LoginService {
 
     public void saveLogOnLogin(UserHistory userHistory) {
         userHistoryRepository.save(userHistory);
+    }
+
+    @Transactional(readOnly = true)
+    public TokenInfoResponse execute(String refreshToken) {
+        String userId = jwtProvider.getUserId(refreshToken);
+
+        User user =
+                userRepository
+                        .findBySocialId(userId)
+                        .orElseThrow(() -> new BadRequestException(NOT_FOUND_USER_ID));
+
+        MemberTokens reissue =
+                jwtProvider.reissue(user.getSocialId(), user.getPlatform(), refreshToken);
+
+        return TokenInfoResponse.of(reissue.getRefreshToken(), reissue.getAccessToken());
     }
 }

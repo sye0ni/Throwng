@@ -4,6 +4,7 @@ import static com.sieum.user.common.CustomExceptionStatus.NOT_AUTHENTICATED_ACCO
 
 import com.sieum.user.dto.MemberTokens;
 import com.sieum.user.exception.BadRequestException;
+import com.sieum.user.util.RedisUtil;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import java.nio.charset.StandardCharsets;
@@ -34,6 +35,7 @@ public class JwtProvider {
     private Long refreshExpirationTime;
 
     private final UserDetailsService userDetailsService;
+    private RedisUtil redisUtil;
 
     public JwtProvider(UserDetailsService userDetailsService) {
         this.userDetailsService = userDetailsService;
@@ -116,5 +118,53 @@ public class JwtProvider {
     private Key getSigningKey(String secretKey) {
         byte[] keyBytes = secretKey.getBytes(StandardCharsets.UTF_8);
         return Keys.hmacShaKeyFor(keyBytes);
+    }
+
+    private Claims extractAllClaims(String token) throws ExpiredJwtException {
+        return Jwts.parserBuilder()
+                .setSigningKey(secretKey)
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+    }
+
+    public String generateAccessToken(String socialId, String platform) {
+        return createToken(socialId, platform, accessExpirationTime);
+    }
+
+    public String generateRefreshToken(String socialId, String platform) {
+        return createToken(socialId, platform, refreshExpirationTime);
+    }
+
+    public Date getExpiredTime(String token) {
+        return extractAllClaims(token).getExpiration();
+    }
+
+    private void storeRefreshToken(String key, String value) {
+        redisUtil.setDataExpire(key, value, refreshExpirationTime.intValue());
+    }
+
+    public String issueRefreshToken(String id, String platform) {
+        String refreshToken = generateRefreshToken(id, platform);
+        storeRefreshToken(id, refreshToken);
+        return refreshToken;
+    }
+
+    public MemberTokens reissue(String id, String platform, String refreshToken) {
+        String accessToken = generateAccessToken(id, platform);
+
+        Date expiredTime = getExpiredTime(refreshToken);
+        Date currentTime = new Date();
+        if (expiredTime.getTime() - currentTime.getTime() < (refreshExpirationTime / 2)) {
+            refreshToken = issueRefreshToken(id, platform);
+        } else {
+            refreshToken = null;
+        }
+
+        return new MemberTokens(refreshToken, accessToken);
+    }
+
+    public int getRefreshTokenExpiryDate() {
+        return Integer.parseInt(String.valueOf(refreshExpirationTime));
     }
 }
