@@ -46,4 +46,11 @@ public class CouponController {
         couponService.modifyCouponStatus(couponStatusRequest);
         return ResponseEntity.noContent().build();
     }
+
+    @Operation(summary = "scheduler data creation test")
+    @GetMapping("/test")
+    public ResponseEntity<?> test() {
+        couponService.sendCouponExpirationNotification();
+        return ResponseEntity.noContent().build();
+    }
 }
