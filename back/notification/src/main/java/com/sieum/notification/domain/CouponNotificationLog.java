@@ -9,17 +9,17 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-@Document("content_notification_log")
+@Document("coupon_notification_log")
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Builder
-public class ContentNotificationLog {
+public class CouponNotificationLog {
 
     @Id private String id;
     private LocalDateTime time;
     private Long userId;
 
     @DBRef(lazy = true)
-    private ContentNotification contentNotification;
+    private CouponNotification couponNotification;
 }
