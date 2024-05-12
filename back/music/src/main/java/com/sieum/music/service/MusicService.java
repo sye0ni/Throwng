@@ -191,11 +191,8 @@ public class MusicService {
         final String key = userId + "_THROWNG";
         final String couponValue = redisUtil.getData(key);
 
-        // 쿠폰 여부 조회
         if (couponValue != null) {
-            // 무제한 여부
             if (couponValue.equals("THROWNG_INF")) {
-                // 그냥 개수제한 없이 쓰롱하기
                 throwngUtil(userId, youtubeId, thrownItemRequest, nowDate);
             } else {
                 final String detailKey = userId + "_" + couponValue;
@@ -206,12 +203,10 @@ public class MusicService {
                     basicThrowng(userLevelInfoResponse, nowDate, youtubeId, thrownItemRequest);
                 }
 
-                // 개수 차감
                 throwngUtil(userId, youtubeId, thrownItemRequest, nowDate);
                 countByCoupon--;
                 redisUtil.setObject(detailKey, countByCoupon);
                 if (countByCoupon == 0) {
-                    // 레디스 키 지우고 상태변화
                     final Object idValue = redisUtil.getObject(userId + "_COUPON_ID_THROWNG");
                     final long couponId = (long) idValue;
 
@@ -222,93 +217,8 @@ public class MusicService {
             }
 
         } else {
-            // 그냥 개수 차감
             basicThrowng(userLevelInfoResponse, nowDate, youtubeId, thrownItemRequest);
         }
-
-        // 일반 개수 차감
-        //        final String nowDate = localDateUtil.GetDate(LocalDate.now());
-        //
-        //        //        final String key = "user_throw_" + userId + "_" +
-        //        // localDateUtil.GetDate(LocalDate.now());
-        //        final String key = "user_throw_" + userId + "_" + nowDate;
-        //        final Object value = redisUtil.getData(key);
-        //
-        //        int thrownCount = 0;
-        //
-        //        if (value == null) {
-        //            thrownCount = userLevelInfoResponse.getLevelCount();
-        //        } else {
-        //            if (Integer.valueOf((String) value) == 0) {
-        //                throw new BadRequestException(NOT_THROW_SONG);
-        //            } else {
-        //                thrownCount = Integer.valueOf((String) value);
-        //            }
-        //        }
-
-        // 쓰롱 유틸
-        //        final Point point =
-        //                GeomUtil.createPoint(
-        //                        thrownItemRequest.getLongitude(),
-        // thrownItemRequest.getLatitude());
-        //
-        //        // Verification: The same user cannot throw the same song again within 100m
-        //        ThrowCurrentDao throwDao =
-        //                throwQueryDSLRepository
-        //                        .findNearItemsPointsByDistanceAndUserIdAndCreatedAtAndYoutubeId(
-        //                                point, 100.0, userId, nowDate, youtubeId);
-        //
-        //        if (throwDao != null) {
-        //            if (throwDao.getStatus().equals(ThrowStatus.valueOf("VISIBLE"))) {
-        //                throw new BadRequestException(NOT_THROW_ITEM_IN_LIMITED_RADIUS);
-        //            }
-        //        }
-        //
-        //        // String[] zipArray = thrownItemRequest.getLocation().split("\\s");
-        //        Zipcode zipcode =
-        //                zipCodeRepository
-        //                        .findByCode(thrownItemRequest.getCode())
-        //                        .orElseThrow(() -> new BadRequestException(NOT_FOUND_ZIP_CODE));
-        //
-        //        boolean isSong = songRepository.existsByYoutubeId(youtubeId);
-        //        if (!isSong) {
-        //            boolean isArtist =
-        // artistRepository.existsByName(thrownItemRequest.getArtist());
-        //            if (!isArtist) {
-        //
-        // artistRepository.save(Artist.builder().name(thrownItemRequest.getArtist()).build());
-        //            }
-        //            Artist artist = artistRepository.findByName(thrownItemRequest.getArtist());
-        //
-        //            songRepository.save(
-        //                    Song.builder()
-        //                            .youtubeId(youtubeId)
-        //                            .title(thrownItemRequest.getTitle())
-        //                            .albumImage(thrownItemRequest.getAlbumImageUrl())
-        //                            .artist(artist)
-        //                            .previewUrl(thrownItemRequest.getPreviewUrl())
-        //                            .build());
-        //        }
-        //
-        //        Song song =
-        //                songRepository
-        //                        .findByYoutubeId(youtubeId)
-        //                        .orElseThrow(() -> new BadRequestException(NOT_FOUND_YOUTUBE_ID));
-        //
-        //        musicRepository.save(
-        //                ThrowItem.builder()
-        //                        .content(thrownItemRequest.getComment())
-        //                        .itemImage(thrownItemRequest.getImageUrl())
-        //                        .status(ThrowStatus.valueOf("VISIBLE"))
-        //                        .locationPoint(point)
-        //                        .userId(userId)
-        //                        .zipcode(zipcode)
-        //                        .song(songRepository.findByTitle(thrownItemRequest.getTitle()))
-        //                        .build());
-
-        //        thrownCount--;
-        //
-        //        redisUtil.setData(key, String.valueOf(thrownCount));
 
         // upgrade experiencePoint
         tokenAuthClient.upgradeExperiencePoint(
