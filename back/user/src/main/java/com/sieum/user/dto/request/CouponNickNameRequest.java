@@ -25,5 +25,5 @@ public class CouponNickNameRequest {
 
     @Schema(description = "types of coupons that can be used")
     @NotNull
-    private String type;
+    private String couponType;
 }

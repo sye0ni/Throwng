@@ -148,7 +148,7 @@ public class UserService {
                 CouponValidationRequest.of(
                         userId,
                         couponNickNameRequest.getCouponId(),
-                        couponNickNameRequest.getType());
+                        couponNickNameRequest.getCouponType());
 
         try {
             if (quizFeignClient.validateCoupon(couponValidationRequest)) {
