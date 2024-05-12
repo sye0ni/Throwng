@@ -130,7 +130,7 @@ public class CouponService {
                         .collect(Collectors.toList());
 
         final String key = "noti_coupon_expiration_" + LocalDate.now();
-        redisUtil.setObject(key, userIdList);
+        redisUtil.setObjectExpire(key, userIdList, 86400);
     }
 
     public void modifyCouponStatus(final CouponStatusRequest couponStatusRequest) {
