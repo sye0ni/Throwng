@@ -95,7 +95,7 @@ const MusicDropHeader = () => {
             return;
           }
         }
-        const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/jpg'];
+        const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/jpg', 'image/heic', 'image/heif'];
         if (!allowedTypes.includes(file.type)) {
           toastMsg("이미지만 업로드 할 수 있어요.");
           setIsLoading(false);

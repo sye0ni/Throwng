@@ -23,7 +23,6 @@ const MyCouponBody = () => {
 
   const fetchGetMyCoupon = async () => {
     const res = await getMyCoupon();
-    console.log(res)
     setCoupons(res)
     setIsLoading(false);
   }
