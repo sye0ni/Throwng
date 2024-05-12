@@ -43,7 +43,7 @@ public class CouponeInquiryResponse {
     public static CouponeInquiryResponse of(Coupon coupon, CouponHistory couponHistory) {
         return new CouponeInquiryResponse(
                 coupon.getId(),
-                "문구테스트",
+                "문구 테스트 중입니다.",
                 CouponType.valueOf(coupon.getCouponType()).getDescription(),
                 createEndDate(coupon.getCreatedAt()),
                 CouponStatus.valueOf(couponHistory.getCouponStatus()).getKr(),
