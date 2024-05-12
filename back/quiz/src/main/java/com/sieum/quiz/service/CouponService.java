@@ -1,7 +1,6 @@
 package com.sieum.quiz.service;
 
-import static com.sieum.quiz.exception.CustomExceptionStatus.DUPLICATE_COUPON_REQUEST;
-import static com.sieum.quiz.exception.CustomExceptionStatus.NOT_FOUND_COUPON_ID;
+import static com.sieum.quiz.exception.CustomExceptionStatus.*;
 
 import com.sieum.quiz.controller.feign.NotificationAuthClient;
 import com.sieum.quiz.controller.feign.UserAuthClient;
@@ -41,6 +40,8 @@ public class CouponService {
     private final CouponHistoryRepository couponHistoryRepository;
     private final CouponHistoryQueryDSLRepository couponHistoryQueryDSLRepository;
     private final String COMPLETION_STATUS = "COMPLETION";
+    private final String WIDE_TYPE = "WIDE";
+    private final String THROWNG_TYPE = "THROWNG";
 
     public CreateCouponResponse createCoupon(final long userId, final String route) {
         final String couponRoute = CouponRoute.findByName(route);
@@ -133,16 +134,18 @@ public class CouponService {
     }
 
     public void modifyCouponStatus(final CouponStatusRequest couponStatusRequest) {
-        CouponHistory couponHistory =
-                couponHistoryRepository.findTopByCouponIdOrderByCreatedAtDesc(
-                        couponStatusRequest.getCouponId());
-
-        if (couponHistory == null) {
-            throw new BadRequestException(NOT_FOUND_COUPON_ID);
+        Coupon coupon =
+                couponRepository
+                        .findById(couponStatusRequest.getCouponId())
+                        .orElseThrow(() -> new BadRequestException(NOT_FOUND_COUPON_ID));
+        if (coupon.getUserId() != couponStatusRequest.getUserId()) {
+            throw new BadRequestException(NOT_MATCH_COUPON_USER);
         }
 
-        couponHistory.changeCouponStatus(COMPLETION_STATUS);
-        couponHistoryRepository.save(couponHistory);
+        if (removeCouponRedisKey(couponStatusRequest)) {
+            couponHistoryRepository.save(
+                    CouponHistory.builder().couponStatus(COMPLETION_STATUS).coupon(coupon).build());
+        }
     }
 
     public CouponIssuanceResponse checkCoupon(final long userId, final String route) {
@@ -154,5 +157,37 @@ public class CouponService {
             return CouponIssuanceResponse.builder().couponStatus(true).build();
         }
         return CouponIssuanceResponse.builder().couponStatus(false).build();
+    }
+
+    public boolean removeCouponRedisKey(final CouponStatusRequest couponStatusRequest) {
+        if (!couponStatusRequest.getCouponType().equals("NICKNAME")) {
+            if (couponStatusRequest.getCouponType().equals(WIDE_TYPE)) {
+                final String key = couponStatusRequest.getUserId() + "_" + WIDE_TYPE;
+                final String couponKey =
+                        couponStatusRequest.getUserId() + "_COUPON_ID_" + WIDE_TYPE;
+                redisUtil.deleteData(key);
+                redisUtil.deleteData(couponKey);
+
+                return true;
+
+            } else if (couponStatusRequest.getCouponType().equals(THROWNG_TYPE)) {
+                final String key = couponStatusRequest.getUserId() + "_" + THROWNG_TYPE;
+                final String detailKey =
+                        couponStatusRequest.getUserId() + "_" + redisUtil.getObject(key);
+                final String couponKey =
+                        couponStatusRequest.getUserId() + "_COUPON_ID_" + THROWNG_TYPE;
+                redisUtil.deleteData(key);
+                redisUtil.deleteData(detailKey);
+                redisUtil.deleteData(couponKey);
+
+                return true;
+            } else {
+                throw new BadRequestException(NOT_FOUND_REDIS_COUPON_TYPE_KEY);
+            }
+        } else if (couponStatusRequest.getCouponType().equals("NICKNAME")) {
+            return true;
+        } else {
+            throw new BadRequestException(NOT_MATCH_COUPON_TYPE);
+        }
     }
 }
