@@ -40,7 +40,8 @@ fi
 
 # 3
 echo "NginX Setting..."
-docker exec -it nginx1 /bin/bash -c "sed -i 's/${BEFORE_PORT}/${AFTER_PORT}/' /etc/nginx/conf.d/include/service_uri.conf && nginx -s reload"
+sed -i 's/${BEFORE_PORT}/${AFTER_PORT}/' /etc/nginx/conf.d/include/service_uri.conf
+nginx -s reload
 echo "Deploy Completed!!"
 
 # 4
