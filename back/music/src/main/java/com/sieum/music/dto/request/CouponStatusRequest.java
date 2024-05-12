@@ -16,7 +16,7 @@ import org.springframework.validation.annotation.Validated;
 public class CouponStatusRequest {
     @Schema(description = "id of the nickname change coupon you are currently using")
     @NotNull
-    private long couponId;
+    private Long couponId;
 
     @Schema(description = "userId to user coupon")
     @NotNull
