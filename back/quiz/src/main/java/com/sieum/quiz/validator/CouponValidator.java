@@ -31,7 +31,7 @@ public class CouponValidator {
     private final String THROWNG_FIVE = "THROWNG_FIVE";
     private final int THROWNG_FIDVE_LIMIT_COUNT = 5;
     private final int TWICE = 2;
-    private final int FOR_A_DAY = 10;
+    private final int FOR_A_DAY = 86400;
 
     public Boolean validateCoupon(final CouponValidationRequest couponValidationRequest) {
 
