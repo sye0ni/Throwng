@@ -97,6 +97,12 @@ const MusicDropHeader = () => {
             return;
           }
         }
+        const allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
+        if (!allowedTypes.includes(file.type)) {
+          toastMsg("이미지만 업로드 할 수 있어요.");
+          setIsLoading(false);
+          return;
+        }
         setImagePreview(URL.createObjectURL(file));
         const data = await postImageUpload(file);
         setUserImageUrl(data);
@@ -104,7 +110,7 @@ const MusicDropHeader = () => {
       setIsLoading(false);
     }
   };
-
+  
   return (
     <div className="MusicDropHeader">
       <img className="album-image" src={songInfo.albumImage} alt="" />

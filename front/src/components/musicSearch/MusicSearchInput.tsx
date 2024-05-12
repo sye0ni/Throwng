@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import { MdOutlineClear } from "react-icons/md";
 import "@/styles/musicSearch/MusicSearchInput.scss";
 import { useRecoilState, useSetRecoilState } from "recoil";
@@ -13,6 +13,12 @@ const MusicSearchInput = () => {
   const navigate = useNavigate();
   const setWords = useSetRecoilState<SearchedWordsList[]>(searchedWords);
   const [title, setTitle] = useRecoilState(inputSearchKeyWord);
+
+  useEffect(() => {
+    if (inputEl.current) {
+      inputEl.current.focus();
+    }
+  }, [])
 
   const onSearch = async (searchKeyWord: string) => {
     const trimmedKeyword = searchKeyWord.trim();
