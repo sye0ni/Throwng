@@ -309,4 +309,18 @@ public class UserService {
 
         return levelHistory.getLevel().getThrowngLimit();
     }
+
+    public void useCoupon(final long userId, final UseCouponInfoRequest useCouponInfoRequest) {
+        CouponValidationRequest couponValidationRequest =
+                CouponValidationRequest.of(
+                        userId,
+                        useCouponInfoRequest.getCouponId(),
+                        useCouponInfoRequest.getCouponType());
+
+        try {
+            quizFeignClient.validateCoupon(couponValidationRequest);
+        } catch (FeignException feignException) {
+            throw new FeignClientException(NOT_USE_COUPON_FROM_FEIGN);
+        }
+    }
 }
