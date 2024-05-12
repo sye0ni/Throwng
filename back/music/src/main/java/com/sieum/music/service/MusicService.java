@@ -342,6 +342,7 @@ public class MusicService {
                         .content(thrownItemRequest.getComment())
                         .itemImage(thrownItemRequest.getImageUrl())
                         .status(ThrowStatus.valueOf("VISIBLE"))
+                        .isPopular(false)
                         .locationPoint(point)
                         .userId(userId)
                         .zipcode(zipcode)
