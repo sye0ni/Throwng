@@ -57,6 +57,12 @@ public class UserController {
         return ResponseEntity.noContent().build();
     }
 
+    @Operation(summary = "Feign Client")
+    @GetMapping("/fcm-list")
+    public ResponseEntity<?> getUserFcmList() {
+        return ResponseEntity.ok().body(userService.getUserFcmList());
+    }
+
     @Operation(summary = "Checking my coupon history")
     @GetMapping("/coupon")
     public ResponseEntity<?> getUserCouponHistory(
@@ -97,9 +103,10 @@ public class UserController {
         return ResponseEntity.noContent().build();
     }
 
-    @Operation(summary = "Feign Client")
-    @GetMapping("/fcm-list")
-    public ResponseEntity<?> getUserFcmList() {
-        return ResponseEntity.ok().body(userService.getUserFcmList());
+
+    @Operation(summary = "Feign Client - the number of throwng by level")
+    @GetMapping("/{userId}/level-count")
+    public ResponseEntity<?> getLevelThrowngCount(@PathVariable final long userId) {
+        return ResponseEntity.ok().body(userService.getLevelThrowngCount(userId));
     }
 }

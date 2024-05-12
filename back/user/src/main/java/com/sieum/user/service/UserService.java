@@ -304,4 +304,15 @@ public class UserService {
     public List<NotificationHistoryResponse> getUserNotificationHistory(final long userId) {
         return notificationFeignClient.getUserNotificationHistory(userId);
     }
+
+    public int getLevelThrowngCount(final long userId) {
+        LevelHistory levelHistory =
+                levelHistoryRepository.findTopByUserIdOrderByCreatedAtDesc(userId);
+
+        if (levelHistory == null) {
+            throw new BadRequestException(NOT_FOUND_LEVEL_HISTORY_ID);
+        }
+
+        return levelHistory.getLevel().getThrowngLimit();
+    }
 }
