@@ -40,7 +40,7 @@ public class BatchScheduler {
         }
     }
 
-    @Scheduled(cron = "* * * * * *")
+    @Scheduled(cron = "0 0 3 * * 0")
     public void runUpdatePopularMusic() {
         Map<String, JobParameter> confMap = new HashMap<>();
         confMap.put("time", new JobParameter(System.currentTimeMillis()));
