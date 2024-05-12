@@ -103,7 +103,6 @@ public class UserController {
         return ResponseEntity.noContent().build();
     }
 
-
     @Operation(summary = "Feign Client - the number of throwng by level")
     @GetMapping("/{userId}/level-count")
     public ResponseEntity<?> getLevelThrowngCount(@PathVariable final long userId) {
