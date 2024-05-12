@@ -13,6 +13,12 @@ public class NotificationController {
 
     private final NotificationService notificationService;
 
+    @Operation(summary = "Sending user notification history")
+    @GetMapping("/{userId}")
+    public ResponseEntity<?> getUserNotificationHistory(@PathVariable final long userId) {
+        return ResponseEntity.ok().body(notificationService.getUserNotificationHistory(userId));
+    }
+
     @Operation(summary = "Sending coupon expiration notification - for test")
     @PostMapping("/coupons")
     public ResponseEntity<?> createCouponExpirationNotification() {
