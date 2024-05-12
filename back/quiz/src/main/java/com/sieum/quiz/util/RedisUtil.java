@@ -57,10 +57,4 @@ public class RedisUtil {
     public void deleteDataList(Collection<?> key) {
         redisTemplate.delete(key);
     }
-
-    public void setObjectExpire(String key, Object value, int duration) {
-        ValueOperations<String, Object> valueOperations = redisTemplate.opsForValue();
-        Duration expiredDuration = Duration.ofSeconds(duration);
-        valueOperations.set(key, value, expiredDuration);
-    }
 }
