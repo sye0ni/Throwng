@@ -47,6 +47,6 @@ public class CouponeInquiryResponse {
                 CouponType.valueOf(coupon.getCouponType()).getDescription(),
                 createEndDate(coupon.getCreatedAt()),
                 CouponStatus.valueOf(couponHistory.getCouponStatus()).getKr(),
-                coupon.getCouponType());
+                coupon.getRoute());
     }
 }
