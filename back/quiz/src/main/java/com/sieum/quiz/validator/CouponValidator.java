@@ -31,6 +31,7 @@ public class CouponValidator {
     private final String THROWNG_FIVE = "THROWNG_FIVE";
     private final int THROWNG_FIDVE_LIMIT_COUNT = 5;
     private final int TWICE = 2;
+    private final int FOR_A_DAY = 86400;
 
     public Boolean validateCoupon(final CouponValidationRequest couponValidationRequest) {
 
@@ -90,25 +91,35 @@ public class CouponValidator {
 
         if (coupon.getCouponType().equals(WIDE)) {
             final String key = userId + "_radius";
-            redisUtil.setData(key, coupon.getCouponType());
+            redisUtil.setDataExpire(key, coupon.getCouponType(), FOR_A_DAY);
+
             final String couponKey = userId + "_COUPON_ID_WIDE";
-            redisUtil.setObject(couponKey, coupon.getId());
+            redisUtil.setObjectExpire(couponKey, coupon.getId(), FOR_A_DAY);
 
         } else {
             final String key = userId + "_" + "THROWNG";
-            redisUtil.setObject(key, coupon.getCouponType());
+            //            redisUtil.setObject(key, coupon.getCouponType());
+            redisUtil.setDataExpire(key, coupon.getCouponType(), FOR_A_DAY);
 
             final String couponKey = userId + "_COUPON_ID_THROWNG";
-            redisUtil.setObject(couponKey, coupon.getId());
+            //            redisUtil.setObject(couponKey, coupon.getId());
+            redisUtil.setObjectExpire(couponKey, coupon.getId(), FOR_A_DAY);
 
             final String deatilKey = userId + "_" + coupon.getCouponType();
 
             if (coupon.getCouponType().equals(THROWNG_FIVE)) {
-                redisUtil.setObject(deatilKey, THROWNG_FIDVE_LIMIT_COUNT);
+                //                redisUtil.setObject(deatilKey, THROWNG_FIDVE_LIMIT_COUNT);
+                redisUtil.setObjectExpire(deatilKey, THROWNG_FIDVE_LIMIT_COUNT, FOR_A_DAY);
             } else if (coupon.getCouponType().equals(THROWNG_LEVEL)) {
-                redisUtil.setObject(deatilKey, userAuthClient.getLevelThrowngCount(userId));
+                //                redisUtil.setObject(deatilKey,
+                // userAuthClient.getLevelThrowngCount(userId));
+                redisUtil.setObjectExpire(
+                        deatilKey, userAuthClient.getLevelThrowngCount(userId), FOR_A_DAY);
             } else if (coupon.getCouponType().equals(THROWNG_TWICE)) {
-                redisUtil.setObject(deatilKey, userAuthClient.getLevelThrowngCount(userId) * TWICE);
+                //                redisUtil.setObject(deatilKey,
+                // userAuthClient.getLevelThrowngCount(userId) * TWICE);
+                redisUtil.setObjectExpire(
+                        deatilKey, userAuthClient.getLevelThrowngCount(userId) * TWICE, FOR_A_DAY);
             }
         }
     }
