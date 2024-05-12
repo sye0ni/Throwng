@@ -1,8 +1,6 @@
 package com.sieum.user.controller;
 
-import com.sieum.user.dto.request.CouponNickNameRequest;
-import com.sieum.user.dto.request.FcmTokenRequest;
-import com.sieum.user.dto.request.UpdateExperiencePointRequest;
+import com.sieum.user.dto.request.*;
 import com.sieum.user.service.LoginService;
 import com.sieum.user.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -81,6 +79,14 @@ public class UserController {
         return ResponseEntity.noContent().build();
     }
 
+    @Operation(summary = "Checking my notification history")
+    @GetMapping("/notification")
+    public ResponseEntity<?> getUserNotificationHistory(
+            @RequestHeader("Authorization") final String accessToken) {
+        final long userId = loginService.getUsername(accessToken);
+        return ResponseEntity.ok().body(userService.getUserNotificationHistory(userId));
+    }
+
     @Operation(summary = "Feign Client")
     @GetMapping("/{userId}/fcm")
     public ResponseEntity<?> getUserFcmList(@PathVariable final long userId) {
@@ -92,6 +98,22 @@ public class UserController {
     public ResponseEntity<?> upgradeExperiencePoint(
             @RequestBody final UpdateExperiencePointRequest updateExperiencePointRequest) {
         userService.upgradeExperiencePoint(updateExperiencePointRequest);
+        return ResponseEntity.noContent().build();
+    }
+
+    @Operation(summary = "Feign Client - the number of throwng by level")
+    @GetMapping("/{userId}/level-count")
+    public ResponseEntity<?> getLevelThrowngCount(@PathVariable final long userId) {
+        return ResponseEntity.ok().body(userService.getLevelThrowngCount(userId));
+    }
+
+    @Operation(summary = "Use coupon")
+    @PostMapping("/coupon")
+    public ResponseEntity<?> useCoupon(
+            @RequestHeader("Authorization") final String accessToken,
+            @RequestBody final UseCouponInfoRequest useCouponInfoRequest) {
+        long userId = loginService.getUsername(accessToken);
+        userService.useCoupon(userId, useCouponInfoRequest);
         return ResponseEntity.noContent().build();
     }
 }

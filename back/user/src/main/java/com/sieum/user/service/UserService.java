@@ -3,6 +3,7 @@ package com.sieum.user.service;
 import static com.sieum.user.common.CustomExceptionStatus.*;
 
 import com.sieum.user.controller.feign.MusicFeignClient;
+import com.sieum.user.controller.feign.NotificationFeignClient;
 import com.sieum.user.controller.feign.QuizFeignClient;
 import com.sieum.user.domain.Level;
 import com.sieum.user.domain.LevelHistory;
@@ -38,6 +39,7 @@ public class UserService {
     private final MusicFeignClient musicFeignClient;
     private final LoginService loginService;
     private final QuizFeignClient quizFeignClient;
+    private final NotificationFeignClient notificationFeignClient;
     private final LevelHistoryRepository levelHistoryRepository;
     private final RedisUtil redisUtil;
     private final LevelRepository levelRepository;
@@ -148,7 +150,7 @@ public class UserService {
                 CouponValidationRequest.of(
                         userId,
                         couponNickNameRequest.getCouponId(),
-                        couponNickNameRequest.getType());
+                        couponNickNameRequest.getCouponType());
 
         try {
             if (quizFeignClient.validateCoupon(couponValidationRequest)) {
@@ -297,5 +299,34 @@ public class UserService {
 
     public void createUserHistory(final String ip, final User user) {
         userHistoryRepository.save(UserHistory.builder().ip(ip).user(user).build());
+    }
+
+    public List<NotificationHistoryResponse> getUserNotificationHistory(final long userId) {
+        return notificationFeignClient.getUserNotificationHistory(userId);
+    }
+
+    public int getLevelThrowngCount(final long userId) {
+        LevelHistory levelHistory =
+                levelHistoryRepository.findTopByUserIdOrderByCreatedAtDesc(userId);
+
+        if (levelHistory == null) {
+            throw new BadRequestException(NOT_FOUND_LEVEL_HISTORY_ID);
+        }
+
+        return levelHistory.getLevel().getThrowngLimit();
+    }
+
+    public void useCoupon(final long userId, final UseCouponInfoRequest useCouponInfoRequest) {
+        CouponValidationRequest couponValidationRequest =
+                CouponValidationRequest.of(
+                        userId,
+                        useCouponInfoRequest.getCouponId(),
+                        useCouponInfoRequest.getCouponType());
+
+        try {
+            quizFeignClient.validateCoupon(couponValidationRequest);
+        } catch (FeignException feignException) {
+            throw new FeignClientException(NOT_USE_COUPON_FROM_FEIGN);
+        }
     }
 }

@@ -23,8 +23,13 @@ public class CouponStatusRequest {
     @NotNull
     private Long userId;
 
+    @Schema(description = "coupon Type")
+    private String couponType;
+
     public static CouponStatusRequest of(CouponValidationRequest couponValidationRequest) {
         return new CouponStatusRequest(
-                couponValidationRequest.getCouponId(), couponValidationRequest.getUserId());
+                couponValidationRequest.getCouponId(),
+                couponValidationRequest.getUserId(),
+                couponValidationRequest.getCouponType());
     }
 }
