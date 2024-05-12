@@ -11,12 +11,12 @@ import com.sieum.notification.domain.CouponNotificationLog;
 import com.sieum.notification.domain.field.BodyData;
 import com.sieum.notification.dto.FcmMessage;
 import com.sieum.notification.dto.UserInfo;
+import com.sieum.notification.dto.response.NotificationHistoryResponse;
 import com.sieum.notification.repository.*;
 import com.sieum.notification.util.RedisUtil;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -40,7 +40,7 @@ public class NotificationService {
         final String key = "noti_coupon_expiration_" + LocalDate.now();
         final List<Long> userIdList = (List<Long>) redisUtil.getObject(key);
 
-        if (userIdList == null) return;
+        if (userIdList == null || userIdList.size() == 0) return;
 
         final List<UserInfo> userInfoList =
                 userIdList.stream()
@@ -119,6 +119,79 @@ public class NotificationService {
                                             .contentNotification(contentNotification)
                                             .build());
                         });
+    }
+
+    public List<NotificationHistoryResponse> getUserNotificationHistory(final long userId) {
+        final List<CouponNotificationLog> couponNotificationLogList =
+                couponNotificationLogRepository.findAllByUserId(userId);
+        final List<ContentNotificationLog> contentNotificationLogList =
+                contentNotificationLogRepository.findAllByUserId(userId);
+
+        final List<NotificationHistoryResponse> notificationHistoryResponseList = new ArrayList<>();
+        notificationHistoryResponseList.addAll(
+                couponNotificationLogList.stream()
+                        .map(
+                                couponNotificationLog ->
+                                        NotificationHistoryResponse.builder()
+                                                .category(
+                                                        couponNotificationLog
+                                                                .getCouponNotification()
+                                                                .getCategory())
+                                                .title(
+                                                        couponNotificationLog
+                                                                .getCouponNotification()
+                                                                .getBodyData()
+                                                                .getTitle())
+                                                .body(
+                                                        couponNotificationLog
+                                                                .getCouponNotification()
+                                                                .getBodyData()
+                                                                .getBody())
+                                                .date(couponNotificationLog.getTime().minusHours(9))
+                                                .link(
+                                                        couponNotificationLog
+                                                                .getCouponNotification()
+                                                                .getBodyData()
+                                                                .getLink())
+                                                .build())
+                        .collect(Collectors.toList()));
+
+        notificationHistoryResponseList.addAll(
+                contentNotificationLogList.stream()
+                        .map(
+                                contentNotificationLog ->
+                                        NotificationHistoryResponse.builder()
+                                                .category(
+                                                        contentNotificationLog
+                                                                .getContentNotification()
+                                                                .getCategory())
+                                                .title(
+                                                        contentNotificationLog
+                                                                .getContentNotification()
+                                                                .getBodyData()
+                                                                .getTitle())
+                                                .body(
+                                                        contentNotificationLog
+                                                                .getContentNotification()
+                                                                .getBodyData()
+                                                                .getBody())
+                                                .date(
+                                                        contentNotificationLog
+                                                                .getTime()
+                                                                .minusHours(9))
+                                                .link(
+                                                        contentNotificationLog
+                                                                .getContentNotification()
+                                                                .getBodyData()
+                                                                .getLink())
+                                                .build())
+                        .collect(Collectors.toList()));
+
+        Collections.sort(
+                notificationHistoryResponseList,
+                Comparator.comparing(NotificationHistoryResponse::getDate).reversed());
+
+        return notificationHistoryResponseList;
     }
 
     // will be removed later
