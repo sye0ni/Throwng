@@ -63,52 +63,6 @@ const MusicDropHeader = () => {
     }
   };
 
-  // const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-  //   if (e.target.files && e.target.files[0]) {
-  //     setIsLoading(true);
-  //     let file = e.target.files[0];
-  //     if (file.size > 5000000) {
-  //       toastMsg("사진의 용량이 너무 커요. 다른 사진을 사용해 주세요.");
-  //       setIsLoading(false);
-  //       return;
-  //     } else {
-  //       if (file.type === "") {
-  //         try {
-  //           const convertedBlob = await heic2any({
-  //             blob: file,
-  //             toType: "image/jpeg",
-  //           });
-  //           if (convertedBlob instanceof Blob) {
-  //             file = new File(
-  //               [convertedBlob],
-  //               file.name.replace(/^data:image\/jpeg;base64,/, ""),
-  //               {
-  //                 type: "image/jpeg",
-  //                 lastModified: Date.now(),
-  //               }
-  //             );
-  //           }
-  //         } catch (error) {
-  //           toastMsg(
-  //             "사진의 유형이 올바르지 않습니다. 다른 사진을 사용해 주세요."
-  //           );
-  //           return;
-  //         }
-  //       }
-  //       const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/jpg', 'image/heic', 'image/heif'];
-  //       if (!allowedTypes.includes(file.type)) {
-  //         toastMsg("이미지만 업로드 할 수 있어요.");
-  //         setIsLoading(false);
-  //         return;
-  //       }
-  //       setImagePreview(URL.createObjectURL(file));
-  //       const data = await postImageUpload(file);
-  //       setUserImageUrl(data);
-  //     }
-  //     setIsLoading(false);
-  //   }
-  // };
-  
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       setIsLoading(true);
@@ -156,7 +110,6 @@ const MusicDropHeader = () => {
     }
   };
   
-
   return (
     <div className="MusicDropHeader">
       <img className="album-image" src={songInfo.albumImage} alt="" />

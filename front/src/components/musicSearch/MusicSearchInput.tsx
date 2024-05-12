@@ -50,6 +50,7 @@ const MusicSearchInput = () => {
           const updatedWords = prevWords.filter((word) => word.title !== title);
           return [{ id: newId, title: title }, ...updatedWords];
         });
+      if (inputEl.current) inputEl.current.blur();
       } else {
         toastMsg("검색어를 입력하세요");
         setTitle("");
