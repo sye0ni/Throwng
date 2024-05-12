@@ -14,7 +14,7 @@ export interface QuizData {
 
 export interface QuizResult {
   quizId: number;
-  submit: string;
+  submit: string | null;
 }
 
 export interface QuizContent {

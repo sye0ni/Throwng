@@ -1,5 +1,12 @@
 import { lazy } from "react";
-const PrivateRoute = lazy(() => import("@components/PrivateRoute"));
+import PrivateRoute from "@components/PrivateRoute";
+import Error404 from "@pages/Error404";
+import MemoryTestPage from "@pages/game/MemoryTestPage";
+
+import MemoryInfoPage from "@pages/game/MemoryInfoPage";
+import MemoryMainPage from "@pages/game/MemoryMainPage";
+import MemoryCouponPage from "@pages/game/MemoryCouponPage";
+import MemorySuccessPage from "@pages/game/MemorySuccessPage";
 const HomePage = lazy(() => import("@pages/HomePage"));
 const MyPage = lazy(() => import("@pages/MyPage"));
 const PlayListPage = lazy(() => import("@pages/PlayListPage"));
@@ -7,7 +14,7 @@ const MusicSearchPage = lazy(() => import("@pages/MusicSearchPage"));
 const NotificationPage = lazy(() => import("@pages/NotificationPage"));
 const MyCouponPage = lazy(() => import("@pages/MyCouponPage"));
 const MyOtpPage = lazy(() => import("@pages/MyOtpPage"));
-const ChangeNickNamePage = lazy(() => import('@pages/ChangeNickNamePage'))
+const ChangeNickNamePage = lazy(() => import("@pages/ChangeNickNamePage"));
 const MusicDrop = lazy(() => import("@pages/musicDrop/MusicDrop"));
 const QuizMain = lazy(() => import("@pages/quiz/QuizMainPage"));
 const MusicPickDetailPage = lazy(() => import("@pages/MusicPickDetailPage"));
@@ -21,7 +28,6 @@ const QuizFailPage = lazy(() => import("@pages/quiz/QuizFailPage"));
 const QuizInfoPage = lazy(() => import("@pages/quiz/QuizInfoPage"));
 const QuizSolvePage = lazy(() => import("@pages/quiz/QuizSolvePage"));
 const QuizSuccessPage = lazy(() => import("@pages/quiz/QuizSuccessPage"));
-// const Error404 = loadable(() => import("./Error404"));
 
 export default {
   path: "/",
@@ -34,11 +40,11 @@ export default {
         {
           path: "mypage",
           children: [
-            {index:true, element: <MyPage />},
+            { index: true, element: <MyPage /> },
             {
-              path:"change-nickname",
-              element:<ChangeNickNamePage/>
-            }
+              path: "change-nickname",
+              element: <ChangeNickNamePage />,
+            },
           ],
         },
         {
@@ -133,6 +139,41 @@ export default {
         },
       ],
     },
+    {
+      path: "hammer",
+      children: [
+        {
+          path: "main",
+          
+        },
+      ]
+    },
+    {
+      path: "memory",
+      children: [
+        {
+          path: "main",
+          element: <MemoryMainPage />
+        },
+        {
+          path: "info",
+          element: <MemoryInfoPage />
+        },
+        {
+          path: "game",
+          element: <MemoryTestPage />
+        },
+        {
+          path: "success",
+          element: <MemorySuccessPage />
+        },
+        {
+          path: "coupon",
+          element: <MemoryCouponPage />
+        },
+      ]
+    },
     { path: "none-permission", element: <NonePermissionPage /> },
   ],
+  errorElement: <Error404 />,
 };

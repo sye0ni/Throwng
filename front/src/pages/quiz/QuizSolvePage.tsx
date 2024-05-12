@@ -7,16 +7,14 @@ import QuizTimeBar from "@components/quiz/QuizTimeBar";
 import "@styles/quiz/QuizSolvePage.scss";
 import { QuizData, QuizResult } from "@/types/quizType";
 import { getQuizSolve, postQuizSolve } from "@services/quizApi/QuizSolveApi";
-import useQuizRedirect from "@hooks/useQuizRedirect";
 
 function QuizSolvePage() {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [quizData, setQuizData] = useState<QuizData[]>([]);
-  const [canSubmit, setCanSubmit] = useState(false);
-  const [timeLeft, setTimeLeft] = useState(20);
+  const [canSubmit, setCanSubmit] = useState<boolean>(false);
+  const [timeLeft, setTimeLeft] = useState<number>(20);
   const [userInput, setUserInput] = useState<string | null>(null);
   const navigate = useNavigate();
-  useQuizRedirect();
 
   const handleUserInput = (input: string) => {
     setUserInput(input);
@@ -25,6 +23,7 @@ function QuizSolvePage() {
   useEffect(() => {
     const fetchQuiz = async () => {
       const data = await getQuizSolve();
+      // console.log(data);
       setQuizData(data);
     };
     fetchQuiz();
@@ -32,41 +31,59 @@ function QuizSolvePage() {
 
   useEffect(() => {
     if (quizData.length > 0 && currentQuestionIndex >= quizData.length) {
-      navigate("/quiz/success", { state: { quizPassed: true }, replace: true });
+      navigate("/quiz/success", { replace: true });
     }
   }, [currentQuestionIndex, navigate, quizData]);
 
   useEffect(() => {
     if (timeLeft === 0) {
+      handleSubmission(null);
       navigate("/quiz/fail", { replace: true });
     }
   }, [timeLeft, navigate]);
 
-  const handleSubmission = async () => {
-    if (!userInput) return; // 사용자 입력이 없으면 아무 것도 하지 않음
+  useEffect(() => {
+    setCanSubmit(userInput !== null);
+  }, [userInput]);
+
+  const handleSubmission = async (submission = userInput) => {
+    if (submission === null) {
+      submission = null;
+    }
 
     const currentQuiz = quizData[currentQuestionIndex];
     const resultData: QuizResult = {
       quizId: currentQuiz.quizId,
-      submit: userInput,
+      submit: submission,
     };
 
     try {
       const response = await postQuizSolve(resultData);
-      if (response.status) {
+      if (currentQuestionIndex === quizData.length - 1) {
+        sessionStorage.setItem("quizCompleted", "true");
+      }
+
+      if (response.data.status) {
+        if (currentQuestionIndex === quizData.length - 1) {
+          sessionStorage.setItem("quizCompleted", "true");
+        }
         goToNextQuestion();
       } else {
-        navigate("/quiz/fail", { replace: true });
+        handleFailNavigation();
       }
     } catch (error) {
       console.error("Failed to submit the quiz:", error);
-      navigate("/quiz/fail", { replace: true });
+      handleFailNavigation();
     }
+  };
+
+  const handleFailNavigation = () => {
+    navigate("/quiz/fail", { replace: true });
   };
 
   const goToNextQuestion = () => {
     setTimeLeft(20);
-    setUserInput(null); // 다음 문제로 넘어갈 때 사용자 입력 초기화
+    setUserInput(null);
     setCanSubmit(false);
     setCurrentQuestionIndex(currentQuestionIndex + 1);
   };
@@ -78,7 +95,7 @@ function QuizSolvePage() {
 
     const currentQuiz = quizData[currentQuestionIndex];
     const props = {
-      onUserInput: handleUserInput, // 사용자 입력을 처리할 콜백 함수 전달
+      onUserInput: handleUserInput,
       setTimeLeft,
       setCanSubmit,
       question: currentQuiz.question,
@@ -90,6 +107,7 @@ function QuizSolvePage() {
 
     switch (currentQuiz.quizType) {
       case "객관식":
+        // @ts-ignore
         return <QuizMultipleChoice {...props} />;
       case "주관식":
         return <QuizSubjective {...props} />;
@@ -109,7 +127,10 @@ function QuizSolvePage() {
       />
       {renderQuestionComponent()}
       {canSubmit && (
-        <button onClick={handleSubmission} className="submission-button">
+        <button
+          onClick={() => handleSubmission()}
+          className="submission-button"
+        >
           제출
         </button>
       )}

@@ -23,6 +23,7 @@ const postQuizSolve = async (quizResult: QuizResult) => {
     const response = await api.post("/quizzes/result", quizResult);
     return response;
   } catch (e) {
+    console.log(e)
     if (axios.isAxiosError(e)) {
       console.error(
         "Failed to post quiz result:",

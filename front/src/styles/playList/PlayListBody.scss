@@ -1,4 +1,7 @@
 .PlayListBody {
+  display: flex;
+  flex-direction: column;
+  gap: 1dvh;
 
   .ref-div {
     background-color: red;
@@ -6,7 +9,7 @@
   }
 
   .result-item {
-    padding: 1dvh 0;
+    padding-bottom: 1dvh;
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 
     .content-container {
@@ -15,10 +18,8 @@
       gap: 1dvh;
 
       .image-container {
-        .item-wide {
-          width: 100%;
-        }
-
+        display: flex;
+        cursor: pointer;
         img {
           width: 6dvh;
           height: 6dvh;
@@ -30,21 +31,24 @@
         display: flex;
         align-items: center;
         overflow: hidden;
-        width: 90%;
+        flex-grow: 1;
+        justify-content: space-between;
+        gap: 1dvh;
 
         .item-detail {
           overflow: hidden;
-          width: 90%;
+          flex-grow: 1;
+          cursor: pointer;
 
           .item-title {
-            font-size: 2dvh;
+            font-size: 1.7dvh;
             text-overflow: ellipsis;
             overflow: hidden;
             white-space: nowrap;
           }
 
           .item-artist {
-            font-size: 1.7dvh;
+            font-size: 1.5dvh;
             font-weight: 500;
             color: var(--placeholder-color);
             text-overflow: ellipsis;
@@ -58,9 +62,10 @@
           display: flex;
           align-items: center;
           justify-content: center;
+          cursor: pointer;
 
           svg {
-            font-size: 3dvh;
+            font-size: 2.5dvh;
           }
 
           &:active {
@@ -72,6 +77,7 @@
     }
     &:last-child {
       border-bottom: none;
+      padding-bottom: 0;
     }
   }
 
@@ -87,6 +93,7 @@
     width: 100%;
 
     .title {
+      font-size: 2.2dvh;
       font-weight: bold;
     }
 

@@ -12,6 +12,7 @@ import { ImVolumeMedium } from "react-icons/im";
 import { ImVolumeMute2 } from "react-icons/im";
 import heic2any from "heic2any";
 import Loading from "@components/Loading";
+import { toastMsg } from "@/utils/toastMsg";
 
 const MusicDropHeader = () => {
   const fileRef = useRef<HTMLInputElement>(null);
@@ -67,12 +68,11 @@ const MusicDropHeader = () => {
       setIsLoading(true);
       let file = e.target.files[0];
       if (file.size > 5000000) {
-        alert("사진의 용량이 너무 커요. 다른 사진을 사용해 주세요.");
-        resetSetImagePreview();
-        resetSetUserImageUrl();
+        toastMsg("사진의 용량이 너무 커요. 다른 사진을 사용해 주세요.");
+        setIsLoading(false);
         return;
       } else {
-        if (file.type === "") {
+        if (/image\/heic/.test(file.type) || /image\/heif/.test(file.type)) {
           try {
             const convertedBlob = await heic2any({
               blob: file,
@@ -81,7 +81,7 @@ const MusicDropHeader = () => {
             if (convertedBlob instanceof Blob) {
               file = new File(
                 [convertedBlob],
-                file.name.replace(/^data:image\/jpeg;base64,/, ""),
+                file.name.replace(/\.(heic|HEIC|heif|HEIF)$/, ".jpeg"),
                 {
                   type: "image/jpeg",
                   lastModified: Date.now(),
@@ -89,11 +89,18 @@ const MusicDropHeader = () => {
               );
             }
           } catch (error) {
-            alert(
+            toastMsg(
               "사진의 유형이 올바르지 않습니다. 다른 사진을 사용해 주세요."
             );
+            setIsLoading(false);
             return;
           }
+        }
+        const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/jpg'];
+        if (!allowedTypes.includes(file.type)) {
+          toastMsg("이미지만 업로드 할 수 있어요.");
+          setIsLoading(false);
+          return;
         }
         setImagePreview(URL.createObjectURL(file));
         const data = await postImageUpload(file);
@@ -102,7 +109,7 @@ const MusicDropHeader = () => {
       setIsLoading(false);
     }
   };
-
+  
   return (
     <div className="MusicDropHeader">
       <img className="album-image" src={songInfo.albumImage} alt="" />

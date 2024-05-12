@@ -1,13 +1,14 @@
 import Header from "@components/Header";
 import LogoutModal from "@components/auth/LogoutModal";
 import MyLevel from "@components/myPage/MyLevel";
-// import MyPageMenu from "@components/myPage/MyPageMenu";
+import MyPageMenu from "@components/myPage/MyPageMenu";
 import MyThrowngHistoryMenu from "@components/myPage/MyThrowngHistoryMenu";
 import { logoutModalState } from "@store/auth/atom";
 import {
   changeNickNameCouponId,
   levelInfoModal,
   myNickName,
+  pageIdx,
 } from "@store/myPage/atoms";
 import { useEffect } from "react";
 import { useRecoilValue, useResetRecoilState } from "recoil";
@@ -21,11 +22,13 @@ const MyPage = () => {
     changeNickNameCouponId
   );
   const resetLevelInfoModal = useResetRecoilState(levelInfoModal);
+  const resetPageIdx = useResetRecoilState(pageIdx);
 
   useEffect(() => {
     resetLogoutModal();
     resetChangeNickNameCouponId();
     resetLevelInfoModal();
+    resetPageIdx();
   }, []);
 
   return (
@@ -36,7 +39,7 @@ const MyPage = () => {
           <div className="content">
             <div className="name">{myName}</div>
             <MyLevel />
-            {/* <MyPageMenu /> */}
+            <MyPageMenu />
           </div>
         </div>
         <div className="body">

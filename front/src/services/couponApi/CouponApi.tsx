@@ -10,9 +10,7 @@ const getContentCoupon = async (route: string): Promise<quizCoupon> => {
     return response.data;
   } catch (e) {
     if (axios.isAxiosError(e)) {
-      console.error("Axios error:", e.response?.data || e.message);
-    } else {
-      console.error("Unexpected error:", e);
+      console.error("이미 쿠폰을 뽑았습니다", e);
     }
     throw e;
   }

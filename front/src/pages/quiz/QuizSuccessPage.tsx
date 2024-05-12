@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { getContentCoupon } from "@/services/couponApi/CouponApi";
 import QuizOpenLottie from "@components/lottie/QuizOpenLottie";
 import QuizPreopenLottie from "@components/lottie/QuizPreopenLottie";
 import "@styles/quiz/QuizSuccessPage.scss";
@@ -12,36 +11,37 @@ import coupon5 from "@assets/images/coupon5.webp";
 import coupon6 from "@assets/images/coupon6.webp";
 import coupon7 from "@assets/images/coupon7.webp";
 import boom from "@assets/images/boom.webp";
-import { quizCoupon } from "../../types/couponType";
-// import useQuizRedirect from "@hooks/useQuizRedirect";
-import useRestrictQuizSuccess from "@hooks/useRestrictQuizSuccess";
+import { getIsCoupon } from "@services/couponApi/IsCouponApi";
 
-const QuizSuccessPage: React.FC = () => {
+const QuizSuccessPage = () => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
-  const [coupon, setCoupon] = useState<quizCoupon | null>(null);
-
   const navigate = useNavigate();
-  useRestrictQuizSuccess();
-  // useQuizRedirect();
-
-  const handleLottieClick = async () => {
-    setIsOpen(true);
-    try {
-      const couponData = (await getContentCoupon("quiz")) as quizCoupon;
-      setCoupon(couponData);
-    } catch (error) {
-      console.error("Failed to fetch coupon:", error);
-    }
-  };
 
   useEffect(() => {
-    if (isOpen && coupon) {
+    const checkCouponValidity = async () => {
+      try {
+        const couponData = await getIsCoupon("quiz");
+        if (couponData.couponStatus) {
+          navigate("/quiz/close", { replace: true });
+        } else {
+          navigate("/quiz/coupon", { replace: true });
+        }
+      } catch (e) {
+        console.error("Error checking coupon validity:", e);
+      }
+    };
+
+    if (isOpen) {
       const timer = setTimeout(() => {
-        navigate("/quiz/coupon", { state: { coupon }, replace: true });
+        checkCouponValidity();
       }, 2500);
       return () => clearTimeout(timer);
     }
-  }, [isOpen, coupon, navigate]);
+  }, [isOpen, navigate]);
+
+  const handleLottieClick = async () => {
+    setIsOpen(true);
+  };
 
   return (
     <div className="QuizSuccessPage">
