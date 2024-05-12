@@ -57,12 +57,6 @@ public class UserController {
         return ResponseEntity.noContent().build();
     }
 
-    @Operation(summary = "Feign Client")
-    @GetMapping("/fcm-list")
-    public ResponseEntity<?> getUserFcmList() {
-        return ResponseEntity.ok().body(userService.getUserFcmList());
-    }
-
     @Operation(summary = "Checking my coupon history")
     @GetMapping("/coupon")
     public ResponseEntity<?> getUserCouponHistory(
@@ -81,6 +75,14 @@ public class UserController {
         return ResponseEntity.noContent().build();
     }
 
+    @Operation(summary = "Checking my notification history")
+    @GetMapping("/notification")
+    public ResponseEntity<?> getUserNotificationHistory(
+            @RequestHeader("Authorization") final String accessToken) {
+        final long userId = loginService.getUsername(accessToken);
+        return ResponseEntity.ok().body(userService.getUserNotificationHistory(userId));
+    }
+
     @Operation(summary = "Feign Client")
     @GetMapping("/{userId}/fcm")
     public ResponseEntity<?> getUserFcmList(@PathVariable final long userId) {
@@ -93,5 +95,11 @@ public class UserController {
             @RequestBody final UpdateExperiencePointRequest updateExperiencePointRequest) {
         userService.upgradeExperiencePoint(updateExperiencePointRequest);
         return ResponseEntity.noContent().build();
+    }
+
+    @Operation(summary = "Feign Client")
+    @GetMapping("/fcm-list")
+    public ResponseEntity<?> getUserFcmList() {
+        return ResponseEntity.ok().body(userService.getUserFcmList());
     }
 }

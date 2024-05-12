@@ -3,6 +3,7 @@ package com.sieum.user.service;
 import static com.sieum.user.common.CustomExceptionStatus.*;
 
 import com.sieum.user.controller.feign.MusicFeignClient;
+import com.sieum.user.controller.feign.NotificationFeignClient;
 import com.sieum.user.controller.feign.QuizFeignClient;
 import com.sieum.user.domain.Level;
 import com.sieum.user.domain.LevelHistory;
@@ -38,6 +39,7 @@ public class UserService {
     private final MusicFeignClient musicFeignClient;
     private final LoginService loginService;
     private final QuizFeignClient quizFeignClient;
+    private final NotificationFeignClient notificationFeignClient;
     private final LevelHistoryRepository levelHistoryRepository;
     private final RedisUtil redisUtil;
     private final LevelRepository levelRepository;
@@ -297,5 +299,9 @@ public class UserService {
 
     public void createUserHistory(final String ip, final User user) {
         userHistoryRepository.save(UserHistory.builder().ip(ip).user(user).build());
+    }
+
+    public List<NotificationHistoryResponse> getUserNotificationHistory(final long userId) {
+        return notificationFeignClient.getUserNotificationHistory(userId);
     }
 }
