@@ -40,7 +40,7 @@ public class CouponService {
     private final CouponHistoryRepository couponHistoryRepository;
     private final CouponHistoryQueryDSLRepository couponHistoryQueryDSLRepository;
     private final String COMPLETION_STATUS = "COMPLETION";
-    private final String WIDE_TYPE = "WIDE";
+    private final String WIDE_TYPE = "radius";
     private final String THROWNG_TYPE = "THROWNG";
 
     public CreateCouponResponse createCoupon(final long userId, final String route) {
@@ -161,8 +161,8 @@ public class CouponService {
 
     public boolean removeCouponRedisKey(final CouponStatusRequest couponStatusRequest) {
         if (!couponStatusRequest.getCouponType().equals("NICKNAME")) {
-            if (couponStatusRequest.getCouponType().equals(WIDE_TYPE)) {
-                final String key = couponStatusRequest.getUserId() + "_" + WIDE_TYPE;
+            if (couponStatusRequest.getCouponType().equals("WIDE")) {
+                final String key = couponStatusRequest.getUserId() + "_radius";
                 final String couponKey =
                         couponStatusRequest.getUserId() + "_COUPON_ID_" + WIDE_TYPE;
                 redisUtil.deleteData(key);
