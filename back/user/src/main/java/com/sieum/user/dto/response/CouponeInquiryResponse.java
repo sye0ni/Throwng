@@ -27,4 +27,7 @@ public class CouponeInquiryResponse {
 
     @Schema(description = "coupon status")
     private String couponStatus;
+
+    @Schema(description = "coupon Type")
+    private String couponType;
 }
