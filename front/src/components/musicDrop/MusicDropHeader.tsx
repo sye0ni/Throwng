@@ -69,8 +69,6 @@ const MusicDropHeader = () => {
       let file = e.target.files[0];
       if (file.size > 5000000) {
         toastMsg("사진의 용량이 너무 커요. 다른 사진을 사용해 주세요.");
-        resetSetImagePreview();
-        resetSetUserImageUrl();
         setIsLoading(false);
         return;
       } else {
@@ -97,7 +95,7 @@ const MusicDropHeader = () => {
             return;
           }
         }
-        const allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
+        const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/jpg'];
         if (!allowedTypes.includes(file.type)) {
           toastMsg("이미지만 업로드 할 수 있어요.");
           setIsLoading(false);

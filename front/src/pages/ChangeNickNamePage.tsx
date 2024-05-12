@@ -30,6 +30,7 @@ const ChangeNickNamePage = () => {
     }
 
     if (regex.test(nickName)) {
+      console.log(requestBody)
       await putNickName(requestBody)
       navigate('/user/mypage', {replace:true})
     } else {
