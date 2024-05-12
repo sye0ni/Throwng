@@ -40,7 +40,7 @@ public class BatchQueryDSLRepository {
                 .count();
     }
 
-    public void popularMusic(List<Long> throwIds) {
+    public void updatePopularMusic(List<Long> throwIds) {
         queryFactory
                 .update(throwItem)
                 .set(throwItem.isPopular, true)

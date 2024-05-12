@@ -1,6 +1,7 @@
 package com.sieum.music.service;
 
 import com.sieum.music.repository.BatchQueryDSLRepository;
+import java.util.AbstractMap;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -17,16 +18,27 @@ public class BatchService {
     @Transactional
     public void popularMusic() {
         List<Integer> zipCodeIds = batchQueryDSLRepository.getZipCodeId();
-        for (int zipCodeId : zipCodeIds) {
-            final Long legalDongPickUpCnt =
-                    batchQueryDSLRepository.getLegalDongPickUpCount(zipCodeId);
-            if (legalDongPickUpCnt < MIN_COUNT) {
-                continue;
-            }
-            List<Long> throwIds =
-                    batchQueryDSLRepository.getPopularThrowItems(
-                            (int) (legalDongPickUpCnt * PERCENT), zipCodeId);
-            batchQueryDSLRepository.popularMusic(throwIds);
-        }
+        zipCodeIds.stream()
+                .map(
+                        zipCodeId -> {
+                            long legalDongPickUpCount =
+                                    batchQueryDSLRepository.getLegalDongPickUpCount(zipCodeId);
+                            return new AbstractMap.SimpleEntry<>(zipCodeId, legalDongPickUpCount);
+                        })
+                .filter(entry -> entry.getValue() >= MIN_COUNT)
+                .forEach(
+                        entry -> {
+                            int zipCodeId = entry.getKey();
+                            long legalDongPickUpCount = entry.getValue();
+                            int popularCount = calculatePopularCount(legalDongPickUpCount);
+                            List<Long> popularThrowIds =
+                                    batchQueryDSLRepository.getPopularThrowItems(
+                                            popularCount, zipCodeId);
+                            batchQueryDSLRepository.updatePopularMusic(popularThrowIds);
+                        });
+    }
+
+    private int calculatePopularCount(long legalDongPickUpCount) {
+        return (int) (legalDongPickUpCount * PERCENT);
     }
 }
