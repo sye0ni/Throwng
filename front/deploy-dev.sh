@@ -22,7 +22,7 @@ echo "${AFTER_COLOR} server up(port:${AFTER_PORT})"
 for cnt in {1..10}
 do
     echo "서버 응답 확인중(${cnt}/10)";
-    UP=$(curl -s http://localhost:${AFTER_PORT}/actuator)
+    UP=$(curl -s http://localhost:${AFTER_PORT})
     if [ -z "${UP}" ]
         then
             sleep 10
@@ -39,5 +39,10 @@ then
 fi
 
 # 3
+echo "NginX Setting..."
+docker exec -it nginx1 /bin/bash -c "sed -i 's/${BEFORE_PORT}/${AFTER_PORT}/' /etc/nginx/conf.d/include/service_uri.conf && nginx -s reload"
+echo "Deploy Completed!!"
+
+# 4
 echo "$BEFORE_COLOR server down(port:${BEFORE_PORT})"
 docker-compose -p ${BEFORE_COLOR} -f docker-compose-dev.${BEFORE_COLOR}.yml down
