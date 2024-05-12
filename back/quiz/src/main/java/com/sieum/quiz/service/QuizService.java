@@ -149,7 +149,7 @@ public class QuizService {
 
         indexes.stream().forEach(index -> todayQuizList.add(quizlist.get(index)));
 
-        redisUtil.setObject(key, todayQuizList);
+        redisUtil.setObjectExpire(key, todayQuizList, 86400);
 
         return todayQuizList;
     }
