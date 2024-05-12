@@ -13,4 +13,7 @@ public interface UserAuthClient {
     @PostMapping("/users/user/experience-point")
     void upgradeExperiencePoint(
             @RequestBody final UpdateExperiencePointRequest updateExperiencePointRequest);
+
+    @GetMapping("/users/user/{userId}/level-count")
+    int getLevelThrowngCount(@PathVariable final long userId);
 }

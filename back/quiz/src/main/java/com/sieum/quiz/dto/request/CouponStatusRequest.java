@@ -22,4 +22,8 @@ public class CouponStatusRequest {
     @Schema(description = "userId to user coupon")
     @NotNull
     private long userId;
+
+    @Schema(description = "userId to user coupon")
+    @NotNull
+    private String couponType;
 }

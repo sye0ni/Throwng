@@ -23,7 +23,6 @@ public class CouponValidationRequest {
     @NotNull
     private Long couponId;
 
-    @Schema(description = "types of coupons that can be used")
-    @NotNull
-    private String type;
+    @Schema(description = "coupon Type")
+    private String couponType;
 }

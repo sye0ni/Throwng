@@ -48,7 +48,7 @@ public class CouponController {
         return ResponseEntity.ok(couponValidator.validateCoupon(couponValidationRequest));
     }
 
-    @Operation(summary = "feign client")
+    @Operation(summary = "feign client - After using a coupon, change the coupon status")
     @PutMapping("/status")
     public ResponseEntity<?> modifyCouponStatus(
             @RequestBody final CouponStatusRequest couponStatusRequest) {
