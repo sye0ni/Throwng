@@ -79,6 +79,14 @@ public class UserController {
         return ResponseEntity.noContent().build();
     }
 
+    @Operation(summary = "Checking my notification history")
+    @GetMapping("/notification")
+    public ResponseEntity<?> getUserNotificationHistory(
+            @RequestHeader("Authorization") final String accessToken) {
+        final long userId = loginService.getUsername(accessToken);
+        return ResponseEntity.ok().body(userService.getUserNotificationHistory(userId));
+    }
+
     @Operation(summary = "Feign Client")
     @GetMapping("/{userId}/fcm")
     public ResponseEntity<?> getUserFcmList(@PathVariable final long userId) {
