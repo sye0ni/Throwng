@@ -43,10 +43,10 @@ public class CouponeInquiryResponse {
     public static CouponeInquiryResponse of(Coupon coupon, CouponHistory couponHistory) {
         return new CouponeInquiryResponse(
                 coupon.getId(),
-                CouponType.valueOf(coupon.getCouponType()).getName(),
+                "문구테스트",
                 CouponType.valueOf(coupon.getCouponType()).getDescription(),
                 createEndDate(coupon.getCreatedAt()),
                 CouponStatus.valueOf(couponHistory.getCouponStatus()).getKr(),
-                coupon.getRoute());
+                coupon.getCouponType());
     }
 }
