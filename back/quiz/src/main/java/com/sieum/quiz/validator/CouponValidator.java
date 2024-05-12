@@ -89,7 +89,7 @@ public class CouponValidator {
     public void issueRedisKey(final Coupon coupon, final long userId) {
 
         if (coupon.getCouponType().equals(WIDE)) {
-            final String key = userId + "_" + coupon.getCouponType();
+            final String key = userId + "_radius";
             redisUtil.setData(key, coupon.getCouponType());
             final String couponKey = userId + "_COUPON_ID_WIDE";
             redisUtil.setObject(couponKey, coupon.getId());
