@@ -7,6 +7,7 @@ import MemoryInfoPage from "@pages/game/MemoryInfoPage";
 import MemoryMainPage from "@pages/game/MemoryMainPage";
 import MemoryCouponPage from "@pages/game/MemoryCouponPage";
 import MemorySuccessPage from "@pages/game/MemorySuccessPage";
+import HammerMainPage from "@pages/game/HammerMainPage";
 const HomePage = lazy(() => import("@pages/HomePage"));
 const MyPage = lazy(() => import("@pages/MyPage"));
 const PlayListPage = lazy(() => import("@pages/PlayListPage"));
@@ -144,7 +145,7 @@ export default {
       children: [
         {
           path: "main",
-          
+          element: <HammerMainPage />
         },
       ]
     },

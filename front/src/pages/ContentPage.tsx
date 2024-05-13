@@ -36,6 +36,10 @@ const ContentPage = () => {
     navigate("/quiz/main");
   };
 
+  const handleGoHammer = () => {
+    navigate("/hammer/main")
+  }
+
   const handleGoMemory = () => {
     navigate("/memory/main")
   }
@@ -72,7 +76,7 @@ const ContentPage = () => {
               </div>
             )
         )}
-        <div className="game1-border" >
+        <div className="game1-border" onClick={handleGoHammer} >
           <div className="game1-title">
             <p>리듬게임</p>
             <div className="participation">
