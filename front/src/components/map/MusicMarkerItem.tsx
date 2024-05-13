@@ -70,9 +70,15 @@ const MusicMarkerItem = ({ marker }: Props) => {
           alt="Custom Overlay"
           style={{ width: "30px", height: "35px" }}
           loading="lazy"
+          decoding="async"
         />
         <div className="cover-img">
-          <img src={marker.albumImage} alt="Custom Overlay" loading="lazy" />
+          <img
+            src={marker.albumImage}
+            alt="Custom Overlay"
+            loading="lazy"
+            decoding="async"
+          />
         </div>
       </div>
     </OverlayViewF>

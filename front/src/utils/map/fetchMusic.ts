@@ -1,7 +1,7 @@
 import { postMusicRadius } from "@services/mapAPi";
 import { Location, Marker } from "../../types/mapType";
 import { SetterOrUpdater } from "recoil";
-import arraysAreEqual from "./arraysAreEqual";
+// import arraysAreEqual from "./arraysAreEqual";
 
 const fetchMusic = async (
   isUserLocation: boolean,
@@ -11,21 +11,28 @@ const fetchMusic = async (
 ) => {
   try {
     const data = await postMusicRadius(isUserLocation, position);
-    if (!arraysAreEqual(data, markers)) {
-      setMarkers(data);
+    // if (!arraysAreEqual(data, markers)) {
+    //   setMarkers(data);
+    // }
+
+    const newItems = data.filter(
+      (item) => !markers.some((items) => items.itemId === item.itemId)
+    );
+
+    console.log(newItems);
+
+    if (newItems.length > 0) {
+      setMarkers((prev) => {
+        return [...prev, ...newItems];
+      });
     }
 
     // setMarkers((prev) => {
-    //   const prevIds = new Set(prev.map((item) => item.itemId)); // prev의 id만 모은 Set
-
-    //   // console.log(prevIds);
-
-    //   // next에서 prev에 없는 아이템만 찾아 추가
+    //   const prevIds = new Set(prev.map((item) => item.itemId));
     //   const newItems = data.filter((item) => !prevIds.has(item.itemId));
-
-    //   // console.log(newItems);
-
-    //   // 기존의 prev 배열에 새로운 아이템들을 추가하여 새 배열을 반환
+    //   if (newItems.length === 0) {
+    //     return prev;
+    //   }
     //   return [...prev, ...newItems];
     // });
   } catch (err) {

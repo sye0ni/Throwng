@@ -1,4 +1,4 @@
-import { memo, useMemo } from "react";
+import { memo } from "react";
 import { useRecoilValue } from "recoil";
 import { markersState } from "@store/map/atoms";
 import MusicMarkerItem from "./MusicMarkerItem";
@@ -6,19 +6,11 @@ import MusicMarkerItem from "./MusicMarkerItem";
 const MapClusterer = () => {
   const markers = useRecoilValue(markersState);
 
-  const renderedMarkers = useMemo(
-    () =>
-      markers.map((marker) => (
-        <MusicMarkerItem key={marker.itemId} marker={marker} />
-      )),
-    [markers]
-  );
+  console.log(1);
 
-  return renderedMarkers;
-
-  // return markers.map((marker) => (
-  //   <MusicMarkerItem key={marker.itemId} marker={marker} />
-  // ));
+  return markers.map((marker) => (
+    <MusicMarkerItem key={marker.itemId} marker={marker} />
+  ));
 };
 
 export default memo(MapClusterer);
