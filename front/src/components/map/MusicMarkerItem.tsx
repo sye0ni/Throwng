@@ -79,4 +79,9 @@ const MusicMarkerItem = ({ marker }: Props) => {
   );
 };
 
+// export default memo(MusicMarkerItem, (prevProps, nextProps) => {
+//   console.log(prevProps.marker.itemId);
+//   console.log(nextProps.marker.itemId);
+//   return prevProps.marker.itemId === nextProps.marker.itemId;
+// });
 export default memo(MusicMarkerItem);
