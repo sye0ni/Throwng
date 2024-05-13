@@ -5,14 +5,13 @@ import { useState, useEffect } from "react";
 import ToasterMsg from "@components/ToasterMsg";
 import { toastMsg } from "@/utils/toastMsg";
 import axios from "axios";
-// import { useNavigate } from "react-router-dom";
-import { EventSourcePolyfill } from "event-source-polyfill";
+import { useNavigate } from "react-router-dom";
 
 const MyOtpBody = () => {
   const [otp, setOtp] = useState('');
   const [timeLeft, setTimeLeft] = useState(0);
   const BASE_URL = import.meta.env.VITE_BASE_URL;
-  // const navigate = useNavigate()
+  const navigate = useNavigate()
 
   const fetchMyOtp = async () => {
     try {
@@ -35,29 +34,25 @@ const MyOtpBody = () => {
   }
 
   const SSEConnection = () => {
-    const sse = new EventSource(`${BASE_URL}/api/users/connect`, {
-    // const sse = new EventSourcePolyfill(`${BASE_URL}/api/users/connect`, {
-    //   headers: {
-    //     'Content-Type': 'text/event-stream',
-    //   },
-      withCredentials: true,
+    const sse = new EventSource(`${BASE_URL}/api/users/connect`);
+  
+    sse.addEventListener('WatchAuthentication', (e) => {
+      if (e.data === 'success') {
+        sse.close();
+        alert('연동이 완료되었어요. 마이쓰롱으로 이동할게요.');
+        navigate('/user/mypage', {replace:true});
+      }
     });
-
-    sse.onmessage = event => {
-      console.log(event)
-      const data = JSON.parse(event.data);
-      console.log(data.message);
-    };
-
-    sse.onerror = (e) => {
-      console.error('SSE 연결 오류:', e);
+  
+    sse.onerror = () => {
       sse.close();
     };
-
+  
     return () => {
       sse.close();
     };
   };
+  
   
   useEffect(() => {
     if (timeLeft > 0) {
