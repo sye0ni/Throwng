@@ -11,7 +11,8 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum CouponRoute {
     QUIZ("quiz"),
-    GAME("game");
+    GAME("game"),
+    MEMORY("memory");
 
     private String name;
 
