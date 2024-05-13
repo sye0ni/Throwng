@@ -41,6 +41,8 @@ public class WatchService {
     private final RedisUtil redisUtil;
     private final KakaoMapReverseGeoUtil kakaoMapReverseGeoUtil;
 
+    private static final boolean DEFAULT_POPULAR = false;
+
     public long getCurrentUserId(String authorization) {
         return tokenAuthClient.getUserId(authorization);
     }
@@ -106,6 +108,7 @@ public class WatchService {
                         .userId(userId)
                         .zipcode(zipcode)
                         .song(song)
+                        .isPopular(DEFAULT_POPULAR)
                         .build());
 
         thrownCount--;
