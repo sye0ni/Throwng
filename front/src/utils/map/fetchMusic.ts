@@ -11,9 +11,9 @@ const fetchMusic = async (
 ) => {
   try {
     const data = await postMusicRadius(isUserLocation, position);
-    setMarkers(data);
-    // if (!arraysAreEqual(data, markers)) {
-    // }
+    if (!arraysAreEqual(data, markers)) {
+      setMarkers(data);
+    }
 
     // setMarkers((prev) => {
     //   const prevIds = new Set(prev.map((item) => item.itemId)); // prev의 id만 모은 Set

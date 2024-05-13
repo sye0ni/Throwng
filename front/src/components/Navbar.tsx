@@ -3,7 +3,7 @@ import { FaRegUser } from "react-icons/fa";
 import { LuHome } from "react-icons/lu";
 import { FaRegCirclePlay } from "react-icons/fa6";
 import circle from "@assets/images/Cone.webp";
-import logo from "@assets/images/logo.png";
+import logo from "@assets/images/logo.webp";
 import "@styles/Navbar.scss";
 import { IoGameControllerOutline } from "react-icons/io5";
 

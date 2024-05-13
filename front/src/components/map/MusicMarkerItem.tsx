@@ -72,7 +72,7 @@ const MusicMarkerItem = ({ marker }: Props) => {
           loading="lazy"
         />
         <div className="cover-img">
-          <img src={marker.albumImage} alt="Custom Overlay" />
+          <img src={marker.albumImage} alt="Custom Overlay" loading="lazy" />
         </div>
       </div>
     </OverlayViewF>
