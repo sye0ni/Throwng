@@ -41,7 +41,8 @@ public class ThrowQueryDSLRepository {
                                 artist.name,
                                 mySqlDistanceSphereFunction(throwItem.locationPoint, point)
                                         .loe(String.valueOf(innerDistance))
-                                        .as("isInnerDistance")))
+                                        .as("isInnerDistance"),
+                                throwItem.isPopular))
                 .from(throwItem)
                 .join(throwItem.song, song)
                 .on(throwItem.song.id.eq(song.id))
