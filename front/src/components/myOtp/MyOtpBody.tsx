@@ -6,12 +6,12 @@ import ToasterMsg from "@components/ToasterMsg";
 import { toastMsg } from "@/utils/toastMsg";
 import axios from "axios";
 // import { useNavigate } from "react-router-dom";
-// import { EventSourcePolyfill } from "event-source-polyfill";
+import { EventSourcePolyfill } from "event-source-polyfill";
 
 const MyOtpBody = () => {
   const [otp, setOtp] = useState('');
   const [timeLeft, setTimeLeft] = useState(0);
-  // const BASE_URL = import.meta.env.VITE_BASE_URL;
+  const BASE_URL = import.meta.env.VITE_BASE_URL;
   // const navigate = useNavigate()
 
   const fetchMyOtp = async () => {
@@ -35,17 +35,16 @@ const MyOtpBody = () => {
   }
 
   const SSEConnection = () => {
-    const sse = new EventSource(`http://13.125.0.190:8086/users/connect`, {
-    // const sse = new EventSourcePolyfill(`http://13.125.0.190:8086/users/connect`, {
-    // const sse = new EventSource(`${BASE_URL}/api/users/connect`, {
+    const sse = new EventSource(`${BASE_URL}/api/users/connect`, {
     // const sse = new EventSourcePolyfill(`${BASE_URL}/api/users/connect`, {
-      // headers: {
-      //   'Content-Type': 'text/event-stream',
-      // },
+    //   headers: {
+    //     'Content-Type': 'text/event-stream',
+    //   },
       withCredentials: true,
     });
 
     sse.onmessage = event => {
+      console.log(event)
       const data = JSON.parse(event.data);
       console.log(data.message);
     };
