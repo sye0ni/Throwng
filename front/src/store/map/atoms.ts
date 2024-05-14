@@ -7,6 +7,11 @@ const { persistAtom } = recoilPersist({
   storage: sessionStorage,
 });
 
+export const loadStatusState = atom({
+  key: "loadStatusState",
+  default: 0,
+});
+
 export const markersState = atom<Marker[]>({
   key: "markersState",
   default: [],

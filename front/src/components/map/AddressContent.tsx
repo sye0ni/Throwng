@@ -5,7 +5,7 @@ import "@styles/map/AddressContent.scss";
 const AddressContent = ({ address }: { address: string }) => {
   return (
     <div className="AddressContent">
-      <img src={ping} alt="" />
+      <img src={ping} alt="" loading="lazy" decoding="async" />
       <div>{address}</div>
     </div>
   );
