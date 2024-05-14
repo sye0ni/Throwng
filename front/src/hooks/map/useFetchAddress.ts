@@ -13,7 +13,6 @@ const useFetchAddress = () => {
       if (type === "myLocation") {
         setMyAddress((prev) => {
           if (prev.code !== data.code) {
-            console.log(1);
             return data;
           }
           return prev;
@@ -21,8 +20,6 @@ const useFetchAddress = () => {
       } else {
         setMapCenterAddress((prev) => {
           if (prev.code !== data.code) {
-            console.log(prev);
-            console.log(data);
             return data;
           }
           return prev;

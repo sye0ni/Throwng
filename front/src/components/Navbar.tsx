@@ -21,8 +21,13 @@ const Navbar = () => {
         </NavLink>
         <div className="menu__item disable">
           <NavLink to={"/music/search"} className="center">
-            <img className="circle" src={circle} alt="" />
-            <img className="logo" src={logo} alt="" />
+            <img
+              className="circle"
+              src={circle}
+              loading="lazy"
+              decoding="async"
+            />
+            <img className="logo" src={logo} loading="lazy" decoding="async" />
           </NavLink>
         </div>
         <NavLink to={"/content"} className="menu__item">

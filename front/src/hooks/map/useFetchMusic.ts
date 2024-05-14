@@ -1,22 +1,21 @@
 import arraysAreEqual from "@/utils/map/arraysAreEqual";
 import { postMusicRadius } from "@services/mapAPi";
 import { markersState } from "@store/map/atoms";
-import { Location, Marker } from "../../types/mapType";
+import { Location } from "../../types/mapType";
 import { useSetRecoilState } from "recoil";
 
 const useFetchMusic = () => {
   const setMarkers = useSetRecoilState(markersState);
 
-  const fetchMusicc = async (
-    isUserLocation: boolean,
-    position: Location,
-    markers: Marker[]
-  ) => {
+  const fetchMusicc = async (isUserLocation: boolean, position: Location) => {
     try {
       const data = await postMusicRadius(isUserLocation, position);
-      if (!arraysAreEqual(data, markers)) {
-        setMarkers(data);
-      }
+      setMarkers((prev) => {
+        if (!arraysAreEqual(data, prev)) {
+          return data;
+        }
+        return prev;
+      });
     } catch (err) {
       console.error(err);
     }

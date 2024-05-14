@@ -6,11 +6,9 @@ import MapContainer from "@components/map/MapContainer";
 interface Props {
   map: google.maps.Map | null;
   setMap: Dispatch<SetStateAction<google.maps.Map | null>>;
-  tilesLoaded: boolean;
-  setTilesLoaded: Dispatch<SetStateAction<boolean>>;
 }
 
-const LoadMap = ({ map, setMap, tilesLoaded, setTilesLoaded }: Props) => {
+const LoadMap = ({ map, setMap }: Props) => {
   return (
     <LoadScriptNext
       id="google-map-script"
@@ -19,12 +17,7 @@ const LoadMap = ({ map, setMap, tilesLoaded, setTilesLoaded }: Props) => {
       libraries={GOOGLE_MAPS_LIBRARIES}
       loadingElement={<></>}
     >
-      <MapContainer
-        map={map}
-        setMap={setMap}
-        tilesLoaded={tilesLoaded}
-        setTilesLoaded={setTilesLoaded}
-      />
+      <MapContainer map={map} setMap={setMap} />
     </LoadScriptNext>
   );
 };

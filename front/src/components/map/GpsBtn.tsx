@@ -21,7 +21,7 @@ const GpsBtn = ({ map }: Props) => {
         setZoomLevel(15);
       }
       map.panTo(location);
-      setCenter(true);
+      setCenter((prev) => !prev);
     }
   }, [map, location, center]);
 
