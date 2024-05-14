@@ -24,10 +24,10 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 import java.util.stream.Collectors;
-import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -43,6 +43,7 @@ public class CouponService {
     private final String WIDE_TYPE = "radius";
     private final String THROWNG_TYPE = "THROWNG";
 
+    @Transactional
     public CreateCouponResponse createCoupon(final long userId, final String route) {
         final String couponRoute = CouponRoute.findByName(route);
 
@@ -79,6 +80,7 @@ public class CouponService {
                 .findFirst();
     }
 
+    @Transactional
     public void createCouponHistory(final Coupon coupon) {
         couponHistoryRepository.save(
                 CouponHistory.builder().coupon(coupon).couponStatus("NONE").build());
@@ -133,6 +135,7 @@ public class CouponService {
         redisUtil.setObjectExpire(key, userIdList, 86400);
     }
 
+    @Transactional
     public void modifyCouponStatus(final CouponStatusRequest couponStatusRequest) {
         Coupon coupon =
                 couponRepository
