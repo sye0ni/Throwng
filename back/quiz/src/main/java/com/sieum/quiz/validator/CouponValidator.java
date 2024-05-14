@@ -12,6 +12,7 @@ import com.sieum.quiz.repository.CouponReposistory;
 import com.sieum.quiz.util.RedisUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
 @RequiredArgsConstructor
@@ -77,6 +78,7 @@ public class CouponValidator {
         return couponHistory;
     }
 
+    @Transactional
     public boolean changeCouponStatus(final Coupon coupon) {
 
         if (!coupon.getCouponType().equals(EXCEPT_COUPON_TYPE)) {
