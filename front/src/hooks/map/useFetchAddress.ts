@@ -1,0 +1,39 @@
+import { postAddress } from "@services/mapAPi";
+import { mapCenterAddressState, myAddressState } from "@store/map/atoms";
+import { Location } from "../../types/mapType";
+import { useSetRecoilState } from "recoil";
+
+const useFetchAddress = () => {
+  const setMyAddress = useSetRecoilState(myAddressState);
+  const setMapCenterAddress = useSetRecoilState(mapCenterAddressState);
+
+  const fetchAddress = async (position: Location, type: string) => {
+    try {
+      const data = await postAddress(position);
+      if (type === "myLocation") {
+        setMyAddress((prev) => {
+          if (prev.code !== data.code) {
+            console.log(1);
+            return data;
+          }
+          return prev;
+        });
+      } else {
+        setMapCenterAddress((prev) => {
+          if (prev.code !== data.code) {
+            console.log(prev);
+            console.log(data);
+            return data;
+          }
+          return prev;
+        });
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  return { fetchAddress };
+};
+
+export default useFetchAddress;
