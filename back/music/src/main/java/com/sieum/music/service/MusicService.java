@@ -2,6 +2,7 @@ package com.sieum.music.service;
 
 import static com.sieum.music.exception.CustomExceptionStatus.*;
 
+import com.sieum.music.controller.feign.CouponFeignClient;
 import com.sieum.music.controller.feign.TokenAuthClient;
 import com.sieum.music.domain.*;
 import com.sieum.music.domain.ThrowItem;
@@ -51,6 +52,7 @@ public class MusicService {
     private final KakaoMapReverseGeoUtil kakaoMapReverseGeoUtil;
     private final String THROWNG_TYPE = "THROWNG";
     private final String PICKUP_TYPE = "PICKUP";
+    private final CouponFeignClient couponFeignClient;
 
     public long getCurrentUserId(String authorization) {
         return tokenAuthClient.getUserId(authorization);
@@ -185,85 +187,38 @@ public class MusicService {
             final String youtubeId,
             final ThrownItemRequest thrownItemRequest) {
         final long userId = userLevelInfoResponse.getUserId();
-
         final String nowDate = localDateUtil.GetDate(LocalDate.now());
+        final String key = userId + "_THROWNG";
+        final String couponValue = redisUtil.getData(key);
 
-        //        final String key = "user_throw_" + userId + "_" +
-        // localDateUtil.GetDate(LocalDate.now());
-        final String key = "user_throw_" + userId + "_" + nowDate;
-        final Object value = redisUtil.getData(key);
-
-        int thrownCount = 0;
-
-        if (value == null) {
-            thrownCount = userLevelInfoResponse.getLevelCount();
-        } else {
-            if (Integer.valueOf((String) value) == 0) {
-                throw new BadRequestException(NOT_THROW_SONG);
+        if (couponValue != null) {
+            if (couponValue.equals("THROWNG_INF")) {
+                throwngUtil(userId, youtubeId, thrownItemRequest, nowDate);
             } else {
-                thrownCount = Integer.valueOf((String) value);
+                final String detailKey = userId + "_" + couponValue;
+                final Object value = redisUtil.getObject(detailKey);
+                int countByCoupon = (int) value;
+
+                if (countByCoupon == 0) {
+                    basicThrowng(userLevelInfoResponse, nowDate, youtubeId, thrownItemRequest);
+                }
+
+                throwngUtil(userId, youtubeId, thrownItemRequest, nowDate);
+                countByCoupon--;
+                redisUtil.setObject(detailKey, countByCoupon);
+                if (countByCoupon == 0) {
+                    final Object idValue = redisUtil.getObject(userId + "_COUPON_ID_THROWNG");
+                    final long couponId = (long) idValue;
+
+                    CouponStatusRequest couponStatusRequest =
+                            CouponStatusRequest.of(couponId, userId, "THROWNG");
+                    couponFeignClient.modifyCouponStatus(couponStatusRequest);
+                }
             }
+
+        } else {
+            basicThrowng(userLevelInfoResponse, nowDate, youtubeId, thrownItemRequest);
         }
-
-        final Point point =
-                GeomUtil.createPoint(
-                        thrownItemRequest.getLongitude(), thrownItemRequest.getLatitude());
-
-        // Verification: The same user cannot throw the same song again within 100m
-        ThrowCurrentDao throwDao =
-                throwQueryDSLRepository
-                        .findNearItemsPointsByDistanceAndUserIdAndCreatedAtAndYoutubeId(
-                                point, 100.0, userId, nowDate, youtubeId);
-
-        if (throwDao != null) {
-            if (throwDao.getStatus().equals(ThrowStatus.valueOf("VISIBLE"))) {
-                throw new BadRequestException(NOT_THROW_ITEM_IN_LIMITED_RADIUS);
-            }
-        }
-
-        // String[] zipArray = thrownItemRequest.getLocation().split("\\s");
-        Zipcode zipcode =
-                zipCodeRepository
-                        .findByCode(thrownItemRequest.getCode())
-                        .orElseThrow(() -> new BadRequestException(NOT_FOUND_ZIP_CODE));
-
-        boolean isSong = songRepository.existsByYoutubeId(youtubeId);
-        if (!isSong) {
-            boolean isArtist = artistRepository.existsByName(thrownItemRequest.getArtist());
-            if (!isArtist) {
-                artistRepository.save(Artist.builder().name(thrownItemRequest.getArtist()).build());
-            }
-            Artist artist = artistRepository.findByName(thrownItemRequest.getArtist());
-
-            songRepository.save(
-                    Song.builder()
-                            .youtubeId(youtubeId)
-                            .title(thrownItemRequest.getTitle())
-                            .albumImage(thrownItemRequest.getAlbumImageUrl())
-                            .artist(artist)
-                            .previewUrl(thrownItemRequest.getPreviewUrl())
-                            .build());
-        }
-
-        Song song =
-                songRepository
-                        .findByYoutubeId(youtubeId)
-                        .orElseThrow(() -> new BadRequestException(NOT_FOUND_YOUTUBE_ID));
-
-        musicRepository.save(
-                ThrowItem.builder()
-                        .content(thrownItemRequest.getComment())
-                        .itemImage(thrownItemRequest.getImageUrl())
-                        .status(ThrowStatus.valueOf("VISIBLE"))
-                        .locationPoint(point)
-                        .userId(userId)
-                        .zipcode(zipcode)
-                        .song(songRepository.findByTitle(thrownItemRequest.getTitle()))
-                        .build());
-
-        thrownCount--;
-
-        redisUtil.setData(key, String.valueOf(thrownCount));
 
         // upgrade experiencePoint
         tokenAuthClient.upgradeExperiencePoint(
@@ -322,5 +277,102 @@ public class MusicService {
                         musicExperienceCountReqeust.getCreatedAt());
 
         return MusicExperienceCountResponse.of(throwItems.size(), pickedupItems.size());
+    }
+
+    public boolean checkUsingUnlimitedRadiusCoupon(final long userId) {
+        String value = redisUtil.getData(userId + "_radius");
+        if (value == null) {
+            return false;
+        }
+        return true;
+    }
+
+    public void throwngUtil(
+            final long userId,
+            final String youtubeId,
+            final ThrownItemRequest thrownItemRequest,
+            final String nowDate) {
+        final Point point =
+                GeomUtil.createPoint(
+                        thrownItemRequest.getLongitude(), thrownItemRequest.getLatitude());
+
+        // Verification: The same user cannot throw the same song again within 100m
+        ThrowCurrentDao throwDao =
+                throwQueryDSLRepository
+                        .findNearItemsPointsByDistanceAndUserIdAndCreatedAtAndYoutubeId(
+                                point, 100.0, userId, nowDate, youtubeId);
+
+        if (throwDao != null) {
+            if (throwDao.getStatus().equals(ThrowStatus.valueOf("VISIBLE"))) {
+                throw new BadRequestException(NOT_THROW_ITEM_IN_LIMITED_RADIUS);
+            }
+        }
+
+        // String[] zipArray = thrownItemRequest.getLocation().split("\\s");
+        Zipcode zipcode =
+                zipCodeRepository
+                        .findByCode(thrownItemRequest.getCode())
+                        .orElseThrow(() -> new BadRequestException(NOT_FOUND_ZIP_CODE));
+
+        boolean isSong = songRepository.existsByYoutubeId(youtubeId);
+        if (!isSong) {
+            boolean isArtist = artistRepository.existsByName(thrownItemRequest.getArtist());
+            if (!isArtist) {
+                artistRepository.save(Artist.builder().name(thrownItemRequest.getArtist()).build());
+            }
+            Artist artist = artistRepository.findByName(thrownItemRequest.getArtist());
+
+            songRepository.save(
+                    Song.builder()
+                            .youtubeId(youtubeId)
+                            .title(thrownItemRequest.getTitle())
+                            .albumImage(thrownItemRequest.getAlbumImageUrl())
+                            .artist(artist)
+                            .previewUrl(thrownItemRequest.getPreviewUrl())
+                            .build());
+        }
+
+        Song song =
+                songRepository
+                        .findByYoutubeId(youtubeId)
+                        .orElseThrow(() -> new BadRequestException(NOT_FOUND_YOUTUBE_ID));
+
+        musicRepository.save(
+                ThrowItem.builder()
+                        .content(thrownItemRequest.getComment())
+                        .itemImage(thrownItemRequest.getImageUrl())
+                        .status(ThrowStatus.valueOf("VISIBLE"))
+                        .isPopular(false)
+                        .locationPoint(point)
+                        .userId(userId)
+                        .zipcode(zipcode)
+                        .song(song)
+                        .build());
+    }
+
+    public void basicThrowng(
+            final UserLevelInfoResponse userLevelInfoResponse,
+            final String nowDate,
+            final String youtubeId,
+            final ThrownItemRequest thrownItemRequest) {
+
+        final String key = "user_throw_" + userLevelInfoResponse.getUserId() + "_" + nowDate;
+        final Object value = redisUtil.getData(key);
+
+        int thrownCount = 0;
+
+        if (value == null) {
+            thrownCount = userLevelInfoResponse.getLevelCount();
+        } else {
+            if (Integer.valueOf((String) value) == 0) {
+                throw new BadRequestException(NOT_THROW_SONG);
+            } else {
+                thrownCount = Integer.valueOf((String) value);
+            }
+        }
+        throwngUtil(userLevelInfoResponse.getUserId(), youtubeId, thrownItemRequest, nowDate);
+        thrownCount--;
+
+        redisUtil.setData(key, String.valueOf(thrownCount));
     }
 }
