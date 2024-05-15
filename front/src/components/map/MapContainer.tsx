@@ -6,8 +6,8 @@ import {
   useEffect,
   useState,
 } from "react";
-import { useRecoilState, useSetRecoilState } from "recoil";
-import { centerState, loadStatusState, zoomLevelState } from "@store/map/atoms";
+import { useSetRecoilState } from "recoil";
+import { centerState, zoomLevelState } from "@store/map/atoms";
 import { GoogleMap } from "@react-google-maps/api";
 import MapClusterer from "@components/map/MapClusterer";
 import MyLocation from "@components/map/MyLocation";
@@ -18,58 +18,77 @@ import useChangeCenter from "@hooks/map/useChangeCenter";
 interface Props {
   map: google.maps.Map | null;
   setMap: Dispatch<SetStateAction<google.maps.Map | null>>;
+  initialLoad: boolean;
+  setInitialLoad: Dispatch<SetStateAction<boolean>>;
 }
 
-const MapContainer = ({ map, setMap }: Props) => {
-  const [initialLoad, setInitialLoad] = useState(true);
-  const [center, setCenter] = useRecoilState(centerState);
-  const [loadStatuss, setLoadStatuss] = useRecoilState(loadStatusState);
+const MapContainer = ({ map, setMap, initialLoad, setInitialLoad }: Props) => {
+  const setCenter = useSetRecoilState(centerState);
   const setZoomLevel = useSetRecoilState(zoomLevelState);
-  const [loadStatus, setLoadStatus] = useState("UNINITIALIZED");
+  const [mapKey, setMapKey] = useState(0);
+  const [loadAttempts, setLoadAttempts] = useState(0);
 
+  useLocationWatcher(map, initialLoad);
   const { changeCenter } = useChangeCenter();
-  useLocationWatcher(map, initialLoad, setInitialLoad);
 
   const onLoad = useCallback((map: google.maps.Map) => setMap(map), []);
   const onUnmount = useCallback(() => setMap(null), []);
 
-  const onChanged = () => {
-    if (!initialLoad && center) {
-      setCenter(false);
+  const onChanged = useCallback(() => {
+    if (!initialLoad) {
+      setCenter((prev) => {
+        if (!prev) {
+          return prev;
+        } else {
+          return false;
+        }
+      });
     }
-  };
+  }, [initialLoad]);
 
-  const onZoomChanged = () => {
+  const onZoomChanged = useCallback(() => {
     onChanged();
     if (map) {
       const zoom = map.getZoom()!;
       setZoomLevel(zoom);
     }
-  };
+  }, [onChanged, map]);
+
+  const onTilesLoaded = useCallback(() => {
+    setLoadAttempts(-1);
+    setInitialLoad((prev) => {
+      if (prev) {
+        return !prev;
+      }
+
+      return prev;
+    });
+  }, []);
 
   useEffect(() => {
-    if (map) {
-      const status = map.getRenderingType();
-      if (status !== "UNINITIALIZED") {
-        setLoadStatus(status);
+    const timer = setTimeout(() => {
+      if (loadAttempts !== -1) {
+        setMapKey((prevKey) => prevKey + 1);
+        setLoadAttempts((prev) => prev + 1);
       }
-    }
-  }, [loadStatuss]);
+    }, 1500);
+
+    return () => clearTimeout(timer);
+  }, [loadAttempts]);
 
   return (
     <GoogleMap
+      key={mapKey}
       mapContainerStyle={CONTAINER_STYLE}
-      onTilesLoaded={() => {
-        setLoadStatuss((prev) => prev + 1);
-      }}
+      onTilesLoaded={onTilesLoaded}
       options={MAP_OPTIONS}
       onLoad={onLoad}
       onUnmount={onUnmount}
       onDragStart={onChanged}
       onZoomChanged={onZoomChanged}
-      onIdle={() => changeCenter(map)}
+      onIdle={() => changeCenter(map, initialLoad)}
     >
-      {loadStatus !== "UNINITIALIZED" && (
+      {!initialLoad && (
         <>
           <MyLocation />
           <MapClusterer />

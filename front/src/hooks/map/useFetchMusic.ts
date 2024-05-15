@@ -18,6 +18,7 @@ const useFetchMusic = () => {
       });
     } catch (err) {
       console.error(err);
+      setMarkers([]);
     }
   };
 

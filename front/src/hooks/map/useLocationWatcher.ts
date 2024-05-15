@@ -1,5 +1,5 @@
-import { Dispatch, SetStateAction, useEffect, useRef } from "react";
-import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
+import { useEffect, useRef } from "react";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   centerState,
   prevLocationState,
@@ -11,12 +11,12 @@ import useUpdateMyLocation from "@hooks/map/useUpdateMyLocation";
 
 const useLocationWatcher = (
   map: google.maps.Map | null,
-  initialLoad: boolean,
-  setInitialLoad: Dispatch<SetStateAction<boolean>>
+  initialLoad: boolean
 ) => {
   const [prevLocation, setPrevLocation] = useRecoilState(prevLocationState);
-  const center = useRecoilValue(centerState);
+  const [center, setCenter] = useRecoilState(centerState);
   const setZoomLevel = useSetRecoilState(zoomLevelState);
+
   const centerRef = useRef(center);
   const prevLocationRef = useRef(prevLocation);
   const initialLoadRef = useRef(initialLoad);
@@ -49,10 +49,10 @@ const useLocationWatcher = (
             map.setZoom(15);
             setZoomLevel(15);
             map.setCenter(currentLocation);
+            setCenter(true);
             fetchMusicc(true, currentLocation);
             updateMyLocation(currentLocation);
             setPrevLocation(currentLocation);
-            setInitialLoad((prev) => !prev);
           } else {
             const distance = fetchDistance(
               prevLocationRef.current,

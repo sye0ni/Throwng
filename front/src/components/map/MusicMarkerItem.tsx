@@ -1,7 +1,6 @@
 import { memo } from "react";
 import { OverlayViewF } from "@react-google-maps/api";
 import { useRecoilValue } from "recoil";
-import { locationState } from "@store/map/atoms";
 import { Marker } from "../../types/mapType";
 import whitePin from "@assets/images/whitePin.webp";
 import purplePin from "@assets/images/purplePin.webp";
@@ -18,7 +17,6 @@ interface Props {
 const MusicMarkerItem = ({ marker }: Props) => {
   const isActiveInside = useRecoilValue(isActiveInsideState(marker.itemId));
   const isActiveOutside = useRecoilValue(isActiveOutsideState(marker.itemId));
-  const location = useRecoilValue(locationState);
 
   const { handleMarkerClick } = useHandleMarkerClick();
 
@@ -35,7 +33,7 @@ const MusicMarkerItem = ({ marker }: Props) => {
     >
       <div
         className="MusicMarkerItem"
-        onClick={() => handleMarkerClick(marker, location)}
+        onClick={() => handleMarkerClick(marker)}
       >
         <img
           src={isActiveInside || isActiveOutside ? purplePin : whitePin}

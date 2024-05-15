@@ -7,11 +7,6 @@ const { persistAtom } = recoilPersist({
   storage: sessionStorage,
 });
 
-export const loadStatusState = atom({
-  key: "loadStatusState",
-  default: 0,
-});
-
 export const markersState = atom<Marker[]>({
   key: "markersState",
   default: [],
@@ -56,5 +51,10 @@ export const centerState = atom({
 
 export const zoomLevelState = atom({
   key: "zoomLevelState",
-  default: 15,
+  default: 0,
+});
+
+export const prevPathState = atom({
+  key: "prevPathState",
+  default: "",
 });

@@ -3,12 +3,6 @@ import SocialKakao from "@components/auth/SocialKakao";
 import "@styles/LoginPage.scss";
 
 const LoginPage = () => {
-  // localStorage.setItem(
-  //   // 민준 토큰
-  //   "jwt",
-  //   "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOiIzNDU4NzgzODI4Iiwic3ViIjoiYWNjZXNzVG9rZW4iLCJpYXQiOjE3MTQzOTE3MTMsImV4cCI6MTcxNjk4MzcxM30.96m_dNQn0fT4QGvU8Yg3YnQPJyTfYxP4SXafGTCOS-Y"
-  // );
-
   return (
     <div className="LoginPage">
       <div className="logo">

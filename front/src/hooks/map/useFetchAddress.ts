@@ -7,7 +7,10 @@ const useFetchAddress = () => {
   const setMyAddress = useSetRecoilState(myAddressState);
   const setMapCenterAddress = useSetRecoilState(mapCenterAddressState);
 
-  const fetchAddress = async (position: Location, type: string) => {
+  const fetchAddress = async (
+    position: Location,
+    type: "myLocation" | "mapCenter"
+  ) => {
     try {
       const data = await postAddress(position);
       if (type === "myLocation") {

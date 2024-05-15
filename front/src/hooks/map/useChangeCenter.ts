@@ -10,7 +10,7 @@ const useChangeCenter = () => {
   const center = useRecoilValue(centerState);
   const location = useRecoilValue(locationState);
 
-  const changeCenter = (map: google.maps.Map | null) => {
+  const changeCenter = (map: google.maps.Map | null, initialLoad: boolean) => {
     if (map) {
       if (!center) {
         const mapCenter = map.getCenter();
@@ -20,7 +20,9 @@ const useChangeCenter = () => {
           fetchAddress(mapPosition, "mapCenter");
         }
       } else {
-        fetchMusicc(true, location);
+        if (!initialLoad) {
+          fetchMusicc(true, location);
+        }
       }
     }
   };
