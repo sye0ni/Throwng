@@ -4,6 +4,7 @@ import { useRecoilValue } from "recoil";
 import { Marker } from "../../types/mapType";
 import whitePin from "@assets/images/whitePin.webp";
 import purplePin from "@assets/images/purplePin.webp";
+import question from "@assets/images/question.webp";
 import {
   isActiveOutsideState,
   isActiveInsideState,
@@ -44,7 +45,7 @@ const MusicMarkerItem = ({ marker }: Props) => {
         />
         <div className="cover-img">
           <img
-            src={marker.albumImage}
+            src={marker.secret ? question : marker.albumImage}
             alt="Custom Overlay"
             loading="lazy"
             decoding="async"
