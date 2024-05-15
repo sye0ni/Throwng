@@ -7,6 +7,12 @@ import MemoryInfoPage from "@pages/game/MemoryInfoPage";
 import MemoryMainPage from "@pages/game/MemoryMainPage";
 import MemoryCouponPage from "@pages/game/MemoryCouponPage";
 import MemorySuccessPage from "@pages/game/MemorySuccessPage";
+import RhythmGamePage from "@pages/game/RhythmGamePage";
+import RhythmMainPage from "@pages/game/RhythmMainPage";
+import RhythmInfoPage from "@pages/game/RhythmInfoPage";
+import RhythmResultPage from "@pages/game/RhythmResultPage";
+import RhythmSuccessPage from "@pages/game/RhythmSuccessPage";
+import RhythmCouponPage from "@pages/game/RhythmCouponPage";
 const HomePage = lazy(() => import("@pages/HomePage"));
 const MyPage = lazy(() => import("@pages/MyPage"));
 const PlayListPage = lazy(() => import("@pages/PlayListPage"));
@@ -140,38 +146,58 @@ export default {
       ],
     },
     {
-      path: "hammer",
+      path: "rhythm",
       children: [
         {
           path: "main",
-          
+          element: <RhythmMainPage />,
         },
-      ]
+        {
+          path: "info",
+          element: <RhythmInfoPage />,
+        },
+        {
+          path: "game",
+          element: <RhythmGamePage />,
+        },
+        {
+          path: "result",
+          element: <RhythmResultPage />,
+        },
+        {
+          path: "success",
+          element: <RhythmSuccessPage />,
+        },
+        {
+          path: "coupon",
+          element: <RhythmCouponPage />,
+        },
+      ],
     },
     {
       path: "memory",
       children: [
         {
           path: "main",
-          element: <MemoryMainPage />
+          element: <MemoryMainPage />,
         },
         {
           path: "info",
-          element: <MemoryInfoPage />
+          element: <MemoryInfoPage />,
         },
         {
           path: "game",
-          element: <MemoryTestPage />
+          element: <MemoryTestPage />,
         },
         {
           path: "success",
-          element: <MemorySuccessPage />
+          element: <MemorySuccessPage />,
         },
         {
           path: "coupon",
-          element: <MemoryCouponPage />
+          element: <MemoryCouponPage />,
         },
-      ]
+      ],
     },
     { path: "none-permission", element: <NonePermissionPage /> },
   ],

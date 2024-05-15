@@ -1,8 +1,8 @@
 import Header from "@components/Header";
 import "@/styles/Content.scss";
 import logo from "@/assets/images/backlogo.webp";
-import hammer from "@/assets/images/Hammer.webp";
-import memory from "@/assets/images/memory.webp"
+import rhythm from "@/assets/images/rhythm.webp";
+import memory from "@/assets/images/memory.webp";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { getQuizContent } from "@services/contentApi/ContentApi";
@@ -36,9 +36,13 @@ const ContentPage = () => {
     navigate("/quiz/main");
   };
 
+  const handleGoMole = () => {
+    navigate("/rhythm/main");
+  };
+
   const handleGoMemory = () => {
-    navigate("/memory/main")
-  }
+    navigate("/memory/main");
+  };
 
   if (loading) {
     return (
@@ -72,22 +76,22 @@ const ContentPage = () => {
               </div>
             )
         )}
-        <div className="game1-border" >
+        <div className="game1-border" onClick={handleGoMole}>
           <div className="game1-title">
-            <p>리듬게임</p>
+            <p>리듬-쓰롱</p>
             <div className="participation">
               <p>준비중</p>
             </div>
           </div>
           <div>
-            <img src={hammer} alt="game1" />
+            <img src={rhythm} alt="game1" />
           </div>
         </div>
         <div className="game2-border" onClick={handleGoMemory}>
           <div className="game2-title">
-            <p>기억력 측정</p>
+            <p>기억력측정</p>
             <div className="participation">
-              <p>준비중</p>
+              <p>ON</p>
             </div>
           </div>
           <div>
