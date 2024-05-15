@@ -1,21 +1,15 @@
 import { useEffect, useRef, useState } from "react";
-import {
-  Navigate,
-  Outlet,
-  useLocation,
-  useMatch,
-  useNavigate,
-} from "react-router-dom";
+import { Navigate, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { getIsLogin } from "@/utils/getIsLogin";
 import checkPermission from "@/utils/permission/checkPermission";
-import { useSetRecoilState } from "recoil";
-import { prevPathState, zoomLevelState } from "@store/map/atoms";
+// import { useSetRecoilState } from "recoil";
+// import { prevPathState, zoomLevelState } from "@store/map/atoms";
 
 function PrivateRoutes() {
   const isLogin = getIsLogin();
   const [isCheck, setIsCheck] = useState(false);
-  const setPrevPath = useSetRecoilState(prevPathState);
-  const setZoomLevel = useSetRecoilState(zoomLevelState);
+  // const setPrevPath = useSetRecoilState(prevPathState);
+  // const setZoomLevel = useSetRecoilState(zoomLevelState);
 
   const navigate = useNavigate();
   const { pathname } = useLocation();
