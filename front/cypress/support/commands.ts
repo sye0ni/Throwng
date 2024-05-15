@@ -35,3 +35,10 @@
 //     }
 //   }
 // }
+Cypress.on('uncaught:exception', (err, runnable) => {
+  if (err.message.includes("Failed to execute 'subscribe' on 'PushManager'")) {
+    return false;
+  } else if (err.message.includes("push service not available")) {
+    return false;
+  }
+});
