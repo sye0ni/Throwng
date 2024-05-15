@@ -2,6 +2,7 @@ package com.sieum.quiz.service;
 
 import static com.sieum.quiz.exception.CustomExceptionStatus.INVALID_QUIZ_ID;
 
+import com.sieum.quiz.controller.feign.MusicAuthClient;
 import com.sieum.quiz.controller.feign.UserAuthClient;
 import com.sieum.quiz.domain.Quiz;
 import com.sieum.quiz.domain.QuizHistory;
@@ -32,6 +33,7 @@ public class QuizService {
     private final String CONTENT_TYPE = "CONTENTS";
     private final RedisUtil redisUtil;
     private final UserAuthClient userAuthClient;
+    private final MusicAuthClient musicAuthClient;
     private final CouponReposistory couponRepository;
     private final QuizRepository quizRepository;
     private final QuizHistoryRepository quizHistoryRepository;
@@ -184,5 +186,18 @@ public class QuizService {
                     UpdateExperiencePointRequest.of(userId, CONTENT_TYPE));
             redisUtil.setDataExpire(key, "attendance", 86400);
         }
+    }
+
+    public List<RhythmResponse> getRhythmList() {
+        final String key =
+                "rhythm_" + LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        List<RhythmResponse> rhythmResponseList = (List<RhythmResponse>) redisUtil.getObject(key);
+
+        if (rhythmResponseList == null) {
+            musicAuthClient.createRhythmList();
+            rhythmResponseList = (List<RhythmResponse>) redisUtil.getObject(key);
+        }
+
+        return rhythmResponseList;
     }
 }

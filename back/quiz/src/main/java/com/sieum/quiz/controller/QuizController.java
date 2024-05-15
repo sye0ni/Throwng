@@ -43,13 +43,19 @@ public class QuizController {
 
     @Operation(summary = "Save game history on redis after user submitted the answer")
     @PostMapping("/contents/result")
-    public ResponseEntity<?> createGAmeHistory(
+    public ResponseEntity<?> createGameHistory(
             @RequestHeader("Authorization") final String authorization,
             @RequestBody final GameHistoryCreationRequest gameHistoryCreationRequest) {
 
         final long userId = quizService.getCurrentUserId(authorization);
         quizService.createGameHistory(userId, gameHistoryCreationRequest);
         return ResponseEntity.noContent().build();
+    }
+
+    @Operation(summary = "Return daily rhythm game list")
+    @GetMapping("/contents/rhythm")
+    public ResponseEntity<?> getRhythmList() {
+        return ResponseEntity.ok().body(quizService.getRhythmList());
     }
 
     @Operation(summary = "Feign Client - Number of quizzes experienced by the user")
