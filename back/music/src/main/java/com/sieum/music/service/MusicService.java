@@ -64,6 +64,14 @@ public class MusicService {
                         .findById(throwId)
                         .orElseThrow(() -> new BadRequestException(NOT_FOUND_THROW_ITEM_ID));
 
+        final String key = userId + "_QUESTION";
+
+        if (throwItem.getIsPopular()) {
+            if (redisUtil.getData(key) == null) {
+                throw new BadRequestException(NOT_FOUND_QUESTION_COUPON);
+            }
+        }
+
         return ThrownMusicDetailResponse.of(
                 throwItem,
                 userId,
