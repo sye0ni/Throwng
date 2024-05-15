@@ -21,8 +21,10 @@ import com.sieum.music.util.LocalDateUtil;
 import com.sieum.music.util.RedisUtil;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.locationtech.jts.geom.Point;
@@ -42,6 +44,7 @@ public class MusicService {
     private final ThrowQueryDSLRepository throwQueryDSLRepository;
     private final ThrowHistoryRepository throwHistoryRepository;
     private final PlaylistRepository playlistRepository;
+    private final RhythmRepository rhythmRepository;
     private final PlaylistHistoryRepository playlistHistoryRepository;
     private final PlaylistQueryDSLRepository playlistQueryDSLRepository;
     private final SongRepository songRepository;
@@ -382,5 +385,24 @@ public class MusicService {
         thrownCount--;
 
         redisUtil.setData(key, String.valueOf(thrownCount));
+    }
+
+    public void createRhythmList() {
+        final String key =
+                "rhythm_" + LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        final List<Artist> artists = rhythmRepository.findDistinctByArtistId();
+        final int randomIdx = createRandomRhythm(artists.size());
+
+        final List<String> previewUrlList =
+                rhythmRepository.findAllByArtist(artists.get(randomIdx)).stream()
+                        .map(rhythm -> rhythm.getPreviewUrl())
+                        .collect(Collectors.toList());
+
+        redisUtil.setObjectExpire(key, previewUrlList, 86400);
+    }
+
+    private int createRandomRhythm(final int size) {
+        final Random random = new Random();
+        return random.nextInt(size);
     }
 }
