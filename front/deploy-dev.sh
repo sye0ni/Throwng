@@ -40,8 +40,7 @@ fi
 
 # 3
 echo "NginX Setting..."
-sudo sed -i 's/${BEFORE_PORT}/${AFTER_PORT}/' /etc/nginx/conf.d/include/service_uri.conf
-sudo nginx -s reload
+sudo sed -i s/${BEFORE_PORT}/${AFTER_PORT}/ /etc/nginx/conf.d/include/service_uri.conf && sudo nginx -s reload
 echo "Deploy Completed!!"
 
 # 4
