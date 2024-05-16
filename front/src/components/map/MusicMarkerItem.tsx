@@ -45,10 +45,12 @@ const MusicMarkerItem = ({ marker }: Props) => {
         />
         <div className="cover-img">
           <img
-            src={marker.secret ? question : marker.albumImage}
+            // src={marker.secret ? question : marker.albumImage}
+            src={marker.albumImage}
             alt="Custom Overlay"
             loading="lazy"
             decoding="async"
+            className={`${marker.secret && "blur"}`}
           />
         </div>
       </div>

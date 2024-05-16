@@ -15,6 +15,10 @@
       border-radius: 50%;
       width: 27px;
       height: 27px;
+
+      &.blur {
+        filter: blur(0.5dvh);
+      }
     }
   }
 
