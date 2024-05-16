@@ -415,7 +415,7 @@ public class MusicService {
     }
 
     public boolean getRadiusCouponUsage(final long userId) {
-        final String key = userId + "_radius";
+        final String key = userId + "_QUESTION";
 
         if (redisUtil.getData(key) != null) {
             return true;
