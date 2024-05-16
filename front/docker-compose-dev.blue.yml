@@ -6,7 +6,7 @@ services:
       context: .
       dockerfile: dev.Dockerfile
     ports:
-      - '5173:5173'
+      - '5173:4173'
 
 networks:
   default:
