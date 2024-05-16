@@ -23,6 +23,13 @@ export interface MusicInfo {
   throwId: number;
   thrownDate: string;
   title: string;
+  previewUrl: string | null;
+  otherPickedCount: number;
+}
+
+export interface Address {
+  code: string;
+  regionName: string;
 }
 
 export interface Address {
