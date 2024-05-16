@@ -6,7 +6,7 @@ const LoginPage = () => {
   return (
     <div className="LoginPage">
       <div className="logo">
-        <img src={`${import.meta.env.BASE_URL}/images/logo.webp`} alt="" />
+        <img src={`${import.meta.env.BASE_URL}images/logo.webp`} alt="" />
       </div>
       <SocialKakao />
     </div>

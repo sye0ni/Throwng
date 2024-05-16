@@ -7,6 +7,8 @@ import circle from "@assets/images/Cone.webp";
 import "@styles/Navbar.scss";
 import { IoGameControllerOutline } from "react-icons/io5";
 
+console.log(import.meta.env.BASE_URL);
+
 const Navbar = () => {
   return (
     <div className="Navbar">
@@ -29,7 +31,7 @@ const Navbar = () => {
             />
             <img
               className="logo"
-              src={`${import.meta.env.BASE_URL}/images/logo.webp`}
+              src={`${import.meta.env.BASE_URL}images/logo.webp`}
               loading="lazy"
               decoding="async"
             />
