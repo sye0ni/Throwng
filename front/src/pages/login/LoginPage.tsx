@@ -1,4 +1,4 @@
-// import logo from "@assets/images/logo.webp";
+import logo from "@assets/images/logo.webp";
 import SocialKakao from "@components/auth/SocialKakao";
 import "@styles/LoginPage.scss";
 
@@ -6,7 +6,7 @@ const LoginPage = () => {
   return (
     <div className="LoginPage">
       <div className="logo">
-        <img src={`${import.meta.env.BASE_URL}images/logo.webp`} alt="" />
+        <img src={logo} alt="" />
       </div>
       <SocialKakao />
     </div>

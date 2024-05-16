@@ -3,11 +3,9 @@ import { FaRegUser } from "react-icons/fa";
 import { LuHome } from "react-icons/lu";
 import { FaRegCirclePlay } from "react-icons/fa6";
 import circle from "@assets/images/Cone.webp";
-// import logo from "@assets/images/logo.webp";
+import logo from "@assets/images/logo.webp";
 import "@styles/Navbar.scss";
 import { IoGameControllerOutline } from "react-icons/io5";
-
-console.log(import.meta.env.BASE_URL);
 
 const Navbar = () => {
   return (
@@ -29,12 +27,7 @@ const Navbar = () => {
               loading="lazy"
               decoding="async"
             />
-            <img
-              className="logo"
-              src={`${import.meta.env.BASE_URL}images/logo.webp`}
-              loading="lazy"
-              decoding="async"
-            />
+            <img className="logo" src={logo} loading="lazy" decoding="async" />
           </NavLink>
         </div>
         <NavLink to={"/content"} className="menu__item">
