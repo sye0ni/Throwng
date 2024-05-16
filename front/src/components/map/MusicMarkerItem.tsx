@@ -39,28 +39,21 @@ const MusicMarkerItem = ({ marker }: Props) => {
         <img
           src={isActiveInside || isActiveOutside ? purplePin : whitePin}
           alt="Custom Overlay"
-          style={{ width: "30px", height: "35px" }}
           loading="lazy"
           decoding="async"
+          className="marker"
         />
         <div className="cover-img">
           <img
-            // src={marker.secret ? question : marker.albumImage}
-            src={marker.albumImage}
+            src={marker.secret ? question : marker.albumImage}
             alt="Custom Overlay"
             loading="lazy"
             decoding="async"
-            className={`${marker.secret && "blur"}`}
+            className="album"
           />
         </div>
       </div>
     </OverlayViewF>
   );
 };
-
-// export default memo(MusicMarkerItem, (prevProps, nextProps) => {
-//   console.log(prevProps.marker.itemId);
-//   console.log(nextProps.marker.itemId);
-//   return prevProps.marker.itemId === nextProps.marker.itemId;
-// });
 export default memo(MusicMarkerItem);
