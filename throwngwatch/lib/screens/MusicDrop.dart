@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import '../const/color.dart';
 import '../services/MusicListAPi.dart';
 import '../store/store.dart';
@@ -63,25 +64,32 @@ class _MusicDropState extends State<MusicDrop> {
   Future<void> fetchThrowng(BuildContext context, data) async {
     var res = await postThrowng(data);
     if (res?.statusCode == 204) {
+      Fluttertoast.showToast(
+        msg: "쓰롱 완료!",
+        gravity: ToastGravity.CENTER,
+        timeInSecForIosWeb: 1,
+        backgroundColor: Color(0xff363636),
+        textColor: Colors.white,
+        fontSize: 13,
+      );
       Navigator.of(context).pushNamedAndRemoveUntil('/', (Route<dynamic> route) => false);
     } else if (res?.statusCode == 400 && res?.data['error'] == 'Song_400_2') {
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text("알림"),
-            content: Text("하루 쓰롱개수를 초과하였습니다."),
-            actions: <Widget>[
-              TextButton(
-                child: Text("확인"),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                  Navigator.of(context).pushNamedAndRemoveUntil('/', (Route<dynamic> route) => false);
-                },
-              ),
-            ],
-          );
-        },
+      Fluttertoast.showToast(
+        msg: "하루 쓰롱 개수를 초과하였습니다.",
+        gravity: ToastGravity.CENTER,
+        timeInSecForIosWeb: 1,
+        backgroundColor: Color(0xff363636),
+        textColor: Colors.white,
+        fontSize: 13,
+      );
+    } else {
+      Fluttertoast.showToast(
+        msg: "에러가 발생했습니다\n다시 시도 해 주세요",
+        gravity: ToastGravity.CENTER,
+        timeInSecForIosWeb: 1,
+        backgroundColor: Color(0xff363636),
+        textColor: Colors.white,
+        fontSize: 13,
       );
     }
   }
