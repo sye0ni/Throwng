@@ -3,13 +3,13 @@ import axios from "axios";
 
 const api = axiosApi();
 
-export const postContentResult = async (route: "game" | "memory") => {
+export const postContentResult = async (route: "rhythm" | "memory") => {
   try {
     
     const response = await api.post("/quizzes/contents/result", {
       route,
     });
-    console.log(response)
+    // console.log(response)
     return response;
   } catch (e) {
     if (axios.isAxiosError(e)) {
