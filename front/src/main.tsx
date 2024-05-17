@@ -6,6 +6,4 @@ const url = window.location.pathname;
 
 if (url !== "/grafana-server") {
   ReactDOM.createRoot(document.getElementById("root")!).render(<App />);
-} else {
-  window.location.href = url;
 }
