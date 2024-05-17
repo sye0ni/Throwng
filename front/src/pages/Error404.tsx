@@ -22,11 +22,16 @@ const Error404 = () => {
   const animationContainer = useRef<HTMLDivElement>(null);
   const [animationData, setAnimationData] = useState<AnimationData>();
   const navigate = useNavigate();
-  const error = useRouteError();
+  const error: any = useRouteError();
   console.log(error);
 
   useEffect(() => {
-    setAnimationData(Animation);
+    const a = error?.error.message.split(' "')[0];
+    if (a === "No route matches URL") {
+      setAnimationData(Animation);
+    } else {
+      window.location.reload();
+    }
   }, []);
 
   useEffect(() => {
