@@ -3,7 +3,8 @@ import lottie, { AnimationItem } from "lottie-web";
 import Animation from "@assets/lottie/notFound.json";
 import "@styles/Error404.scss";
 import MusicDropBtn from "@components/musicDrop/MusicDropBtn";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
+import router from "@/routes/router";
 
 interface AnimationData {
   v: string;
@@ -20,9 +21,28 @@ const Error404 = () => {
   const animationContainer = useRef<HTMLDivElement>(null);
   const [animationData, setAnimationData] = useState<AnimationData>();
   const navigate = useNavigate();
+  const { pathname } = useLocation();
+
+  console.log(router.routes[1].children);
+  console.log(pathname.split("/"));
 
   useEffect(() => {
-    setAnimationData(Animation);
+    const a = router.routes[1].children;
+    const b = pathname.split("/")[1];
+
+    const data = a?.some((c) => {
+      if (c.index && b === "") {
+        return true;
+      } else {
+        return c.path === b;
+      }
+    });
+
+    if (data) {
+      window.location.reload();
+    } else {
+      setAnimationData(Animation);
+    }
   }, []);
 
   useEffect(() => {
