@@ -34,28 +34,20 @@ class _MyPlayListState extends State<MyPlayList> {
     _pageController = PageController(initialPage: _currentPageIndex);
   }
 
-  void fetchMyPlayList() async {
-    try {
-      setState(() {
-        isLoading = true;
-      });
-      final res = await getMyPlayList();
-      if (mounted) {
-        setState(() {
-          final List<Map<String, dynamic>> tempList = List<Map<String, dynamic>>.from(res.data.map((item) => Map<String, dynamic>.from(item)));
-          myPlayList.addAll(tempList);
-          if (myPlayList.isNotEmpty) {
-            Map<String, dynamic> initialMusic = myPlayList[0];
-            _currentMusicTitleAndArtist = "${initialMusic['title']}-${initialMusic['artist']}";
-          }
-        });
+  Future<void> fetchMyPlayList() async {
+    setState(() {
+      isLoading = true;
+    });
+    final res = await getMyPlayList();
+    setState(() {
+      final List<Map<String, dynamic>> tempList = List<Map<String, dynamic>>.from(res.data.map((item) => Map<String, dynamic>.from(item)));
+      myPlayList.addAll(tempList);
+      if (myPlayList.isNotEmpty) {
+        Map<String, dynamic> initialMusic = myPlayList[0];
+        _currentMusicTitleAndArtist = "${initialMusic['title']}-${initialMusic['artist']}";
       }
-      setState(() {
-        isLoading = false;
-      });
-    } catch (e) {
-      print(e);
-    }
+      isLoading = false;
+    });
   }
 
   @override
@@ -131,39 +123,42 @@ class _MyPlayListState extends State<MyPlayList> {
                             child: Container(
                               height: 110,
                               width: 110,
-                              child: myPlayList.isEmpty
-                                  ? Center(child: Text('플레이리스트가 비어있습니다.'))
-                                  : PageView.builder(
-                                      itemCount: myPlayList.length,
-                                      scrollDirection: Axis.vertical,
-                                      controller: _pageController,
-                                      onPageChanged: _onPageChanged,
-                                      itemBuilder: (context, playlistId) {
-                                        return GestureDetector(
-                                          onTap: () {
-                                            Navigator.of(context).push(
-                                              MaterialPageRoute(
-                                                builder: (context) => MusicDrop(
-                                                  musicData: myPlayList[playlistId],
-                                                ),
-                                              ),
-                                            );
-                                          },
-                                          child: Container(
-                                            height: 110,
-                                            width: 110,
-                                            child: ClipRRect(
-                                              borderRadius: BorderRadius.circular(100),
-                                              child: CachedNetworkImage(
-                                                imageUrl: myPlayList[playlistId]['albumImage'],
-                                                placeholder: (context, url) => CircularProgressIndicator(),
-                                                fit: BoxFit.cover,
-                                              ),
-                                            ),
+                              child: PageView.builder(
+                                itemCount: myPlayList.isEmpty ? 1 : myPlayList.length,
+                                scrollDirection: Axis.vertical,
+                                controller: _pageController,
+                                onPageChanged: _onPageChanged,
+                                itemBuilder: (context, playlistId) {
+                                  if (myPlayList.isEmpty) {
+                                    return Center(
+                                      child: Text('비어있는 리스트입니다.', style: TextStyle(fontSize: 12, color: Colors.white)),
+                                    );
+                                  }
+                                  return GestureDetector(
+                                    onTap: () {
+                                      Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                          builder: (context) => MusicDrop(
+                                            musicData: myPlayList[playlistId],
                                           ),
-                                        );
-                                      },
+                                        ),
+                                      );
+                                    },
+                                    child: Container(
+                                      height: 110,
+                                      width: 110,
+                                      child: ClipRRect(
+                                        borderRadius: BorderRadius.circular(100),
+                                        child: CachedNetworkImage(
+                                          imageUrl: myPlayList[playlistId]['albumImage'],
+                                          placeholder: (context, url) => CircularProgressIndicator(),
+                                          fit: BoxFit.cover,
+                                        ),
+                                      ),
                                     ),
+                                  );
+                                },
+                              ),
                             ),
                           ),
                           Padding(
