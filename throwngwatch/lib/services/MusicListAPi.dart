@@ -50,7 +50,6 @@ Future<Response> postWatchAuth(String otp) async {
     final res = await api.post('/users/watch/auth', data: {"otp": otp});
     return res;
   } catch (e) {
-    print(e);
-    throw Exception('Failed to post user info');
+    throw (e);
   }
 }
