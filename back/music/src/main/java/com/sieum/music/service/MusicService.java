@@ -67,11 +67,19 @@ public class MusicService {
                         .findById(throwId)
                         .orElseThrow(() -> new BadRequestException(NOT_FOUND_THROW_ITEM_ID));
 
-        final String key = userId + "_QUESTION";
-
         if (throwItem.getIsPopular()) {
+            final String key = userId + "_QUESTION";
+
             if (redisUtil.getData(key) == null) {
-                throw new BadRequestException(NOT_FOUND_QUESTION_COUPON);
+                if (!throwItem.getUserId().equals(userId)) {
+                    final ThrowHistory throwHistory =
+                            throwHistoryRepository
+                                    .findByUserIdAndThrowItemId(userId, throwId)
+                                    .orElseThrow(
+                                            () ->
+                                                    new BadRequestException(
+                                                            NOT_FOUND_QUESTION_COUPON));
+                }
             }
         }
 
@@ -404,5 +412,14 @@ public class MusicService {
     private int createRandomRhythm(final int size) {
         final Random random = new Random();
         return random.nextInt(size);
+    }
+
+    public boolean getRadiusCouponUsage(final long userId) {
+        final String key = userId + "_QUESTION";
+
+        if (redisUtil.getData(key) != null) {
+            return true;
+        }
+        return false;
     }
 }
