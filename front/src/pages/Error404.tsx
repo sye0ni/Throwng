@@ -5,6 +5,8 @@ import "@styles/Error404.scss";
 import MusicDropBtn from "@components/musicDrop/MusicDropBtn";
 import { useLocation, useNavigate } from "react-router-dom";
 import router from "@/routes/router";
+import { ErrorBoundary } from "react-error-boundary";
+import ErrorFallback from "@components/ErrorFallback";
 
 interface AnimationData {
   v: string;
@@ -27,22 +29,7 @@ const Error404 = () => {
   console.log(pathname.split("/"));
 
   useEffect(() => {
-    const a = router.routes[1].children;
-    const b = pathname.split("/")[1];
-
-    const data = a?.some((c) => {
-      if (c.index && b === "") {
-        return true;
-      } else {
-        return c.path === b;
-      }
-    });
-
-    if (data) {
-      window.location.reload();
-    } else {
-      setAnimationData(Animation);
-    }
+    setAnimationData(Animation);
   }, []);
 
   useEffect(() => {
@@ -67,10 +54,12 @@ const Error404 = () => {
   }, [animationData]);
 
   return (
-    <div className="Error404">
-      <div className="quiz-main-container" ref={animationContainer}></div>
-      <MusicDropBtn btnText="홈으로" onClick={() => navigate("/")} />
-    </div>
+    <ErrorBoundary FallbackComponent={ErrorFallback}>
+      <div className="Error404">
+        <div className="quiz-main-container" ref={animationContainer}></div>
+        <MusicDropBtn btnText="홈으로" onClick={() => navigate("/")} />
+      </div>
+    </ErrorBoundary>
   );
 };
 
