@@ -50,6 +50,7 @@ const CouponPage: React.FC<CouponPageProps> = ({ storageKey, couponType, redirec
         setCoupon(couponData);
       } catch (error) {
         console.error("Failed to fetch coupon:", error);
+        throw new Error('CouponPage');
       }
       setLoading(false);
     };
