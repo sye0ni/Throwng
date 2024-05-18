@@ -25,7 +25,7 @@ const Error404 = () => {
   useEffect(() => {
     console.log(error);
     const a = error?.error.message.split(' "')[0];
-    if (a === "No route matches URL") {
+    if (a !== "No route matches URL") {
       setAnimationData(Animation);
     } else {
       window.location.reload();

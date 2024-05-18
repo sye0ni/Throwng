@@ -109,13 +109,19 @@ const MusicDropHeader = () => {
           return;
         }
         setImagePreview(URL.createObjectURL(file));
-        const data = await postImageUpload(file);
-        setUserImageUrl(data);
+        try {
+          const data = await postImageUpload(file);
+          setUserImageUrl(data);
+        } catch (error) {
+          setIsLoading(false);
+          throw new Error('MusicDropHeader-postImageUpload')
+          return;
+        }
       }
       setIsLoading(false);
     }
   };
-
+  
   return (
     <div className="MusicDropHeader">
       <img className="album-image" src={songInfo.albumImage} alt="" />
