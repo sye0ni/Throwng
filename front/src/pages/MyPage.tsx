@@ -41,30 +41,46 @@ const MyPage = () => {
   }, []);
   
   const loadData = async () => {
-    if (scrollHistoryIndexValue === '') {
-      await apiGetMyLevel();
-      await apiGetMyPickHistory();
-      await apiGetMyThrowngHistory();
-      resetPageIdx();
+    try {
+      if (scrollHistoryIndexValue === '') {
+        await apiGetMyLevel();
+        await apiGetMyPickHistory();
+        await apiGetMyThrowngHistory();
+        resetPageIdx();
+      }
+    } catch (error) {
+      throw new Error('MyPage-loadData');
     }
     setIsLoading(false);
   }
-
+  
   const apiGetMyLevel = async () => {
-    const data = await getMyLevel();
-    setMyLevelValue(data);
+    try {
+      const data = await getMyLevel();
+      setMyLevelValue(data);
+    } catch (error) {
+      throw new Error('MyPage-apiGetMyLevel');
+    }
   };
-
+  
   const apiGetMyPickHistory = async () => {
-    const pickData = await getMyPickHistory();
-    setPickHistoryList(pickData);
+    try {
+      const pickData = await getMyPickHistory();
+      setPickHistoryList(pickData);
+    } catch (error) {
+      throw new Error('MyPage-apiGetMyPickHistory');
+    }
   }
-
+  
   const apiGetMyThrowngHistory = async () => {
-    const thownData = await getMyDropHistory();
-    setThrownHistoryList(thownData);
+    try {
+      const thownData = await getMyDropHistory();
+      setThrownHistoryList(thownData);
+    } catch (error) {
+      throw new Error('MyPage-apiGetMyThrowngHistory');
+    }
   }
-
+  
   return (
     <div className="MyPage">
       <div className="top">
