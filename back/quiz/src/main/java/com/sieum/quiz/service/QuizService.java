@@ -137,7 +137,7 @@ public class QuizService {
 
         //        final List<Integer> indexes = createRandomQuiz(quizlist.size());
         final List<Integer> indexes = new ArrayList<>();
-        indexes.add(22);
+        indexes.add(11);
         indexes.add(20);
         indexes.add(7);
 
