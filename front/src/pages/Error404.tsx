@@ -24,12 +24,13 @@ const Error404 = () => {
 
   useEffect(() => {
     console.log(error);
-    const a = error?.error.message.split(' "')[0];
-    if (a !== "No route matches URL") {
-      setAnimationData(Animation);
-    } else {
-      window.location.reload();
-    }
+    // const a = error?.error.message.split(' "')[0];
+    setAnimationData(Animation);
+    // console.log(a);
+    // if (a === "No route matches URL") {
+    // } else {
+    //   window.location.reload();
+    // }
   }, []);
 
   useEffect(() => {

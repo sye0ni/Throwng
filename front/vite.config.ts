@@ -12,60 +12,62 @@ export default defineConfig({
       project: "javascript-react",
       authToken: process.env.SENTRY_AUTH_TOKEN,
     }),
-    react(), tsconfigPaths(), VitePWA({
-    registerType: "autoUpdate",
-    devOptions: {
-      enabled: true,
-    },
-    manifest: {
-      name: "Throwng",
-      short_name: "Throwng",
-      display: "standalone",
-      theme_color: "#0F1114",
-      background_color: "#0F1114",
-      description: "Song Drop&Pick",
-      orientation: "portrait-primary",
-      start_url: "/",
-      prefer_related_applications: true,
-      icons: [
-        {
-          src: "./icons/logo192x192.png",
-          sizes: "192x192",
-          type: "image/png",
-        },
-        {
-          src: "./icons/logo192x192.png",
-          sizes: "192x192",
-          type: "image/png",
-          purpose: "any",
-        },
-        {
-          src: "./icons/logo192x192.png",
-          sizes: "192x192",
-          type: "image/png",
-          purpose: "maskable",
-        },
-        {
-          src: "./icons/logo512x512.png",
-          sizes: "512x512",
-          type: "image/png",
-        },
-        {
-          src: "./icons/logo512x512.png",
-          sizes: "512x512",
-          type: "image/png",
-          purpose: "any",
-        },
-        {
-          src: "./icons/logo512x512.png",
-          sizes: "512x512",
-          type: "image/png",
-          purpose: "maskable",
-        },
-      ],
-    },
-  }),
-],
+    react(),
+    tsconfigPaths(),
+    VitePWA({
+      registerType: "autoUpdate",
+      devOptions: {
+        enabled: true,
+      },
+      manifest: {
+        name: "Throwng",
+        short_name: "Throwng",
+        display: "standalone",
+        theme_color: "#0F1114",
+        background_color: "#0F1114",
+        description: "Song Drop&Pick",
+        orientation: "portrait-primary",
+        start_url: "/",
+        prefer_related_applications: true,
+        icons: [
+          {
+            src: "./icons/logo192x192.png",
+            sizes: "192x192",
+            type: "image/png",
+          },
+          {
+            src: "./icons/logo192x192.png",
+            sizes: "192x192",
+            type: "image/png",
+            purpose: "any",
+          },
+          {
+            src: "./icons/logo192x192.png",
+            sizes: "192x192",
+            type: "image/png",
+            purpose: "maskable",
+          },
+          {
+            src: "./icons/logo512x512.png",
+            sizes: "512x512",
+            type: "image/png",
+          },
+          {
+            src: "./icons/logo512x512.png",
+            sizes: "512x512",
+            type: "image/png",
+            purpose: "any",
+          },
+          {
+            src: "./icons/logo512x512.png",
+            sizes: "512x512",
+            type: "image/png",
+            purpose: "maskable",
+          },
+        ],
+      },
+    }),
+  ],
 
   server: {
     port: 5173,
@@ -73,6 +75,6 @@ export default defineConfig({
   },
 
   build: {
-    sourcemap: true
-  }
+    sourcemap: true,
+  },
 });
