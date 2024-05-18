@@ -15,22 +15,33 @@ import {
   scrollHistoryIndex,
 } from "@store/myPage/atoms";
 import { useEffect } from "react";
-import { useRecoilState, useRecoilValue, useResetRecoilState, useSetRecoilState } from "recoil";
+import {
+  useRecoilState,
+  useRecoilValue,
+  useResetRecoilState,
+  useSetRecoilState,
+} from "recoil";
 import "@styles/myPage/MyPage.scss";
-import { getMyDropHistory, getMyLevel, getMyPickHistory } from "@services/myPageHistoryApi/MyPageHistoryApi";
+import {
+  getMyDropHistory,
+  getMyLevel,
+  getMyPickHistory,
+} from "@services/myPageHistoryApi/MyPageHistoryApi";
 import Loading from "@components/Loading";
 
 const MyPage = () => {
   const logoutModal = useRecoilValue(logoutModalState);
   const resetLogoutModal = useResetRecoilState(logoutModalState);
-  const resetChangeNickNameCouponId = useResetRecoilState(changeNickNameCouponId);
+  const resetChangeNickNameCouponId = useResetRecoilState(
+    changeNickNameCouponId
+  );
   const resetLevelInfoModal = useResetRecoilState(levelInfoModal);
   const resetPageIdx = useResetRecoilState(pageIdx);
   const [myLevelValue, setMyLevelValue] = useRecoilState(myLevel);
   const setThrownHistoryList = useSetRecoilState(myThrowHistoryList);
   const setPickHistoryList = useSetRecoilState(myPickHistoryList);
-  const [isLoading, setIsLoading] = useRecoilState(loadingState)
-  const scrollHistoryIndexValue = useRecoilValue(scrollHistoryIndex)
+  const [isLoading, setIsLoading] = useRecoilState(loadingState);
+  const scrollHistoryIndexValue = useRecoilValue(scrollHistoryIndex);
 
   useEffect(() => {
     setIsLoading(true);
@@ -39,16 +50,16 @@ const MyPage = () => {
     resetChangeNickNameCouponId();
     resetLevelInfoModal();
   }, []);
-  
+
   const loadData = async () => {
-    if (scrollHistoryIndexValue === '') {
+    if (scrollHistoryIndexValue === "") {
       await apiGetMyLevel();
       await apiGetMyPickHistory();
       await apiGetMyThrowngHistory();
       resetPageIdx();
     }
     setIsLoading(false);
-  }
+  };
 
   const apiGetMyLevel = async () => {
     const data = await getMyLevel();
@@ -58,12 +69,12 @@ const MyPage = () => {
   const apiGetMyPickHistory = async () => {
     const pickData = await getMyPickHistory();
     setPickHistoryList(pickData);
-  }
+  };
 
   const apiGetMyThrowngHistory = async () => {
     const thownData = await getMyDropHistory();
     setThrownHistoryList(thownData);
-  }
+  };
 
   return (
     <div className="MyPage">
@@ -88,7 +99,7 @@ const MyPage = () => {
       </div>
       {logoutModal && <LogoutModal />}
     </div>
-  ); 
+  );
 };
 
 export default MyPage;
