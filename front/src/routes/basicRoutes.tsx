@@ -1,13 +1,8 @@
 import { lazy } from "react";
 import PrivateRoute from "@components/PrivateRoute";
 import Error404 from "@pages/Error404";
-import MemoryTestPage from "@pages/game/MemoryTestPage";
+import ContentSuccessPage from "@pages/content/ContentSuccessPage";
 
-import MemoryInfoPage from "@pages/game/MemoryInfoPage";
-import MemoryMainPage from "@pages/game/MemoryMainPage";
-import MemoryCouponPage from "@pages/game/MemoryCouponPage";
-import MemorySuccessPage from "@pages/game/MemorySuccessPage";
-import MoleGamePage from "@pages/game/MoleGamePage";
 const HomePage = lazy(() => import("@pages/HomePage"));
 const MyPage = lazy(() => import("@pages/MyPage"));
 const PlayListPage = lazy(() => import("@pages/PlayListPage"));
@@ -17,18 +12,44 @@ const MyCouponPage = lazy(() => import("@pages/MyCouponPage"));
 const MyOtpPage = lazy(() => import("@pages/MyOtpPage"));
 const ChangeNickNamePage = lazy(() => import("@pages/ChangeNickNamePage"));
 const MusicDrop = lazy(() => import("@pages/musicDrop/MusicDrop"));
-const QuizMain = lazy(() => import("@pages/quiz/QuizMainPage"));
+const QuizMain = lazy(() => import("@pages/content/quiz/QuizMainPage"));
 const MusicPickDetailPage = lazy(() => import("@pages/MusicPickDetailPage"));
 const MusicList = lazy(() => import("@components/musicSearch/MusicList"));
 const NonePermissionPage = lazy(() => import("@pages/NonePermissionPage"));
-const QuizClosePage = lazy(() => import("@pages/quiz/QuizClosePage"));
-const ContentPage = lazy(() => import("@pages/ContentPage"));
-const QuizCountDown = lazy(() => import("@pages/quiz/QuizCountDown"));
-const QuizCouponPage = lazy(() => import("@pages/quiz/QuizCouponPage"));
-const QuizFailPage = lazy(() => import("@pages/quiz/QuizFailPage"));
-const QuizInfoPage = lazy(() => import("@pages/quiz/QuizInfoPage"));
-const QuizSolvePage = lazy(() => import("@pages/quiz/QuizSolvePage"));
-const QuizSuccessPage = lazy(() => import("@pages/quiz/QuizSuccessPage"));
+const QuizClosePage = lazy(() => import("@pages/content/quiz/QuizClosePage"));
+const ContentPage = lazy(() => import("@pages/content/ContentPage"));
+const QuizCountDown = lazy(() => import("@pages/content/quiz/QuizCountDown"));
+const QuizCouponPage = lazy(() => import("@pages/content/quiz/QuizCouponPage"));
+const QuizFailPage = lazy(() => import("@pages/content/quiz/QuizFailPage"));
+const QuizInfoPage = lazy(() => import("@pages/content/quiz/QuizInfoPage"));
+const QuizSolvePage = lazy(() => import("@pages/content/quiz/QuizSolvePage"));
+const MemoryTestPage = lazy(
+  () => import("@pages/content/memory/MemoryTestPage")
+);
+const MemoryInfoPage = lazy(
+  () => import("@pages/content/memory/MemoryInfoPage")
+);
+const MemoryMainPage = lazy(
+  () => import("@pages/content/memory/MemoryMainPage")
+);
+const MemoryCouponPage = lazy(
+  () => import("@pages/content/memory/MemoryCouponPage")
+);
+const RhythmGamePage = lazy(
+  () => import("@pages/content/rhythm/RhythmGamePage")
+);
+const RhythmMainPage = lazy(
+  () => import("@pages/content/rhythm/RhythmMainPage")
+);
+const RhythmInfoPage = lazy(
+  () => import("@pages/content/rhythm/RhythmInfoPage")
+);
+const RhythmResultPage = lazy(
+  () => import("@pages/content/rhythm/RhythmResultPage")
+);
+const RhythmCouponPage = lazy(
+  () => import("@pages/content/rhythm/RhythmCouponPage")
+);
 
 export default {
   path: "/",
@@ -104,6 +125,14 @@ export default {
       element: <ContentPage />,
     },
     {
+      path: "close",
+      element: <QuizClosePage />,
+    },
+    {
+      path: ":type/success",
+      element: <ContentSuccessPage />,
+    },
+    {
       path: "quiz",
       children: [
         {
@@ -123,10 +152,6 @@ export default {
           element: <QuizSolvePage />,
         },
         {
-          path: "success",
-          element: <QuizSuccessPage />,
-        },
-        {
           path: "coupon",
           element: <QuizCouponPage />,
         },
@@ -134,18 +159,30 @@ export default {
           path: "fail",
           element: <QuizFailPage />,
         },
-        {
-          path: "*",
-          element: <QuizClosePage />,
-        },
       ],
     },
     {
-      path: "mole",
+      path: "rhythm",
       children: [
         {
+          path: "main",
+          element: <RhythmMainPage />,
+        },
+        {
+          path: "info",
+          element: <RhythmInfoPage />,
+        },
+        {
           path: "game",
-          element: <MoleGamePage />,
+          element: <RhythmGamePage />,
+        },
+        {
+          path: "result",
+          element: <RhythmResultPage />,
+        },
+        {
+          path: "coupon",
+          element: <RhythmCouponPage />,
         },
       ],
     },
@@ -163,10 +200,6 @@ export default {
         {
           path: "game",
           element: <MemoryTestPage />,
-        },
-        {
-          path: "success",
-          element: <MemorySuccessPage />,
         },
         {
           path: "coupon",
