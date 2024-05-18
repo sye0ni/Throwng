@@ -62,10 +62,12 @@ export default defineConfig({
         },
       ],
     },
-  }), sentryVitePlugin({
-    org: "throwng",
-    project: "javascript-react"
-  })],
+  }), 
+  // sentryVitePlugin({
+  //   org: "throwng",
+  //   project: "javascript-react"
+  // })
+],
 
   server: {
     port: 5173,
