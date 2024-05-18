@@ -1,8 +1,8 @@
 FROM node:latest
 WORKDIR /app
-COPY package.json .
+COPY package.json package-lock.json ./
 RUN npm install
 COPY . .
 RUN npm run build
 
-CMD ["npm", "run", "prod"]
+CMD ["npx", "serve", "-s", "dist"]
