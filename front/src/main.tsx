@@ -8,14 +8,14 @@ import { createRoutesFromChildren, matchRoutes, useLocation, useNavigationType }
 Sentry.init({
   dsn: "https://e59c6078b8161c146a11dc1478f67e84@o4507270245777408.ingest.de.sentry.io/4507270261112912",
   integrations: [
+    Sentry.browserTracingIntegration(),
     Sentry.reactRouterV6BrowserTracingIntegration({
-        useEffect: React.useEffect,
-        useLocation,
-        useNavigationType,
-        createRoutesFromChildren,
-        matchRoutes
+      useEffect: React.useEffect,
+      useLocation,
+      useNavigationType,
+      createRoutesFromChildren,
+      matchRoutes,
     }),
-    Sentry.replayIntegration()
   ],
   tracesSampleRate: 0.25,
   tracePropagationTargets: [

@@ -60,6 +60,10 @@ export default defineConfig({
     },
   }), sentryVitePlugin({
     org: "throwng",
+    project: "javascript-react",
+    authToken: process.env.SENTRY_AUTH_TOKEN,
+  }), sentryVitePlugin({
+    org: "throwng",
     project: "javascript-react"
   })],
 
