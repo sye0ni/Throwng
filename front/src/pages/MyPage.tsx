@@ -5,7 +5,6 @@ import MyPageMenu from "@components/myPage/MyPageMenu";
 import MyThrowngHistoryMenu from "@components/myPage/MyThrowngHistoryMenu";
 import { logoutModalState } from "@store/auth/atom";
 import {
-  changeNickNameCouponId,
   levelInfoModal,
   loadingState,
   myLevel,
@@ -32,9 +31,6 @@ import Loading from "@components/Loading";
 const MyPage = () => {
   const logoutModal = useRecoilValue(logoutModalState);
   const resetLogoutModal = useResetRecoilState(logoutModalState);
-  const resetChangeNickNameCouponId = useResetRecoilState(
-    changeNickNameCouponId
-  );
   const resetLevelInfoModal = useResetRecoilState(levelInfoModal);
   const resetPageIdx = useResetRecoilState(pageIdx);
   const [myLevelValue, setMyLevelValue] = useRecoilState(myLevel);
@@ -47,7 +43,6 @@ const MyPage = () => {
     setIsLoading(true);
     loadData();
     resetLogoutModal();
-    resetChangeNickNameCouponId();
     resetLevelInfoModal();
   }, []);
 
