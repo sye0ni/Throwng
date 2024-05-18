@@ -26,4 +26,8 @@ Sentry.init({
   replaysOnErrorSampleRate: 1.0,
 });
 
-ReactDOM.createRoot(document.getElementById("root")!).render(<App />);
+const url = window.location.pathname;
+
+if (url !== "/grafana-server") {
+  ReactDOM.createRoot(document.getElementById("root")!).render(<App />);
+}
