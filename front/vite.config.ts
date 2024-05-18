@@ -6,13 +6,11 @@ import { VitePWA } from "vite-plugin-pwa";
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [
-    sentryVitePlugin({
-      org: "throwng",
-      project: "javascript-react",
-      authToken: process.env.SENTRY_AUTH_TOKEN,
-    }),
-    react(), tsconfigPaths(), VitePWA({
+  plugins: [sentryVitePlugin({
+    org: "throwng",
+    project: "javascript-react",
+    authToken: process.env.SENTRY_AUTH_TOKEN,
+  }), react(), tsconfigPaths(), VitePWA({
     registerType: "autoUpdate",
     devOptions: {
       enabled: true,
@@ -64,8 +62,7 @@ export default defineConfig({
         },
       ],
     },
-  }),
-],
+  })],
 
   server: {
     port: 5173,
