@@ -30,8 +30,12 @@ const ChangeNickNamePage = () => {
     }
 
     if (regex.test(nickName)) {
-      await putNickName(requestBody)
-      navigate('/user/mypage', {replace:true})
+      try {
+        await putNickName(requestBody)
+        navigate('/user/mypage', {replace:true})
+      } catch (e) {
+        throw new Error('ChangeNickNamePage');
+      }
     } else {
       toastMsg("닉네임은 한글 단어로만 설정이 가능하며, 영어, 숫자, 공백, 특수문자는 사용할 수 없습니다. 최대 15자까지 가능합니다.");
       setNickName('');
