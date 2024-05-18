@@ -15,22 +15,33 @@ import {
   scrollHistoryIndex,
 } from "@store/myPage/atoms";
 import { useEffect } from "react";
-import { useRecoilState, useRecoilValue, useResetRecoilState, useSetRecoilState } from "recoil";
+import {
+  useRecoilState,
+  useRecoilValue,
+  useResetRecoilState,
+  useSetRecoilState,
+} from "recoil";
 import "@styles/myPage/MyPage.scss";
-import { getMyDropHistory, getMyLevel, getMyPickHistory } from "@services/myPageHistoryApi/MyPageHistoryApi";
+import {
+  getMyDropHistory,
+  getMyLevel,
+  getMyPickHistory,
+} from "@services/myPageHistoryApi/MyPageHistoryApi";
 import Loading from "@components/Loading";
 
 const MyPage = () => {
   const logoutModal = useRecoilValue(logoutModalState);
   const resetLogoutModal = useResetRecoilState(logoutModalState);
-  const resetChangeNickNameCouponId = useResetRecoilState(changeNickNameCouponId);
+  const resetChangeNickNameCouponId = useResetRecoilState(
+    changeNickNameCouponId
+  );
   const resetLevelInfoModal = useResetRecoilState(levelInfoModal);
   const resetPageIdx = useResetRecoilState(pageIdx);
   const [myLevelValue, setMyLevelValue] = useRecoilState(myLevel);
   const setThrownHistoryList = useSetRecoilState(myThrowHistoryList);
   const setPickHistoryList = useSetRecoilState(myPickHistoryList);
-  const [isLoading, setIsLoading] = useRecoilState(loadingState)
-  const scrollHistoryIndexValue = useRecoilValue(scrollHistoryIndex)
+  const [isLoading, setIsLoading] = useRecoilState(loadingState);
+  const scrollHistoryIndexValue = useRecoilValue(scrollHistoryIndex);
 
   useEffect(() => {
     setIsLoading(true);
@@ -39,48 +50,48 @@ const MyPage = () => {
     resetChangeNickNameCouponId();
     resetLevelInfoModal();
   }, []);
-  
+
   const loadData = async () => {
     try {
-      if (scrollHistoryIndexValue === '') {
+      if (scrollHistoryIndexValue === "") {
         await apiGetMyLevel();
         await apiGetMyPickHistory();
         await apiGetMyThrowngHistory();
         resetPageIdx();
       }
     } catch (error) {
-      throw new Error('MyPage-loadData');
+      throw new Error("MyPage-loadData");
     }
     setIsLoading(false);
-  }
-  
+  };
+
   const apiGetMyLevel = async () => {
     try {
       const data = await getMyLevel();
       setMyLevelValue(data);
     } catch (error) {
-      throw new Error('MyPage-apiGetMyLevel');
+      throw new Error("MyPage-apiGetMyLevel");
     }
   };
-  
+
   const apiGetMyPickHistory = async () => {
     try {
       const pickData = await getMyPickHistory();
       setPickHistoryList(pickData);
     } catch (error) {
-      throw new Error('MyPage-apiGetMyPickHistory');
+      throw new Error("MyPage-apiGetMyPickHistory");
     }
-  }
-  
+  };
+
   const apiGetMyThrowngHistory = async () => {
     try {
       const thownData = await getMyDropHistory();
       setThrownHistoryList(thownData);
     } catch (error) {
-      throw new Error('MyPage-apiGetMyThrowngHistory');
+      throw new Error("MyPage-apiGetMyThrowngHistory");
     }
-  }
-  
+  };
+
   return (
     <div className="MyPage">
       <div className="top">
@@ -104,7 +115,7 @@ const MyPage = () => {
       </div>
       {logoutModal && <LogoutModal />}
     </div>
-  ); 
+  );
 };
 
 export default MyPage;

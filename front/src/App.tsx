@@ -3,8 +3,6 @@ import router from "./routes/router";
 import { Suspense } from "react";
 import { RecoilRoot } from "recoil";
 import * as Sentry from "@sentry/react";
-import { ErrorBoundary } from "react-error-boundary";
-import ErrorFallback from "@components/ErrorFallback";
 
 function App() {
   const url = window.location.pathname;
@@ -15,11 +13,9 @@ function App() {
 
   return (
     <RecoilRoot>
-      <ErrorBoundary FallbackComponent={ErrorFallback}>
-        <Suspense fallback={<div></div>}>
-          <RouterProvider router={router} />
-        </Suspense>
-      </ErrorBoundary>
+      <Suspense fallback={null}>
+        <RouterProvider router={router} />
+      </Suspense>
     </RecoilRoot>
   );
 }
