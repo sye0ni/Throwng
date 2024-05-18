@@ -1,21 +1,25 @@
-import { requestPermission } from "@/notificaiton/firebase-messaging-sw";
-import Navbar from "@components/Navbar";
-import Map from "@components/map/Map";
-import MapSwiper from "@components/map/MapSwiper";
-import { activeMarkerState } from "@store/map/atoms";
 import { useEffect } from "react";
-import { useRecoilValue } from "recoil";
+import { LoadScriptNext } from "@react-google-maps/api";
+import { GOOGLE_MAPS_LIBRARIES } from "@constants/map";
+import { requestPermission } from "@/notificaiton/firebase-messaging-sw";
+import Map from "@components/map/Map";
 
 const HomePage = () => {
   useEffect(() => {
     requestPermission();
   }, []);
-  const activeMarkerId = useRecoilValue(activeMarkerState);
+
   return (
-    <div className="HomePage">
+    <LoadScriptNext
+      id="google-map-script"
+      googleMapsApiKey={import.meta.env.VITE_GOOGLE_MAP_API}
+      language="ko"
+      libraries={GOOGLE_MAPS_LIBRARIES}
+      loadingElement={<></>}
+      onError={(e) => console.error("Error loading Google Maps", e)}
+    >
       <Map />
-      {activeMarkerId ? <MapSwiper /> : <Navbar />}
-    </div>
+    </LoadScriptNext>
   );
 };
 

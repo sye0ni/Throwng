@@ -1,67 +1,59 @@
+import { memo } from "react";
 import { OverlayViewF } from "@react-google-maps/api";
+import { useRecoilValue } from "recoil";
+import { Marker } from "../../types/mapType";
 import whitePin from "@assets/images/whitePin.webp";
 import purplePin from "@assets/images/purplePin.webp";
-import { useRecoilState, useRecoilValue } from "recoil";
-import { activeMarkerState, locationState } from "@store/map/atoms";
-import { toastMsg } from "@/utils/toastMsg";
-import { Location, Marker } from "../../types/mapType";
-import fetchDistance from "@/utils/map/fetchDistance";
+import question from "@assets/images/question.webp";
+import {
+  isActiveOutsideState,
+  isActiveInsideState,
+} from "@store/map/selectors";
+import useHandleMarkerClick from "@hooks/map/useHandleMarkerClick";
 
 interface Props {
   marker: Marker;
 }
 
-interface MarkerPosition {
-  id: number;
-  position: Location;
-}
-
 const MusicMarkerItem = ({ marker }: Props) => {
-  const [activeMarkerId, setActiveMarkerId] = useRecoilState(activeMarkerState);
-  const location = useRecoilValue(locationState);
+  const isActiveInside = useRecoilValue(isActiveInsideState(marker.itemId));
+  const isActiveOutside = useRecoilValue(isActiveOutsideState(marker.itemId));
 
-  const outsideCircleClick = () => {
-    toastMsg("반경 밖 음악을 듣고 싶다면 위치를 이동해 보세요!");
-    setActiveMarkerId(null);
-  };
-
-  const getOnClickFunction = (marker: MarkerPosition) => {
-    const distance = fetchDistance(marker.position, location);
-
-    return distance <= 600
-      ? setActiveMarkerId(marker.id) // handleMarkerClick(marker.id)
-      : outsideCircleClick();
-  };
+  const { handleMarkerClick } = useHandleMarkerClick();
 
   return (
     <OverlayViewF
       key={marker.itemId}
       position={{ lat: marker.latitude, lng: marker.longitude }}
       mapPaneName="overlayMouseTarget"
+      zIndex={1}
       getPixelPositionOffset={(width, height) => ({
         x: -width / 2,
         y: -height / 1.2,
       })}
     >
       <div
-        onClick={() => {
-          getOnClickFunction({
-            id: marker.itemId,
-            position: { lat: marker.latitude, lng: marker.longitude },
-          });
-        }}
+        className="MusicMarkerItem"
+        onClick={() => handleMarkerClick(marker)}
       >
         <img
-          src={marker.itemId === activeMarkerId ? purplePin : whitePin}
+          src={isActiveInside || isActiveOutside ? purplePin : whitePin}
           alt="Custom Overlay"
-          style={{ width: "30px", height: "35px" }}
+          loading="lazy"
+          decoding="async"
+          className="marker"
         />
         <div className="cover-img">
-          <img src={marker.albumImage} alt="Custom Overlay" />
+          <img
+            src={marker.secret ? question : marker.albumImage}
+            alt="Custom Overlay"
+            loading="lazy"
+            decoding="async"
+            className="album"
+          />
         </div>
       </div>
     </OverlayViewF>
   );
 };
-
-export default MusicMarkerItem;
+export default memo(MusicMarkerItem);
