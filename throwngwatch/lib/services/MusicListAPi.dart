@@ -5,6 +5,8 @@ final api = ApiClient();
 
 Future<Response> getMusicList(lat, lon) async {
   try {
+    print(lat);
+    print(lon);
     final res = await api.get('/music/watch/popular-items?lat=${lat}&lon=${lon}');
     return res;
   } catch (e) {

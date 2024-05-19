@@ -7,6 +7,7 @@ import '../const/color.dart';
 import '../services/MusicListAPi.dart';
 import '../store/store.dart';
 import '../widgets/ElevateBTN.dart';
+import 'LocationService.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -23,6 +24,7 @@ class _LoginPageState extends State<LoginPage> {
   @override
   void initState() {
     super.initState();
+    LocationService.initialize();
     inputController.text = otpInput;
   }
 
