@@ -38,6 +38,7 @@ class _LoginPageState extends State<LoginPage> {
     });
     try {
       final res = await postWatchAuth(otpInput);
+      print(res);
       await UserManager().saveUserInfo(newAccessToken: res.data['accessToken'], newRefreshToken: res.data['refreshToken']);
       Navigator.push(context, MaterialPageRoute(builder: (context) => MainPage()));
     } on DioError catch (e) {
