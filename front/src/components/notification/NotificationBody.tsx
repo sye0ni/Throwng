@@ -1,78 +1,86 @@
-import { useEffect, useState } from "react";
-import "@styles/notification/NotificationBody.scss";
-import { NoticeType } from "../../types/noticeType";
-import dayjs from "dayjs";
-import relativeTime from "dayjs/plugin/relativeTime";
-import "dayjs/locale/ko";
-import { useNavigate } from "react-router-dom";
-import { getMyNotice } from "@services/myPageHistoryApi/MyPageHistoryApi";
+  import { useEffect, useState } from "react";
+  import "@styles/notification/NotificationBody.scss";
+  import { NoticeType } from "../../types/noticeType";
+  import dayjs from "dayjs";
+  import relativeTime from "dayjs/plugin/relativeTime";
+  import "dayjs/locale/ko";
+  import { useNavigate } from "react-router-dom";
+  import { getMyNotice } from "@services/myPageHistoryApi/MyPageHistoryApi";
+  import Loading from "@components/Loading";
 
-dayjs.extend(relativeTime);
-dayjs.locale("ko");
+  dayjs.extend(relativeTime);
+  dayjs.locale("ko");
 
-const NotificationBody = () => {
-  const navigate = useNavigate();
-  const [noticeList, setNoticeList] = useState<NoticeType[]>([]);
+  const NotificationBody = () => {
+    const navigate = useNavigate();
+    const [noticeList, setNoticeList] = useState<NoticeType[]>([]);
+    const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  useEffect(() => {
-    fetchGetMyNotice();
-    setNoticeList([]);
-  }, []);
+    useEffect(() => {
+      setIsLoading(true);
+      fetchGetMyNotice();
+      setNoticeList([]);
+    }, []);
 
-  const fetchGetMyNotice = async () => {
-    try {
-      const res = await getMyNotice();
-      const updatedNotices = res.map(notice => {
-        const url = new URL(notice.link);
-        const path = url.pathname;
-        return {
-          ...notice,
-          link: path,
-        };
-      });
-      setNoticeList(updatedNotices);
-    } catch (error) {
-      throw new Error('NotificationBody')
-    }
-  };  
+    const fetchGetMyNotice = async () => {
+      try {
+        const res = await getMyNotice();
+        const updatedNotices = res.map(notice => {
+          const url = new URL(notice.link);
+          const path = url.pathname;
+          return {
+            ...notice,
+            link: path,
+          };
+        });
+        setNoticeList(updatedNotices);
+        setIsLoading(false);
+      } catch (error) {
+        // throw new Error('NotificationBody')
+      }
+    };  
 
-  const formatDistanceToNow = (dateString: string) => {
-    return dayjs(dateString).fromNow();
-  };
+    const formatDistanceToNow = (dateString: string) => {
+      return dayjs(dateString).fromNow();
+    };
 
-  const goQuiz = (link: string) => {
-    navigate(link);
-  };  
+    const goQuiz = (link: string) => {
+      navigate(link);
+    };  
 
-  return (
-    <div className="NotificationBody">
-      {noticeList.length > 0 ? (
-        noticeList.map((notice, index) => (
-          <div
-            className="notice-body"
-            key={index}
-            onClick={() => goQuiz(notice.link)}
-          >
-            <div className="header">
-              <div className="category">{notice.category}</div>
-              <div className="date">{formatDistanceToNow(notice.date)}</div>
-            </div>
-            <div className="title">{notice.title}</div>
-            <div className="sub-title">
-              {notice.body}
+    return (
+      <div className="NotificationBody">
+        {isLoading ? (
+          <Loading />
+        ) : (
+          noticeList.length > 0 ? (
+            noticeList.map((notice, index) => (
+              <div
+                className="notice-body"
+                key={index}
+                onClick={() => goQuiz(notice.link)}
+              >
+                <div className="header">
+                  <div className="category">{notice.category}</div>
+                  <div className="date">{formatDistanceToNow(notice.date)}</div>
+                </div>
+                <div className="title">{notice.title}</div>
+                <div className="sub-title">
+                  {notice.body}
+                </div>
+              </div>
+            ))
+          ) : (
+          <div className="SearchedWords">
+            <div className="no-word-container">
+              <div className="title">앗!</div>
+              <div className="subtitle">알림 내역이 없습니다.</div>
             </div>
           </div>
-        ))
-      ) : (
-      <div className="SearchedWords">
-        <div className="no-word-container">
-          <div className="title">앗!</div>
-          <div className="subtitle">알림 내역이 없습니다.</div>
-        </div>
+          )
+        )}
       </div>
-      )}
-    </div>
-  );
-};
+    );
+  };
 
-export default NotificationBody;
+  export default NotificationBody;
