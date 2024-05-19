@@ -6,8 +6,8 @@ class UserManager with ChangeNotifier {
 
   String? accessToken;
   String? refreshToken;
-  double? latitude;
-  double? longitude;
+  double? latitude = 35.205249508651896;
+  double? longitude = 126.81176083041734;
 
   static final UserManager _instance = UserManager._internal();
 
@@ -42,8 +42,8 @@ class UserManager with ChangeNotifier {
     String? latStr = await storage.read(key: 'latitude');
     String? lonStr = await storage.read(key: 'longitude');
 
-    latitude = latStr != null ? double.tryParse(latStr) : null;
-    longitude = lonStr != null ? double.tryParse(lonStr) : null;
+    latitude = latStr != null ? double.tryParse(latStr) : 35.205249508651896;
+    longitude = lonStr != null ? double.tryParse(lonStr) : 126.81176083041734;
 
     notifyListeners();
   }
