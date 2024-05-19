@@ -44,10 +44,6 @@ class _MusicListState extends State<MusicList> {
     await userManager.loadUserInfo();
     double? latitude = await userManager.latitude;
     double? longitude = await userManager.longitude;
-    setState(() {
-      isLoading = false;
-    });
-
     if (latitude != null && longitude != null) {
       await fetchMusicList(latitude, longitude);
     } else {
@@ -71,6 +67,9 @@ class _MusicListState extends State<MusicList> {
     } catch (e) {
       print(e);
     }
+    setState(() {
+      isLoading = false;
+    });
   }
 
   @override

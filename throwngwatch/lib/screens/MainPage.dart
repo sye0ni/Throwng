@@ -23,6 +23,7 @@ class _MainPageState extends State<MainPage> {
   void initState() {
     super.initState();
     _pageController = PageController(initialPage: _currentPageIndex);
+    print(111111111111);
     LocationService.initialize();
   }
 
