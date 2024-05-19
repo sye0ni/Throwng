@@ -15,7 +15,9 @@ class LocationService {
       case 'sendLocation':
         double? latitude = call.arguments['latitude'];
         double? longitude = call.arguments['longitude'];
-        await UserManager().saveUserInfo(newLatitude: latitude, newLongitude: longitude);
+        if (latitude != null && longitude != null) {
+          await UserManager().saveUserInfo(newLatitude: latitude.abs(), newLongitude: longitude.abs());
+        }
         break;
       default:
         print('Unknown method ${call.method}');
