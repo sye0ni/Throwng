@@ -21,4 +21,7 @@ function App() {
 }
 
 export default Sentry.withProfiler(App);
+<<<<<<< HEAD
 // export default App;
+=======
+>>>>>>> origin
