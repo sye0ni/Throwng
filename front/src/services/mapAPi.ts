@@ -29,4 +29,27 @@ const postAddress = async (position: Location): Promise<Address> => {
   }
 };
 
-export { postMusicRadius, postAddress };
+const getCheckRadiusCoupon = async (): Promise<boolean> => {
+  try {
+    const { data } = await axiosApi().get<boolean>(`music/check-radius-coupon`);
+    return data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+const getCheckQuestionCoupon = async (): Promise<boolean> => {
+  try {
+    const { data } = await axiosApi().get<boolean>(`music/usage/radius`);
+    return data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export {
+  postMusicRadius,
+  postAddress,
+  getCheckRadiusCoupon,
+  getCheckQuestionCoupon,
+};

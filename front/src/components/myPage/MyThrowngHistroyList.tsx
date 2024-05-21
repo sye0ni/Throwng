@@ -1,16 +1,19 @@
+// import { useCallback, useEffect, useRef, useState } from "react";
 import { useEffect, useState } from "react";
 import { MyHistory } from "../../types/songType";
 import "@styles/myPage/MyThrowngHistroyList.scss";
 import { TiLocation } from "react-icons/ti";
-import { useRecoilValue } from "recoil";
+import { useRecoilValue, useResetRecoilState, useSetRecoilState } from "recoil";
 import {
   myPickHistoryList,
   myThrowHistoryList,
+  scrollHistoryIndex,
   throwngFilter,
 } from "@store/myPage/atoms";
 import { useNavigate } from "react-router-dom";
 import dayjs from "dayjs";
 import isBetween from "dayjs/plugin/isBetween";
+import SongItemModule from "@components/SongItemModule";
 
 interface Props {
   pageIdx: boolean;
@@ -25,7 +28,28 @@ const MyThrowngHistroyList = ({ pageIdx, setHistoryCnt }: Props) => {
   const now = dayjs();
   const sevenDaysAgo = dayjs().subtract(7, "days");
   const navigate = useNavigate();
+  const setScrollHistoryIndex = useSetRecoilState(scrollHistoryIndex);
+  const scrollIndex = useRecoilValue(scrollHistoryIndex);
+  const resetScrollHistoryIndex = useResetRecoilState(scrollHistoryIndex);
+  // const observer = useRef<IntersectionObserver | null>(null);
+
   dayjs.extend(isBetween);
+
+  useEffect(() => {
+    fetchAndFilterHistory();
+    if (scrollIndex && songHistoryList.length > 0) {
+      moveScroll();
+    }
+  }, [filter, pageIdx, scrollIndex, songHistoryList.length]);
+
+  const handleGoNavigation = (song: MyHistory, index: number) => {
+    setScrollHistoryIndex(`${index}`);
+    if ("myThrowId" in song) {
+      navigate(`/music/pick/${song.myThrowId}`);
+    } else if ("myPickId" in song) {
+      navigate(`/music/pick/${song.throwId}`);
+    }
+  };
 
   const fetchAndFilterHistory = () => {
     const dataList = !pageIdx ? filterThrownList : filterPickList;
@@ -56,17 +80,34 @@ const MyThrowngHistroyList = ({ pageIdx, setHistoryCnt }: Props) => {
     setHistoryCnt(filteredData.length);
   };
 
-  useEffect(() => {
-    fetchAndFilterHistory();
-  }, [filter, pageIdx, filterThrownList, filterPickList]);
-
-  const handleGoNavigation = (song: MyHistory) => {
-    if ("myThrowId" in song) {
-      navigate(`/music/pick/${song.myThrowId}`);
-    } else if ("myPickId" in song) {
-      navigate(`/music/pick/${song.throwId}`);
+  const moveScroll = () => {
+    const element = document.getElementById(scrollIndex);
+    if (element) {
+      element.scrollIntoView({ block: "center" });
+      resetScrollHistoryIndex();
     }
   };
+
+  // const lastElementRef = useCallback(
+  //   (node: HTMLDivElement) => {
+  //     if (observer.current) observer.current.disconnect();
+  //     observer.current = new IntersectionObserver((entries) => {
+  //       if (entries[0].isIntersecting && !isLastPage) {
+  //         fetchData(
+  //           songHistoryList.length ? songHistoryList[playList.length - 1].modifiedAt : ""
+  //         );
+  //       }
+  //     });
+  //     if (node) observer.current.observe(node);
+  //   },
+  //   [isLastPage, fetchData, songHistoryList]
+  // );
+
+  // const lastElementRef = useCallback((node: HTMLDivElement) => {
+  //   console.log(1);
+  //   if (observer.current) observer.current.disconnect();
+  //   if (node) observer.current.observe(node);
+  // }, [])
 
   return (
     <div className="MyThrowngHistroyList">
@@ -74,9 +115,9 @@ const MyThrowngHistroyList = ({ pageIdx, setHistoryCnt }: Props) => {
         {songHistoryList.length > 0 ? (
           songHistoryList.map((song, index) => (
             <div
-              key={index}
               className="result-item"
-              onClick={() => handleGoNavigation(song)}
+              key={index}
+              onClick={() => handleGoNavigation(song, index)}
             >
               <div className="item-header">
                 {!pageIdx ? (
@@ -88,25 +129,20 @@ const MyThrowngHistroyList = ({ pageIdx, setHistoryCnt }: Props) => {
                     {dayjs(song.pickDate).format("YYYY-MM-DD")}
                   </div>
                 )}
-
                 <div className="item-location">
-                  <TiLocation /> {song.location}
+                  <TiLocation />
+                  <div>{song.location}</div>
                 </div>
               </div>
-              <div className="item">
-                <div className="img-container">
-                  <img src={song.albumImage} alt="" />
-                </div>
-                <div className="item-detail">
-                  <div className="item-title">{song.title}</div>
-                  <div className="item-artist">{song.artist}</div>
-                  <div className="item-comment">{song.comment}</div>
-                </div>
-              </div>
+              <SongItemModule song={song} index={index} type="history" />
+              {/* {songHistoryList.length ? <div ref={lastElementRef} /> : null} */}
             </div>
           ))
         ) : (
-          <div className="no-result">내역이 없습니다.</div>
+          <div className="no-word-container">
+            <div className="title">앗!</div>
+            <div className="subtitle">기록이 없습니다.</div>
+          </div>
         )}
       </div>
     </div>

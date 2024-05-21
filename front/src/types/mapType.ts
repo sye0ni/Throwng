@@ -11,6 +11,7 @@ export interface Marker {
   songTitle: string;
   artistName: string;
   innerDistance: boolean;
+  secret: boolean;
 }
 
 export interface MusicInfo {
@@ -23,6 +24,13 @@ export interface MusicInfo {
   throwId: number;
   thrownDate: string;
   title: string;
+  previewUrl: string | null;
+  otherPickedCount: number;
+}
+
+export interface Address {
+  code: string;
+  regionName: string;
 }
 
 export interface Address {

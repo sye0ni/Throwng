@@ -1,75 +1,38 @@
 .PlayListBody {
+  display: flex;
+  flex-direction: column;
+  gap: 1dvh;
+
   .ref-div {
     background-color: red;
     width: 100dvw;
   }
-  .result-item {
-    padding: 1dvh 0;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 
-    .content-container {
-      display: flex;
-      align-items: center;
-      gap: 1dvh;
+  .item-body {
+    display: flex;
+    flex-direction: column;
+    gap: 1dvh;
+  }
 
-      .image-container {
-        .item-wide {
-          width: 100%;
-        }
+  .no-word-container {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
 
-        img {
-          width: 6dvh;
-          height: 6dvh;
-          border-radius: 1dvh;
-        }
-      }
-
-      .item-wide {
-        display: flex;
-        align-items: center;
-        overflow: hidden;
-        width: 90%;
-
-        .item-detail {
-          overflow: hidden;
-          width: 90%;
-
-          .item-title {
-            font-size: 2dvh;
-            text-overflow: ellipsis;
-            overflow: hidden;
-            white-space: nowrap;
-          }
-
-          .item-artist {
-            font-size: 1.7dvh;
-            font-weight: 500;
-            color: var(--placeholder-color);
-            text-overflow: ellipsis;
-            overflow: hidden;
-            white-space: nowrap;
-          }
-        }
-
-        .item-detail-btn {
-          color: var(--main-color);
-          display: flex;
-          align-items: center;
-          justify-content: center;
-
-          svg {
-            font-size: 3dvh;
-          }
-
-          &:active {
-            background-color: var(--input-box-color);
-            border-radius: 50%;
-          }
-        }
-      }
+    .title {
+      font-size: 2.2dvh;
+      font-weight: bold;
     }
-    &:last-child {
-      border-bottom: none;
+
+    .subtitle {
+      font-size: 2dvh;
+      color: var(--placeholder-color);
     }
   }
 }

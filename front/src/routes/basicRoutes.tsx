@@ -1,25 +1,55 @@
-import QuizCountDown from "@pages/quiz/QuizCountDown";
-import QuizCouponPage from "@pages/quiz/QuizCouponPage";
-import QuizFailPage from "@pages/quiz/QuizFailPage";
-import QuizInfoPage from "@pages/quiz/QuizInfoPage";
-import QuizSolvePage from "@pages/quiz/QuizSolvePage";
-import QuizSuccessPage from "@pages/quiz/QuizSuccessPage";
 import { lazy } from "react";
-const PrivateRoute = lazy(() => import("@components/PrivateRoute"));
-const HomePage = lazy(() => import("@pages/HomePage"));
+import PrivateRoute from "@components/PrivateRoute";
+import Error404 from "@pages/Error404";
+import ContentSuccessPage from "@pages/content/ContentSuccessPage";
+
+import HomePage from "@pages/HomePage";
 const MyPage = lazy(() => import("@pages/MyPage"));
 const PlayListPage = lazy(() => import("@pages/PlayListPage"));
 const MusicSearchPage = lazy(() => import("@pages/MusicSearchPage"));
 const NotificationPage = lazy(() => import("@pages/NotificationPage"));
-const MyCouponPage = lazy(() => (import("@pages/MyCouponPage")))
-// const Error404 = loadable(() => import("./Error404"));
+const MyCouponPage = lazy(() => import("@pages/MyCouponPage"));
+const MyOtpPage = lazy(() => import("@pages/MyOtpPage"));
+const ChangeNickNamePage = lazy(() => import("@pages/ChangeNickNamePage"));
 const MusicDrop = lazy(() => import("@pages/musicDrop/MusicDrop"));
-const QuizMain = lazy(() => import("@pages/quiz/QuizMainPage"));
+const QuizMain = lazy(() => import("@pages/content/quiz/QuizMainPage"));
 const MusicPickDetailPage = lazy(() => import("@pages/MusicPickDetailPage"));
 const MusicList = lazy(() => import("@components/musicSearch/MusicList"));
-
-const QuizClosePage = lazy(() => import("@pages/quiz/QuizClosePage"));
 const NonePermissionPage = lazy(() => import("@pages/NonePermissionPage"));
+const QuizClosePage = lazy(() => import("@pages/content/quiz/QuizClosePage"));
+const ContentPage = lazy(() => import("@pages/content/ContentPage"));
+const QuizCountDown = lazy(() => import("@pages/content/quiz/QuizCountDown"));
+const QuizCouponPage = lazy(() => import("@pages/content/quiz/QuizCouponPage"));
+const QuizFailPage = lazy(() => import("@pages/content/quiz/QuizFailPage"));
+const QuizInfoPage = lazy(() => import("@pages/content/quiz/QuizInfoPage"));
+const QuizSolvePage = lazy(() => import("@pages/content/quiz/QuizSolvePage"));
+const MemoryTestPage = lazy(
+  () => import("@pages/content/memory/MemoryTestPage")
+);
+const MemoryInfoPage = lazy(
+  () => import("@pages/content/memory/MemoryInfoPage")
+);
+const MemoryMainPage = lazy(
+  () => import("@pages/content/memory/MemoryMainPage")
+);
+const MemoryCouponPage = lazy(
+  () => import("@pages/content/memory/MemoryCouponPage")
+);
+const RhythmGamePage = lazy(
+  () => import("@pages/content/rhythm/RhythmGamePage")
+);
+const RhythmMainPage = lazy(
+  () => import("@pages/content/rhythm/RhythmMainPage")
+);
+const RhythmInfoPage = lazy(
+  () => import("@pages/content/rhythm/RhythmInfoPage")
+);
+const RhythmResultPage = lazy(
+  () => import("@pages/content/rhythm/RhythmResultPage")
+);
+const RhythmCouponPage = lazy(
+  () => import("@pages/content/rhythm/RhythmCouponPage")
+);
 
 export default {
   path: "/",
@@ -31,7 +61,13 @@ export default {
       children: [
         {
           path: "mypage",
-          element: <MyPage />,
+          children: [
+            { index: true, element: <MyPage /> },
+            {
+              path: "change-nickname",
+              element: <ChangeNickNamePage />,
+            },
+          ],
         },
         {
           path: "playlist",
@@ -43,7 +79,11 @@ export default {
         },
         {
           path: "mycoupons",
-          element: <MyCouponPage/>
+          element: <MyCouponPage />,
+        },
+        {
+          path: "myotp",
+          element: <MyOtpPage />,
         },
       ],
     },
@@ -55,7 +95,7 @@ export default {
           children: [
             { index: true, element: <MusicSearchPage /> },
             {
-              path: ":id",
+              path: "results",
               element: <MusicList />,
             },
           ],
@@ -81,6 +121,18 @@ export default {
       ],
     },
     {
+      path: "content",
+      element: <ContentPage />,
+    },
+    {
+      path: "close",
+      element: <QuizClosePage />,
+    },
+    {
+      path: ":type/success",
+      element: <ContentSuccessPage />,
+    },
+    {
       path: "quiz",
       children: [
         {
@@ -100,10 +152,6 @@ export default {
           element: <QuizSolvePage />,
         },
         {
-          path: "success",
-          element: <QuizSuccessPage />,
-        },
-        {
           path: "coupon",
           element: <QuizCouponPage />,
         },
@@ -111,12 +159,55 @@ export default {
           path: "fail",
           element: <QuizFailPage />,
         },
+      ],
+    },
+    {
+      path: "rhythm",
+      children: [
         {
-          path: "*",
-          element: <QuizClosePage />,
+          path: "main",
+          element: <RhythmMainPage />,
+        },
+        {
+          path: "info",
+          element: <RhythmInfoPage />,
+        },
+        {
+          path: "game",
+          element: <RhythmGamePage />,
+        },
+        {
+          path: "result",
+          element: <RhythmResultPage />,
+        },
+        {
+          path: "coupon",
+          element: <RhythmCouponPage />,
+        },
+      ],
+    },
+    {
+      path: "memory",
+      children: [
+        {
+          path: "main",
+          element: <MemoryMainPage />,
+        },
+        {
+          path: "info",
+          element: <MemoryInfoPage />,
+        },
+        {
+          path: "game",
+          element: <MemoryTestPage />,
+        },
+        {
+          path: "coupon",
+          element: <MemoryCouponPage />,
         },
       ],
     },
     { path: "none-permission", element: <NonePermissionPage /> },
   ],
+  errorElement: <Error404 />,
 };
