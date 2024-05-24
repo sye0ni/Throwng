@@ -28,6 +28,7 @@ const MyOtpBody = () => {
       if (axios.isAxiosError(e)) {
         if (e.response?.status === 429) {
           toastMsg('너무 많은 요청을 보냈습니다. 잠시 후에 다시 시도해주세요.');
+          // throw new Error('MyOtpBody');
         }
       }
     }
@@ -35,24 +36,21 @@ const MyOtpBody = () => {
 
   const SSEConnection = () => {
     const sse = new EventSource(`${BASE_URL}/api/users/connect`);
-  
+
     sse.addEventListener('WatchAuthentication', (e) => {
       if (e.data === 'success') {
         sse.close();
         alert('연동이 완료되었어요. 마이쓰롱으로 이동할게요.');
-        navigate('/user/mypage', {replace:true});
+        navigate('/user/mypage', { replace: true });
       }
     });
-  
+
     sse.onerror = () => {
       sse.close();
     };
-  
-    return () => {
-      sse.close();
-    };
+
+    return sse;
   };
-  
   
   useEffect(() => {
     if (timeLeft > 0) {

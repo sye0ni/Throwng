@@ -14,7 +14,7 @@ import { useNavigate } from "react-router-dom";
 import { searchedWords } from "@store/musicSearch/atoms";
 import { deleteMyPlayList } from "@services/myPlayListApi/MyPlayListApi";
 import { selectMusic } from "@store/music/drop/atoms";
-import logo from "@assets/images/logo.png";
+import logo from "@assets/images/logo.webp";
 
 interface Props {
   song: Content;
@@ -51,11 +51,17 @@ const PlayListItemModal = ({ song, deleteSongFromPlayList }: Props) => {
   };
 
   const deleteSong = async (e: React.MouseEvent<HTMLLIElement>) => {
-    e.preventDefault();
-    await deleteMyPlayList(song.playlistId);
-    deleteSongFromPlayList(song.playlistId);
-    setModalSongIndex(null);
+    try {
+      e.preventDefault();
+      await deleteMyPlayList(song.playlistId);
+      deleteSongFromPlayList(song.playlistId);
+    } catch (error) {
+      // throw new Error ('PlayListItemModal-deleteSong')
+    } finally {
+      setModalSongIndex(null);
+    }
   };
+  
 
   const directDrop = (song: Content) => {
     const songForSelectMusic: Song = {

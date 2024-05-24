@@ -1,19 +1,20 @@
 import Header from "@components/Header"
-import { changeNickNameCouponId, myNickName } from "@store/myPage/atoms";
+import { myLevel } from "@store/myPage/atoms";
 import { useRef, useState } from "react"
 import { useRecoilValue } from "recoil";
 import "@styles/ChangeNickName/ChangeNickName.scss"
 import { putNickName } from "@services/myCouponApi/MyCouponAPi";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import ToasterMsg from "@components/ToasterMsg";
 import { toastMsg } from "@/utils/toastMsg";
 
 const ChangeNickNamePage = () => {
   const inputEl = useRef<HTMLInputElement>(null);
-  const myName = useRecoilValue(myNickName);
+  const myName = useRecoilValue(myLevel);
   const [nickName, setNickName] = useState('');
   const navigate = useNavigate();
-  const changeNickNameCouponIdValue = useRecoilValue(changeNickNameCouponId)
+  const location = useLocation();
+  const couponId = location.state.couponId
 
   const nickNameOnChange = (e:React.ChangeEvent<HTMLInputElement>) => {
     setNickName(e.target.value);
@@ -24,14 +25,21 @@ const ChangeNickNamePage = () => {
     const regex = /^[가-힣]{1,15}$/;
 
     const requestBody = {
-      'couponId':changeNickNameCouponIdValue,
+      'couponId':couponId,
       'nickName':nickName,
       'couponType':"NICKNAME",
     }
 
     if (regex.test(nickName)) {
-      await putNickName(requestBody)
-      navigate('/user/mypage', {replace:true})
+      const isConfirmed = window.confirm(`${nickName}(으)로 닉네임을 변경하시겠어요?`);
+        if (isConfirmed) {
+          try {
+            await putNickName(requestBody)
+            navigate('/user/mypage', {replace:true})
+          } catch (e) {
+            // throw new Error('ChangeNickNamePage');
+          }
+        }
     } else {
       toastMsg("닉네임은 한글 단어로만 설정이 가능하며, 영어, 숫자, 공백, 특수문자는 사용할 수 없습니다. 최대 15자까지 가능합니다.");
       setNickName('');
@@ -55,7 +63,7 @@ const ChangeNickNamePage = () => {
               className="input"
               ref={inputEl}
               type="text"
-              placeholder={myName}
+              placeholder={myName.nickName}
               value={nickName}
               onChange={(e)=> nickNameOnChange(e)}
               maxLength={15}

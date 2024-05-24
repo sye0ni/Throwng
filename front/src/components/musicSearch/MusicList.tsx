@@ -9,6 +9,7 @@ import { useEffect, useState } from "react";
 import { getSearchMusic } from "@services/musicSearchApi/MusicSearchApi.tsx";
 import { selectMusic } from "@store/music/drop/atoms.ts";
 import Loading from "@components/Loading.tsx";
+import SongItemModule from "@components/SongItemModule.tsx";
 
 const MusicList = () => {
   const navigate = useNavigate();
@@ -25,62 +26,59 @@ const MusicList = () => {
     if (searchKeyword) {
       onSearch(decodeURIComponent(searchKeyword));
     }
-  }, [searchKeyword]);
+  }, [searchKeyword])
 
   const onSearch = async (searchKeyWord: string) => {
     setIsLoading(true);
     const decodedKeyword = decodeURIComponent(searchKeyWord);
     setTitle(decodedKeyword);
-    const res = await getSearchMusic(decodedKeyword);
-    if (res) {
-      setSearchResults(res);
+    try {
+      const res = await getSearchMusic(decodedKeyword);
+      if (res) {
+        setSearchResults(res);
+      }
+    } catch (error) {
+      setSearchResults([]);
+      // throw new Error ('MusicList-onSearch')
+    } finally {
+      setIsLoading(false);
     }
-    setIsLoading(false);
   };
+  
 
-  const handleGoNavigation = (song: Song) => {
-    setSelectMusic(song);
-    navigate(`/music/drop/${song.youtubeId}`);
-  };
+  const handleGoNavigation = (song : Song) => {
+    setSelectMusic(song)
+    navigate(`/music/drop/${song.youtubeId}`)
+  }
 
   return (
     <div className="MusicList">
       <div className="MusicList-header">
-        <Header />
-        <MusicSearchInput />
+        <Header/>
+        <MusicSearchInput/>
       </div>
-      {isLoading ? (
-        <Loading />
-      ) : searchResults && searchResults.length > 0 ? (
+      {isLoading ? ( <Loading /> ) 
+      : searchResults && searchResults.length > 0 ? (
         <div className="searchResults none-scroll">
           {searchResults.map((song, index: number) => (
-            <div
+            <SongItemModule
               key={index}
-              className="result-item"
+              type="search"
               onClick={() => handleGoNavigation(song)}
-            >
-              <div className="image-container">
-                <img src={song.albumImage} loading="lazy" />
-              </div>
-              <div className="item-wide">
-                <div className="item-detail">
-                  <div className="item-title">{song.title}</div>
-                  <div className="item-artist">{song.artist}</div>
-                </div>
-              </div>
-            </div>
+              song={song}            
+            />
           ))}
         </div>
       ) : (
-        <div className="SearchedWords">
-          <div className="no-word-container">
-            <div className="title">앗!</div>
-            <div className="subtitle">검색결과가 없어요.</div>
-          </div>
+      <div className="SearchedWords">
+        <div className="no-word-container">
+          <div className="title">앗!</div>
+          <div className="subtitle">검색결과가 없어요.</div>
         </div>
+      </div>
       )}
     </div>
-  );
-};
+  )
+}
 
-export default MusicList;
+export default MusicList
