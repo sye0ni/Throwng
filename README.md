@@ -1,6 +1,6 @@
 ![throwng-opensource-logo](https://github.com/sye0ni/Throwng/assets/91115868/a0687196-50f5-45fe-a045-2295b20ff373)
 
-[Throwng](https://www.sieum.co.kr/) is a location-based music sharing open-source platform based on the insight that the music you listen to varies depending on the place. This repo is the primary source for core development on the Throwng platform. It's written in Java and React and runs as a single Linux binary with MySQL and MongoDB. A new compiled version is released under an MIT license every month.
+[Throwng](https://www.throwng.store/) is a location-based music sharing open-source platform based on the insight that the music you listen to varies depending on the place. This repo is the primary source for core development on the Throwng platform. It's written in Java and React and runs as a single Linux binary with MySQL and MongoDB. A new compiled version is released under an MIT license every month.
 
 Deploy Throwng on-premises, or try it for free in the cloud.
 
@@ -39,9 +39,9 @@ Follow this guide if you want to write code for Throwng.
 ## Native Mobile and Desktop Apps
 In addition to the web interface, you can also download Throwng clients for Android, iOS, Windows PC, macOS, and Linux.
 
-- Get Throwng on [Windows PC](https://www.sieum.co.kr/)
-- Get Throwng on [Mac OSX](https://www.sieum.co.kr/)
-- Get Throwng on [Linux](https://www.sieum.co.kr/)
+- Get Throwng on [Windows PC](https://www.throwng.store/)
+- Get Throwng on [Mac OSX](https://www.throwng.store/)
+- Get Throwng on [Linux](https://www.throwng.store/)
 - Get Throwng on [Google Play](#) (Available in June)
 
 
